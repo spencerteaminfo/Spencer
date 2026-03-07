@@ -5,6 +5,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
 // MAIN ROUTES`
@@ -20,6 +21,18 @@ Route::get('/register', [AuthController::class, 'showRegistrationForm'])
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])
     ->name('login');
+
+// PASSWORD RESET ROUTES
+// views
+Route::get('/forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])
+    ->name('password.request');
+
+Route::prefix('api')->group(function () {
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])
+        ->name('api.password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'reset'])
+        ->name('api.password.update');
+});
 
 // SETTINGS ROUTES
 // views

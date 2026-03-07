@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PasswordResetController;
 use Illuminate\Support\Facades\Route;
 
 // AUTHENTICATION ROUTES
@@ -37,7 +38,17 @@ Route::get('/users', [UserController::class, 'search'])
 Route::delete('/user', [UserController::class, 'delete'])
     ->middleware(['web', 'auth:sanctum'])
     ->name('api.user.delete');
+// PASSWORD RESET ROUTES
+// get
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])
+    ->name('api.password.reset');
+// post
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])
+    ->name('api.password.email');
 
+Route::post('/reset-password', [PasswordResetController::class, 'reset'])
+    ->name('api.password.update');
+    
 // EVENT ROUTES
 // get
 Route::get('/events', [EventController::class, 'search'])
