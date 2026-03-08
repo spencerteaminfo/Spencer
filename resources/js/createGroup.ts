@@ -172,7 +172,7 @@ saveBtn?.addEventListener("click", async () => {
 deleteBtn?.addEventListener("click", async () => {
     if (!currentGroupId || !confirm("Are you sure?")) return;
     try {
-        await api.delete(`/group/delete/${currentGroupId}`);
+        await api.delete(`/api/group/${currentGroupId}`);
         window.location.reload();
     } catch (e) {
         if (errorHandler) errorHandler.innerHTML = "Error deleting group.";

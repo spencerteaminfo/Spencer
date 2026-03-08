@@ -88,7 +88,7 @@ class GroupController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Group $group): JsonResponse
+    public function update(Request $request, Group $group): JsonResponse // TODO update members
     {
         $request->validate([
             'name' => ['nullable', 'string', 'max:128'],
