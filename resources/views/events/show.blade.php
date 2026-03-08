@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<x-head title="Show Event">@vite(['resources/js/showImg.ts', 'resources/js/createEvent.ts'])</x-head>
+<x-head title="Show Event">@vite(['resources/js/showImg.ts', 'resources/js/createEvent.ts', 'resources/js/detailEvent.ts'])</x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
 <x-header />
 <main class="d-flex">
@@ -14,7 +14,7 @@
                         <div id="title-div" class="mb-3">
                             <label class="form-label small text-muted">Title</label>
                             <p>{{ $event->title }}</p>
-                            {{-- <p>{{ $event }}</p> --}}
+                            {{--<p>{{ $event }}</p>--}} 
                         </div>
 
                         <div id="description-div" class="mb-3">
@@ -43,18 +43,11 @@
                             </label>
                         </div>
                         <input type="hidden" id="group-hidden" value='1'>
-                        <button id="save-changes" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">Save Changes</button>
                     </div>
 
                     <div class="mb-4">
-                        <div class="position-relative">
-                            <input id="searchInput" type="text" class="form-control rounded-pill py-3 px-4 shadow-sm border-0" placeholder="Search for a person or a group">
-                            <span class="position-absolute end-0 top-50 translate-middle-y me-4">
-                                <img src="{{ Vite::asset('resources/svg/search.svg') }}" alt="search" class="h-auto w-auto opacity-50">
-                            </span>
-                        </div>
-
-                        <div id="userBulletList" class="d-flex flex-column gap-1 mb-2"></div>
+                        <h4 class="text-muted">Groups:</h4>
+                        <div id="userBulletList" class="d-flex flex-column gap-1 mb-2" data-groupid="{{$event->group_id}}"></div>
                     </div>
 
                     <div class="d-flex flex-column gap-2">
