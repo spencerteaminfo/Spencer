@@ -19,14 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const [resUser, resGroups, resEvents] = await Promise.all([
-                api.post("/listusers", { email: query }),
-                api.post("/listgroups", { title: query }),
-                api.post("/listevents", { title: query })
+                api.get("/api/users", {params: { email: query }}),
+                api.get("/api/groups", {params: { title: query }}),
+                api.get("/api/events", {params: { title: query }})
             ]);
 
-            const users = resUser.data;
-            const groups = resGroups.data;
-            const events = resEvents.data;
+            const users = resUser.data.data;
+            const groups = resGroups.data.data;
+            const events = resEvents.data.data;
 
             resultContainer.innerHTML = "";
 

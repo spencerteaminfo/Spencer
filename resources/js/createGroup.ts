@@ -100,8 +100,8 @@ const performSearch = async (query: string) => {
     }
 
     try {
-        const response = await api.post("/listusers", { email: query });
-        const users = response.data;
+        const response = await api.get("/api/users", {params: {email: query}});
+        const users = response.data.data;
         modalList.innerHTML = "";
 
         users.filter((u: any) => !selectedUserIds.includes(u.id)).forEach((user: any) => {
