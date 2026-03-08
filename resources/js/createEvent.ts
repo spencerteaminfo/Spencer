@@ -121,9 +121,6 @@ const addMemberToGroup = (group: Group, canDelete: boolean = true) => {
                 <img src="https://ui-avatars.com/api/?name=${group.name}&background=198754&color=fff" class="w-100 profile-pic" alt="acc">
             </div>
             <div class="small">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Dropdown button</button>
-                </div>
                 <span class="text-muted d-none d-sm-inline">${group.name}</span>
             </div>
             ${canDelete ? '<div class="remove-user-btn text-danger small fw-bold px-1" role="button">✕</div>' : ''}
