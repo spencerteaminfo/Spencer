@@ -17,15 +17,23 @@
             <div class="row g-4">
                 @forelse($groups as $group)
                     @php
-                        $existingMembers = $group->users->where('id', '!=', auth()->id())->map(function($u) {
-                            return ['id' => $u->id, 'email' => $u->email];
+                        $existingMembers = $group->users->where('id', '!=', auth()->id())->map(function($u) use ($group) {
+                            $roleId = \App\Models\Membership::where('group_id', $group->id)->where('user_id', $u->id)->value('role_id') ?? 4;
+                            return ['id' => $u->id, 'email' => $u->email, 'role' => $roleId];
                         })->values();
+                        $myRoleId = \App\Models\Membership::where('group_id', $group->id)->where('user_id', auth()->id())->value('role_id') ?? 4;
+                        $myRoleName = match($myRoleId) {3 => 'Owner', 6 => 'Cashier', default => 'Member'};
                     @endphp
                     <div class="col-12 col-md-6 col-lg-4 col-xl-3">
-                        <div class="card border-0 shadow-sm rounded-4 text-center p-4 h-100 bg-white group-card" role="button" data-bs-toggle="modal" data-bs-target="#groupModal" data-id="{{ $group->id }}" data-name="{{ $group->name }}" data-description="{{ $group->description }}" data-is-creator="true" data-members="{{ json_encode($existingMembers) }}">
+                        <div class="card border-0 shadow-sm rounded-4 text-center p-4 h-100 bg-white group-card" role="button" data-bs-toggle="modal" data-bs-target="#groupModal" data-id="{{ $group->id }}" data-name="{{ $group->name }}" data-description="{{ $group->description }}" data-is-creator="{{ $myRoleId == 3 ? 'true' : 'false' }}" data-members="{{ json_encode($existingMembers) }}" data-picture="{{ $group->picture }}">
+                            @if($group->picture)
+                                <div class="ratio ratio-21x9 mb-3 rounded-3 overflow-hidden">
+                                    <img src="{{ asset('storage/' . $group->picture) }}" class="w-100 h-100 object-fit-cover" alt="Group Thumbnail">
+                                </div>
+                            @endif
                             <span class="fw-bold text-secondary fs-6">{{ $group->name }}</span>
                             <div class="mt-2">
-                                <span class="badge bg-light text-primary rounded-pill">Member</span>
+                                <span class="badge bg-light text-primary rounded-pill">{{ $myRoleName }}</span>
                             </div>
                         </div>
                     </div>
@@ -51,6 +59,7 @@
                         <span class="small text-muted fw-bold">Click to upload group image</span>
                         <input type="file" id="event-image-upload" class="d-none" accept="image/png, image/jpg, image/webp, image/jpeg">
                     </label>
+                    <button type="button" id="remove-img-btn" class="btn btn-danger btn-sm position-absolute top-0 end-0 m-2 d-none z-2 rounded-circle fw-bold" style="width: 32px; height: 32px;">✕</button>
                 </div>
             </div>
             <div class="mb-3">

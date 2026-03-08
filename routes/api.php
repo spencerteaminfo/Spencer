@@ -32,7 +32,8 @@ Route::patch('/user/settings', [SettingController::class, 'update']) // TODO cha
 
 // get
 Route::get('/users', [UserController::class, 'search'])
-    ->name('api.user.search'); // List users
+    ->name('api.user.search') // List users
+    ->middleware(['web', 'auth:sanctum']);
 
 //delete
 Route::delete('/user', [UserController::class, 'delete'])
@@ -52,7 +53,8 @@ Route::post('/reset-password', [PasswordResetController::class, 'reset'])
 // EVENT ROUTES
 // get
 Route::get('/events', [EventController::class, 'search'])
-    ->name('api.event.search'); // List events
+    ->name('api.event.search') // List events
+    ->middleware(['web', 'auth:sanctum']);
 
 // post
 Route::post('/event', [EventController::class, 'store'])
@@ -70,28 +72,28 @@ Route::patch('/event/{event}/attendance', [EventController::class, 'setAttendanc
 // GROUP ROUTES
 // get
 Route::get('/groups', [GroupController::class, 'search'])
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.group.search'); // List groups
 
 // post
 Route::post('/group', [GroupController::class, 'store'])
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.group.store');
 Route::post('/group/{group}/members', [GroupController::class, 'addMembers'])
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.group.members.add');
 
 // patch
 Route::patch('/group/{group}', [GroupController::class, 'update'])
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.group.update');
 
 // delete
 Route::delete('/group/{group}', [GroupController::class, 'destroy'])
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.group.delete');
 Route::delete('/group/{group}/members', [GroupController::class, 'destroyMembers'])
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.group.members.destroy');
 
 // NOTIFICATION ROUTES
