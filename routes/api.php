@@ -25,10 +25,10 @@ Route::post('/logout', [AuthController::class, 'logout'])
 // patch
 Route::patch('/user/profile', [UserController::class, 'updateProfile'])
     ->name('api.user.profile.update')
-    ->middleware('auth:sanctum');
+    ->middleware(['web', 'auth:sanctum']);
 Route::patch('/user/settings', [SettingController::class, 'update']) // TODO change deceiving method names
     ->name('api.user.settings.update')
-    ->middleware('auth:sanctum');
+    ->middleware(['web', 'auth:sanctum']);
 
 // get
 Route::get('/users', [UserController::class, 'search'])
@@ -48,7 +48,7 @@ Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkE
 
 Route::post('/reset-password', [PasswordResetController::class, 'reset'])
     ->name('api.password.update');
-    
+
 // EVENT ROUTES
 // get
 Route::get('/events', [EventController::class, 'search'])

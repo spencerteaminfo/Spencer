@@ -43,7 +43,7 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        Auth::logout();
+        Auth::guard('web')->logout();
 
         $user->delete();
 
