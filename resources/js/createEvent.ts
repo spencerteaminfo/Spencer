@@ -55,7 +55,11 @@ submitBtn.addEventListener("click", async (e)=>{
     try{
         submitBtn.disabled=true;
         console.log(formData);
-        const response = await api.post("/event/create", formData);
+        const response = await api.post("/api/event", formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
         window.location.href="/";
     }catch (error:unknown){
         console.error("Error: "+error);
@@ -66,7 +70,7 @@ const modalList = document.getElementById('userBulletList');
 
 const searchAndLog = async (search: string) => {
     try {
-        const response = await api.get('/api/groups', { title: search });
+        const response = await api.get('/api/groups', {params: {title: search}});
         console.log(response)
         const groups: Group[] = response.data.data;
         console.log(response);
