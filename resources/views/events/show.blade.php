@@ -14,7 +14,7 @@
                         <div id="title-div" class="mb-3">
                             <label class="form-label small text-muted">Title</label>
                             <p>{{ $event->title }}</p>
-                            <p>{{ $event }}</p>
+                            {{-- <p>{{ $event }}</p> --}}
                         </div>
 
                         <div id="description-div" class="mb-3">
