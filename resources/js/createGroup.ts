@@ -158,8 +158,9 @@ saveBtn?.addEventListener("click", async () => {
     try {
         saveBtn.disabled = true;
         saveBtn.innerText = "Saving...";
-        const url = currentGroupId ? `/group/edit/${currentGroupId}` : '/group/create';
-        await api.post(url, data);
+        const url = currentGroupId ? `/api/group/${currentGroupId}` : '/api/group';
+        currentGroupId ? await api.patch(url, data) : await api.post(url, data);
+        // await api.post(url, data);
         window.location.reload();
     } catch (error: any) {
         saveBtn.disabled = false;
