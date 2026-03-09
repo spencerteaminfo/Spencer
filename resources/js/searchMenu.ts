@@ -86,14 +86,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 events.forEach((event: any) => {
                     resultContainer.innerHTML += `
                     <div class="p-3 border-bottom shadow-sm-hover">
-                        <a href="" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100">
-                            <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
-                                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(event.title)}&background=198754&color=fff" class="w-100 h-100 object-fit-cover">
+                        <a href="/event/${event.id}" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100">
+                            <div class="flex-shrink-0" style="width: 45px;">
+                                <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(event.title)}&background=198754&color=fff" class="w-100 h-100 object-fit-cover">
+                                </div>
                             </div>
-                            </div>
-                            <div class="ms-3">
-                                <div class="fw-bold text-dark">${event.title}</div>
-                                <div class="text-muted small">Událost</div>
+                            <div class="flex-grow-1 ms-3 overflow-hidden">
+                                <div class="fw-bold text-dark text-truncate">${event.title}</div>
+                                <div class="text-muted small text-truncate">Událost</div>
                             </div>
                         </a>
                     </div>`;

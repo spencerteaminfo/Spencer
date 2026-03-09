@@ -16,9 +16,10 @@
                                 <div class="ratio ratio-1x1 w-75 bg-white rounded-circle shadow-sm border-white d-flex justify-content-center align-items-center overflow-hidden">
                                     <div class="d-flex justify-content-center align-items-center w-100 h-100">
                                         @php
-                                            $profilePic = $user->avatar_url ? asset('storage/' . $user->avatar_url) : 'https://ui-avatars.com/api/?name=' . urlencode($user->email) . '&background=198754&color=fff';
+                                            $fallback = 'https://ui-avatars.com/api/?name=' . urlencode($user->email) . '&background=198754&color=fff';
+                                            $profilePic = $user->avatar_url ? asset('storage/' . $user->avatar_url) : $fallback;
                                         @endphp
-                                        <img src="{{ $profilePic }}" class="w-100 h-100 rounded-circle border object-fit-cover" alt="profile picture">
+                                        <img src="{{ $profilePic }}" class="w-100 h-100 rounded-circle border object-fit-cover" onerror="this.onerror=null;this.src='{{ $fallback }}';" alt="profile picture">
                                     </div>
                                 </div>
                             </div>
