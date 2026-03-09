@@ -7,7 +7,7 @@
     <x-sidebar/>
     <div id="content" class="flex-grow-1 p-3 p-md-5 overflow-auto">
         <div class="container-xl">
-            <div class="row g-4 justify-content-center">
+            <div class="row g-4 justify-content-center mb-5 mb-md-0">
                 <div class="col-lg-8">
                     <div class="card shadow-sm border-0 rounded-4 p-4 mb-4">
                         <h2 class="h3 fw-bold mb-4 text-secondary">Event</h2>

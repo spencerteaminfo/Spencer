@@ -6,7 +6,7 @@
 <main class="d-flex">
     <x-sidebar/>
     <div id="content" class="flex-grow-1 p-3 p-md-5 overflow-auto">
-        <div class="container-fluid">
+        <div class="container-fluid mb-5 mb-md-0">
             <div class="d-flex justify-content-center justify-content-md-start mb-5">
                 <button class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg d-flex align-items-center gap-2 border-0" data-bs-toggle="modal" data-bs-target="#groupModal" id="createNewGroupBtn">
                     <span class="fs-4 lh-1 text-white">+</span>

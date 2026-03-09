@@ -6,7 +6,7 @@
 <main class="d-flex">
     <x-sidebar/>
     <div id="content" class="flex-grow-1 p-3 p-md-5 mb-sm-5 mb-md-0 overflow-auto">
-        <div class="container-fluid d-flex gap-4 flex-md-row flex-column">
+        <div class="container-fluid d-flex gap-4 flex-md-row flex-column mb-5 mb-md-0">
             <div class="column g-4 col-md-6">
                 <h2 id="newest-event-title" class="mb-4">Latest Events</h2>
                 <div id="container-events" data-url="{{ Vite::asset('resources/svg/clock.svg') }}"></div>

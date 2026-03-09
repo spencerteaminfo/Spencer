@@ -23,7 +23,7 @@
     <main class="d-flex">
         <x-sidebar class="z-3 position-absolute"/>
         <div id="content" class="flex-grow-1 overflow-auto mb-5">
-            <div class="container position-releative mt-5">
+            <div class="container position-releative mt-5 mb-5 mb-md-0">
                 <div class="row justify-content-center">
                     <div class="col-12 col-lg-10">
                         <div class="row align-items-center mb-5 g-4">
