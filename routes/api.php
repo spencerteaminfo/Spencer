@@ -59,15 +59,15 @@ Route::get('/events', [EventController::class, 'search'])
 
 // post
 Route::post('/event', [EventController::class, 'store'])
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.event.store');
 
 // patch
 Route::patch('/event/{event}', [EventController::class, 'update'])
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.event.update');
 Route::patch('/event/{event}/attendance', [EventController::class, 'setAttendance'])
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.event.setAttendance');
 
 // GROUP ROUTES
@@ -106,23 +106,23 @@ Route::delete('/group/{group}/members', [GroupController::class, 'destroyMembers
 // NOTIFICATION ROUTES
 // patch
 Route::get('/notifications', [NotificationController::class, 'list'])
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.notifications.list');
 Route::patch('/notifications/{id}/read', [NotificationController::class, 'read']) // Mark one notification as read
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.notifications.read');
 Route::patch('/notifications/read-all', [NotificationController::class, 'readAll']) // Mark all notifications as read
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.notifications.readAll');
 
 // ROLES ROUTES
 // get
 Route::get('/roles', [RoleController::class, 'list'])
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.roles.list');
 
 // GENERAL ROUTES
 // get
 Route::get('/users-and-groups', [EventController::class, 'searchUsersAndGroups'])
-    ->middleware('auth:sanctum')
+    ->middleware(['web', 'auth:sanctum'])
     ->name('api.search.users-and-groups');
