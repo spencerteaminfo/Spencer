@@ -56,6 +56,9 @@ Route::post('/reset-password', [PasswordResetController::class, 'reset'])
 Route::get('/events', [EventController::class, 'search'])
     ->name('api.event.search') // List events
     ->middleware(['web', 'auth:sanctum']);
+Route::get('/event/{event}/attendance', [EventController::class, 'attendances'])
+    ->middleware(['web', 'auth:sanctum'])
+    ->name('api.group.attendance'); // List user attendance in the event
 
 // post
 Route::post('/event', [EventController::class, 'store'])
@@ -78,9 +81,6 @@ Route::get('/groups', [GroupController::class, 'search'])
 Route::get('/group/{group}/members', [GroupController::class, 'members'])
     ->middleware(['web', 'auth:sanctum'])
     ->name('api.group.members'); // List group members
-Route::get('/group/{group}/attendance', [GroupController::class, 'member'])
-    ->middleware(['web', 'auth:sanctum'])
-    ->name('api.group.attendance');
 
 // post
 Route::post('/group', [GroupController::class, 'store'])
