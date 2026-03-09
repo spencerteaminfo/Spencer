@@ -44,7 +44,7 @@
 
                                     <div class="mb-0">
                                         <label class="form-label small text-muted ms-1">Email</label>
-                                        <div class="position-relative">,
+                                        <div class="position-relative">
                                             <h4>{{$user->email}}</h4>
                                         </div>
                                     </div>
