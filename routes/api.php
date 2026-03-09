@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PasswordResetController;
@@ -107,6 +108,12 @@ Route::patch('/notifications/{id}/read', [NotificationController::class, 'read']
 Route::patch('/notifications/read-all', [NotificationController::class, 'readAll']) // Mark all notifications as read
     ->middleware('auth:sanctum')
     ->name('api.notifications.readAll');
+
+// ROLES ROUTES
+// get
+Route::get('roles', [RoleController::class, 'list'])
+    ->middleware('auth:sanctum')
+    ->name('api.roles.list');
 
 // GENERAL ROUTES
 // get

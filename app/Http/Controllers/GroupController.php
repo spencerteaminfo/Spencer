@@ -6,6 +6,7 @@ use App\Models\Group;
 use App\Models\Membership;
 use App\Models\Role;
 use App\Models\User;
+use App\Rules\MatchUserIdsRule;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use App\Services\SearchService;
@@ -50,11 +51,14 @@ class GroupController extends Controller
     public function store(Request $request): JsonResponse
     {
         return DB::transaction(function () use ($request) {
+            $idsFromRequest = $request->input('users_ids', []);
+
             $data = $request->validate([
                 'name' => ['required', 'string', 'max:128'],
                 'description' => ['nullable', 'string'],
                 'users_ids' => ['nullable', 'array'],
                 'users_ids.*' => ['exists:users,id'],
+                'users_roles' => ['nullable', 'array', new MatchUserIdsRule($idsFromRequest)],
                 'img' => ['nullable', 'image', 'max:4096']
             ]);
 
@@ -81,7 +85,8 @@ class GroupController extends Controller
                 foreach ($data['users_ids'] as $userId) {
                     if ($userId == $requester->id) continue;
 
-                    $this->storeMember($userId, $group);
+                    $roleId = $data['users_roles'][$userId] ?? null;
+                    $this->storeMember($userId, $group, $roleId);
                 }
             }
 
@@ -131,9 +136,12 @@ class GroupController extends Controller
      */
     public function addMembers(Request $request, Group $group): JsonResponse
     {
+        $idsFromRequest = $request->input('users_ids', []);
+
         $data = $request->validate([
             'users_ids' => ['nullable', 'array'],
-            'users_ids.*' => ['exists:users,id']
+            'users_ids.*' => ['exists:users,id'],
+            'users_roles' => ['nullable', 'array', new MatchUserIdsRule($idsFromRequest)]
         ]);
 
         $requester = auth()->user();
@@ -149,7 +157,8 @@ class GroupController extends Controller
                 if ($userId == $requester->id) continue;
                 if ($this->isMember($userId, $group)) continue;
 
-                $this->storeMember($userId, $group);
+                $roleId = $data['users_roles'][$userId] ?? null;
+                $this->storeMember($userId, $group, $roleId);
                 $addedUserIds[] = $userId;
             }
         }
@@ -218,10 +227,14 @@ class GroupController extends Controller
             ->exists();
     }
 
-    private function storeMember(int $userId, Group $group): void
+    private function storeMember(int $userId, Group $group, int $roleId = null): void
     {
+        if ($roleId == null) {
+            $roleId = Role::first()->id;
+        }
+
         $group->users()->attach($userId, [
-            'role_id' => Role::first()->id,
+            'role_id' => $roleId,
             'created_at' => now(),
             'updated_at' => now()
         ]);
