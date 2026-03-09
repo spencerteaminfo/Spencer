@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
     await api.get('/sanctum/csrf-cookie');
     const addedMembersContainer = document.getElementById("userBulletList") as HTMLDivElement;
     const groupId: string | undefined = addedMembersContainer.dataset.groupid;
+    const notIterestedContainer = document.getElementById("not-interested-container");
     let nazev:string = ""
     let user_id:string = "";
     const TrueAttendece = document.getElementById("interested");
@@ -11,6 +12,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
     const event = TrueAttendece?.dataset.eventid;
     const res = await api.get("/api/group/"+groupId+"/members"); 
     const members = res.data.data;
+    // console.log(members)
     const groupRes = await api.get("/api/groups", { params: { title: "" } });
     const groups = groupRes.data.data;
     const currentGroup = groups.find((g: any) => g.id == groupId);
@@ -30,12 +32,20 @@ document.addEventListener("DOMContentLoaded", async()=>{
         addedMembersContainer.appendChild(card);
     }
     members.forEach((member:any) => {
-        if(member.email == groupId) {
-            console.log(member.name)
-            console.log(member.pivot.user_id)
-        }
+        const notIterestedDiv = document.createElement('div');
+        notIterestedDiv.className = "d-flex align-items-center mb-3";
+        notIterestedDiv.innerHTML = `
+            <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 flex-shrink-0" style="width: 24px; height: 24px;">
+                <img src="https://ui-avatars.com/api/?name=${member.email}&background=198754&color=fff" class="w-100" alt="user">
+            </div>
+            <span class="small fw-medium">${member.email}</span>`;
+        
+        console.log(member.email)
+        console.log(member.pivot.user_id)
+        notIterestedContainer?.append(notIterestedDiv);
     });
     console.log(members);
+    
     TrueAttendece?.addEventListener("click", async ()=>{
     const response = await api.patch("/api/event/"+event+"/set-attends", {params: {
         user_id: "smth",

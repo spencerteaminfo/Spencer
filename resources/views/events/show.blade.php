@@ -84,14 +84,17 @@
 
                         <div>
                             <span class="d-block small text-muted mb-3">Not Interested</span>
-                            @foreach(range(1, 3) as $i)
+                            <div id="not-interested-container">
+
+                            </div>
+                            {{--@foreach(range(1, 3) as $i)
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 flex-shrink-0" style="width: 24px; height: 24px;">
                                         <img src="{{ Vite::asset('resources/svg/user.svg') }}" class="w-100" alt="user">
                                     </div>
                                     <span class="small fw-medium">John Doe</span>
                                 </div>
-                            @endforeach
+                            @endforeach--}}
                         </div>
                     </div>
                 </div>
