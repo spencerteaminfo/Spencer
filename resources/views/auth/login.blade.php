@@ -35,7 +35,7 @@
                     <a href="/register" class="text-decoration-none">
                         <h4 class="h6 text-muted">Don't have an account? Register</h4>
                     </a>
-                    <a href="{{ route('password.request') }}" class="text-decoration-none">Forgot password?</a>
+                    <a href="{{ route('password.request') }}" class="text-decoration-none text-muted fw-light fs-7">Forgot password?</a>
                 </div>
             </div>
         </div>

@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\View\View;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class PasswordResetController extends Controller
 {
@@ -45,7 +46,7 @@ class PasswordResetController extends Controller
         ]);
     }
 
-    public function reset(Request $request) : JsonResponse
+    public function reset(Request $request) : RedirectResponse
     {
         $request->validate([
             'token' => 'required',
@@ -59,10 +60,15 @@ class PasswordResetController extends Controller
                 $this->resetPassword($user, $password);
             }
         );
-        $message = $status === Password::PASSWORD_RESET ? 200 : 400;
-        return response()->json([
-            'message' => $message
-        ]);
+
+        
+        if ($status === Password::PASSWORD_RESET) {
+            return redirect()->route('login')->with('status', __($status));
+        }
+
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors(['email' => __($status)]);
 
     }
 
