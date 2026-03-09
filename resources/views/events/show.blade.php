@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<x-head title="Show Event">@vite(['resources/js/showImg.ts', 'resources/js/createEvent.ts', 'resources/js/detailEvent.ts', 'resources/js/setAttendence.ts'])</x-head>
+<x-head title="Show Event">@vite(['resources/js/showImg.ts', 'resources/js/createEvent.ts', 'resources/js/detailEvent.ts'])</x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
 <x-header />
 <main class="d-flex">
