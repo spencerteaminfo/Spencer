@@ -45,19 +45,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     const profilePic = hasLocalAvatar ? `/storage/${user.avatar_url}` : fallbackAvatar;
 
                     resultContainer.innerHTML += `
-                    <div class="d-flex align-items-center p-3 border-bottom shadow-sm-hover">
-                        <div class="flex-shrink-0" style="width: 45px;">
-                            <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
-                                <img src="${profilePic}" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(short)}&background=198754&color=fff';">
+                    <div class="p-3 border-bottom shadow-sm-hover">
+                        <a href="" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100">
+                            <div class="flex-shrink-0" style="width: 45px;">
+                                <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
+                                    <img src="${profilePic}" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(short)}&background=198754&color=fff';">
+                                </div>
                             </div>
-                        </div>
-                        <div class="flex-grow-1 ms-3">
-                            <div class="d-flex flex-column">
-                                <span class="fw-bold text-dark">${short}</span>
-                                <span class="text-muted small">@${suffix}</span>
-                                ${fullName ? `<span class="text-secondary mt-1 small">${fullName}</span>` : ''}
+                            <div class="flex-grow-1 ms-3 overflow-hidden">
+                                <div class="d-flex flex-column">
+                                    <span class="fw-bold text-dark text-truncate">${short}</span>
+                                    <span class="text-muted small text-truncate">@${suffix}</span>
+                                    ${fullName ? `<span class="text-secondary mt-1 small text-truncate">${fullName}</span>` : ''}
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>`;
                 });
             }
@@ -67,23 +69,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 groups.forEach((group: any) => {
                     resultContainer.innerHTML += `
-                    <div class="d-flex align-items-center p-3 border-bottom shadow-sm-hover">
-                        <div class="flex-shrink-0" style="width: 45px;">
-                            <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
-                                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(group.name)}&background=198754&color=fff" class="w-100 h-100 object-fit-cover">
+                    <div class="p-3 border-bottom shadow-sm-hover">
+                        <a href="" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100">
+                            <div class="flex-shrink-0" style="width: 45px;">
+                                <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
+                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(group.name)}&background=198754&color=fff" class="w-100 h-100 object-fit-cover">
+                                </div>
                             </div>
-                        </div>
-                        <div class="ms-3">
-                            <div class="fw-bold text-dark">${group.name}</div>
-                            <div class="text-muted small">Skupina</div>
-                        </div>
+                            <div class="ms-3">
+                                <div class="fw-bold text-dark">${group.name}</div>
+                                <div class="text-muted small">Skupina</div>
+                            </div>
+                        </a>
                     </div>`;
                 });
 
                 events.forEach((event: any) => {
                     resultContainer.innerHTML += `
-                    <div class="d-flex align-items-center p-3 border-bottom shadow-sm-hover">
-                        <div class="flex-shrink-0" style="width: 45px;">
+                    <div class="p-3 border-bottom shadow-sm-hover">
+                        <a href="" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100">
                             <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
                                 <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(event.title)}&background=198754&color=fff" class="w-100 h-100 object-fit-cover">
                             </div>
@@ -92,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="fw-bold text-dark">${event.title}</div>
                             <div class="text-muted small">Událost</div>
                         </div>
+                        </a>
                     </div>`;
                 });
             }

@@ -48,7 +48,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 rounded-4 shadow-lg p-4">
             <div class="mb-3 d-flex justify-content-between align-items-start">
-                <h5 class="fw-bold text-secondary mb-3" id="modalTitle">Create New Group</h5>
+                <h5 class="fw-bold text-secondary mb-3" id="modalTitle">Group</h5>
                 <img id="deleteBtn" class="cursor-pointer" src="{{ Vite::asset('resources/svg/trash.svg') }}" alt="delete" width="20" height="20">
             </div>
             <div class="mb-3">
