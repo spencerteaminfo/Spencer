@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<x-head title="Show Event">@vite(['resources/js/showImg.ts', 'resources/js/createEvent.ts', 'resources/js/detailEvent.ts'])</x-head>
+<x-head title="Show Event">@vite(['resources/js/showImg.ts', 'resources/js/createEvent.ts', 'resources/js/detailEvent.ts', 'resources/js/setAttendence.ts'])</x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
 <x-header />
 <main class="d-flex">
@@ -14,7 +14,7 @@
                         <div id="title-div" class="mb-3">
                             <label class="form-label small text-muted">Title</label>
                             <p>{{ $event->title }}</p>
-                            {{--<p>{{ $event }}</p>--}} 
+                            {{--<p>{{ $event }}</p>--}}
                         </div>
 
                         <div id="description-div" class="mb-3">
@@ -56,8 +56,8 @@
                     </div>
 
                     <div class="d-flex gap-3 mt-4">
-                        <button class="btn btn-primary flex-grow-1 rounded-pill py-2 fw-bold shadow-sm">I'm Interested</button>
-                        <button class="btn btn-danger flex-grow-1 rounded-pill py-2 fw-bold shadow-sm">Not Interested</button>
+                        <button id="interested" data-eventId="{{$event->id}}" class="btn btn-primary flex-grow-1 rounded-pill py-2 fw-bold shadow-sm">I'm Interested</button>
+                        <button id="not-interested" class="btn btn-danger flex-grow-1 rounded-pill py-2 fw-bold shadow-sm">Not Interested</button>
                     </div>
                 </div>
 

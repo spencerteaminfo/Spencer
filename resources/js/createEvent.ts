@@ -50,12 +50,11 @@ submitBtn.addEventListener("click", async (e)=>{
     }
 
     if (img.files && img.files?.[0]) {
-        formData.append("img", img.files?.[0])
+        formData.append("img", img.files?.[0]);
     }
     try{
         submitBtn.disabled=true;
         console.log(formData);
-        await api.get('/sanctum/csrf-cookie');
         const response = await api.post("/api/event", formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
