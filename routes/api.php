@@ -99,7 +99,7 @@ Route::delete('/group/{group}/members', [GroupController::class, 'destroyMembers
 
 // NOTIFICATION ROUTES
 // patch
-Route::get('notifications', [NotificationController::class, 'list'])
+Route::get('/notifications', [NotificationController::class, 'list'])
     ->middleware('auth:sanctum')
     ->name('api.notifications.list');
 Route::patch('/notifications/{id}/read', [NotificationController::class, 'read']) // Mark one notification as read
@@ -111,7 +111,7 @@ Route::patch('/notifications/read-all', [NotificationController::class, 'readAll
 
 // ROLES ROUTES
 // get
-Route::get('roles', [RoleController::class, 'list'])
+Route::get('/roles', [RoleController::class, 'list'])
     ->middleware('auth:sanctum')
     ->name('api.roles.list');
 
