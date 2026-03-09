@@ -75,6 +75,12 @@ Route::patch('/event/{event}/attendance', [EventController::class, 'setAttendanc
 Route::get('/groups', [GroupController::class, 'search'])
     ->middleware(['web', 'auth:sanctum'])
     ->name('api.group.search'); // List groups
+Route::get('/group/{group}/members', [GroupController::class, 'members'])
+    ->middleware(['web', 'auth:sanctum'])
+    ->name('api.group.members'); // List group members
+Route::get('/group/{group}/attendance', [GroupController::class, 'member'])
+    ->middleware(['web', 'auth:sanctum'])
+    ->name('api.group.attendance');
 
 // post
 Route::post('/group', [GroupController::class, 'store'])
