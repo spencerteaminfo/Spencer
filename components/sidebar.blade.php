@@ -19,14 +19,14 @@
                     <img src="{{ Vite::asset('resources/svg/plus.svg') }}" alt="Create" width="20" height="20">
                     <span class="ms-3 text-secondary sidebar-text">Create Event</span>
                 </a>
-                <a href="/event" class="text-decoration-none d-flex align-items-center p-2 rounded hover-bg">
+                <a href="/events" class="text-decoration-none d-flex align-items-center p-2 rounded hover-bg">
                     <img src="{{ Vite::asset('resources/svg/list.svg') }}" alt="Show" width="20" height="20">
                     <span class="ms-3 text-secondary sidebar-text">Show Events</span>
                 </a>
             </div>
         </div>
 
-        <a href="/group" class="text-decoration-none d-flex align-items-center p-2 rounded hover-bg">
+        <a href="/groups" class="text-decoration-none d-flex align-items-center p-2 rounded hover-bg">
             <img src="{{ Vite::asset('resources/svg/users.svg') }}" alt="Groups" width="24" height="24">
             <span class="ms-3 text-secondary fw-medium sidebar-text">Groups</span>
         </a>
@@ -71,14 +71,14 @@
                         <img src="{{ Vite::asset('resources/svg/plus.svg') }}" alt="Create" width="16" height="16">
                         <span class="small">Create</span>
                     </a>
-                    <a href="/event" class="d-flex align-items-center gap-2 p-2 text-decoration-none text-dark hover-bg rounded">
+                    <a href="/events" class="d-flex align-items-center gap-2 p-2 text-decoration-none text-dark hover-bg rounded">
                         <img src="{{ Vite::asset('resources/svg/list.svg') }}" alt="Show" width="16" height="16">
                         <span class="small">Show</span>
                     </a>
                 </div>
             </div>
 
-            <a href="/group" class="text-center text-decoration-none flex-grow-1">
+            <a href="/groups" class="text-center text-decoration-none flex-grow-1">
                 <img src="{{ Vite::asset('resources/svg/users.svg') }}" alt="Groups" height="20">
                 <div class="small text-muted">Groups</div>
             </a>

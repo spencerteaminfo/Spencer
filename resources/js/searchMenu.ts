@@ -46,8 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     resultContainer.innerHTML += `
                     <div class="p-3 border-bottom shadow-sm-hover">
-                        <a href="" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100">
-                            <div class="flex-shrink-0" style="width: 45px;">
+                        <a href="/user/${user.id}" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100"><div class="flex-shrink-0" style="width: 45px;">
                                 <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
                                     <img src="${profilePic}" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(short)}&background=198754&color=fff';">
                                 </div>
@@ -91,11 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
                                 <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(event.title)}&background=198754&color=fff" class="w-100 h-100 object-fit-cover">
                             </div>
-                        </div>
-                        <div class="ms-3">
-                            <div class="fw-bold text-dark">${event.title}</div>
-                            <div class="text-muted small">Událost</div>
-                        </div>
+                            </div>
+                            <div class="ms-3">
+                                <div class="fw-bold text-dark">${event.title}</div>
+                                <div class="text-muted small">Událost</div>
+                            </div>
                         </a>
                     </div>`;
                 });

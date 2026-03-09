@@ -9,13 +9,10 @@
         <div class="container-fluid d-flex gap-4 flex-md-row flex-column">
             <div class="column g-4 col-md-12">
                 <h2 id="newest-event-title" class="mb-4">Latest Events</h2>
-                <div id="container-events" data-url="{{ Vite::asset('resources/svg/clock.svg') }}">
-
-                </div>
+                <div id="container-events" data-url="{{ Vite::asset('resources/svg/clock.svg') }}"></div>
             </div>
         </div>
     </div>
-
 </main>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

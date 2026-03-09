@@ -37,7 +37,7 @@ class UserController extends Controller
      */
     public function show(User $user): View
     {
-        return view('events.show', compact('user'));
+        return view('showUserProfile', compact('user'));
     }
 
     public function delete(Request $request): JsonResponse
