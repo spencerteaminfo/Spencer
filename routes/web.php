@@ -6,6 +6,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\PasswordResetController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // MAIN ROUTES`
@@ -47,7 +48,7 @@ Route::get('/groups', [GroupController::class, 'index'])
     ->name('groups.index');
 
 // EVENT ROUTES
-// get
+// views
 Route::get('/events', [EventController::class, 'index'])
     ->middleware('auth')
     ->name('events.index');
@@ -60,6 +61,13 @@ Route::get('/event/{event}', [EventController::class, 'show'])
     ->middleware('auth')
     ->where('event', '[0-9]+')
     ->name('event.show');
+
+// USER ROUTES
+// views
+Route::get('/user/{user}', [UserController::class, 'show'])
+    ->middleware('auth')
+    ->where('user', '[0-9]+')
+    ->name('user.show');
 
 // NOTIFICATION ROUTES
 // views
