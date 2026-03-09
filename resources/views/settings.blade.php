@@ -2,7 +2,7 @@
 <html lang="en">
 <x-head title="Settings">@vite(['resources/js/settingsUser.ts'])</x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
-<div id="deleteMenu" class="w-100 h-100 d-none position-absolute start-0 top-0 d-flex align-items-center bg-dark bg-opacity-50 z-3">
+<div id="deleteMenu" class="w-100 h-100 d-none position-fixed start-0 top-0 d-flex align-items-center bg-dark bg-opacity-50" style="z-index: 9999;">
     <div class="w-100 d-flex justify-content-center">
         <div class="card p-5 shadow-lg">
             <h2 class="text-muted">Are you sure you want to delete account?</h2>
