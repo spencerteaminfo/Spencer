@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Rules\MapKeysExist;
 use App\Rules\MatchUserIdsRule;
+use App\Services\StorageService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use App\Services\SearchService;
@@ -18,10 +19,12 @@ use Illuminate\View\View;
 class GroupController extends Controller
 {
     protected SearchService $searchService;
+    protected StorageService $storageService;
 
-    public function __construct(SearchService $groupService)
+    public function __construct(SearchService $groupService, StorageService $storageService)
     {
         $this->searchService = $groupService;
+        $this->storageService = $storageService;
     }
 
     /**
@@ -64,15 +67,10 @@ class GroupController extends Controller
                 'img' => ['nullable', 'image', 'max:4096']
             ]);
 
-            $imgPath = null;
-            if ($request->hasFile('img')) {
-                $imgPath = $request->file('img')->store('thumbnails', 'public');
-            }
-
             $group = Group::create([
                 'name' => $data['name'],
                 'description' => $data['description'],
-                'picture_url' => $imgPath ?? ''
+                'picture_url' => $this->storageService->image($data['img'])
             ]);
 
             $group->users()->attach(auth()->id(), [
@@ -110,11 +108,6 @@ class GroupController extends Controller
             'img' => ['nullable', 'image', 'max:4096']
         ]);
 
-        $imgPath = null;
-        if ($request->hasFile('img')) {
-            $imgPath = $request->file('img')->store('thumbnails', 'public');
-        }
-
         $requester = auth()->user();
 
         if (!$this->hasRole($requester, $group, 'owner') && !$this->hasRole($requester, $group, 'cashier')) {
@@ -124,7 +117,7 @@ class GroupController extends Controller
         $group->update([
             'name' => $data['name'],
             'description' => $data['description'],
-            'picture_url' => $imgPath ?? ''
+            'picture_url' => $this->storageService->image($data['img'])
         ]);
 
         return response()->json([

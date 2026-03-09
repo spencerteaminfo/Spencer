@@ -6,6 +6,7 @@ use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\Membership;
 use App\Services\SearchService;
+use App\Services\StorageService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -15,10 +16,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class EventController extends Controller
 {
     protected SearchService $searchService;
+    protected StorageService $storageService;
 
-    public function __construct(SearchService $userService)
+    public function __construct(SearchService $userService, StorageService $storageService)
     {
         $this->searchService = $userService;
+        $this->storageService = $storageService;
     }
 
     /**
@@ -129,10 +132,6 @@ class EventController extends Controller
             'group_id' => ['required', 'integer', 'exists:groups,id'],
             'img' => ['nullable', 'image', 'max:4096']
         ]);
-        $imgPath = null;
-        if ($request->hasFile('img')) {
-            $imgPath = $request->file('img')->store('thumbnails', 'public');
-        }
 
         $event = Event::create([
             'title' => $data['title'],
@@ -141,7 +140,7 @@ class EventController extends Controller
             'starts_at' => $data['from'],
             'ends_at' => $data['to'],
             'group_id' => $data['group_id'],
-            'thumbnail_url' => $imgPath ?? ''
+            'thumbnail_url' => $this->storageService->image($data['img'])
         ]);
 
         $memberships = $event->group->memberships;
