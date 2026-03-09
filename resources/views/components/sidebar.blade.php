@@ -79,7 +79,7 @@
                         <img src="{{ Vite::asset('resources/svg/plus.svg') }}" alt="Create" width="16" height="16">
                         <span class="small">Create</span>
                     </a>
-                    <a href="/event" class="d-flex align-items-center gap-2 p-2 text-decoration-none text-dark hover-bg rounded">
+                    <a href="/events" class="d-flex align-items-center gap-2 p-2 text-decoration-none text-dark hover-bg rounded">
                         <img src="{{ Vite::asset('resources/svg/list.svg') }}" alt="Show" width="16" height="16">
                         <span class="small">Show</span>
                     </a>
