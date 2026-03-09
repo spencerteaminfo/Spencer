@@ -126,6 +126,16 @@ class GroupController extends Controller
         ], 200);
     }
 
+    public function members(Group $group): JsonResponse
+    {
+        $users = $group->users()->get();
+
+        return response()->json([
+            'message' => 'Members were retrieved successfully.',
+            'data' => $users
+        ], 200);
+    }
+
     /**
      * Add members to the specified group.
      */
