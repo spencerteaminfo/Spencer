@@ -88,6 +88,12 @@ Route::post('/group/{group}/members', [GroupController::class, 'addMembers'])
 Route::patch('/group/{group}', [GroupController::class, 'update'])
     ->middleware(['web', 'auth:sanctum'])
     ->name('api.group.update');
+Route::patch('/group/{group}/members', [GroupController::class, 'updateMembers'])
+    ->middleware(['web', 'auth:sanctum'])
+    ->name('api.group.members.update');
+Route::patch('/group/{group}/member', [GroupController::class, 'updateMember'])
+    ->middleware(['web', 'auth:sanctum'])
+    ->name('api.group.member.update');
 
 // delete
 Route::delete('/group/{group}', [GroupController::class, 'destroy'])

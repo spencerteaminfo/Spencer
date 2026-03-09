@@ -6,6 +6,7 @@ use App\Models\Group;
 use App\Models\Membership;
 use App\Models\Role;
 use App\Models\User;
+use App\Rules\MapKeysExist;
 use App\Rules\MatchUserIdsRule;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
@@ -59,6 +60,7 @@ class GroupController extends Controller
                 'users_ids' => ['nullable', 'array'],
                 'users_ids.*' => ['exists:users,id'],
                 'users_roles' => ['nullable', 'array', new MatchUserIdsRule($idsFromRequest)],
+                'users_roles.*' => ['exists:roles,id'],
                 'img' => ['nullable', 'image', 'max:4096']
             ]);
 
@@ -141,7 +143,8 @@ class GroupController extends Controller
         $data = $request->validate([
             'users_ids' => ['nullable', 'array'],
             'users_ids.*' => ['exists:users,id'],
-            'users_roles' => ['nullable', 'array', new MatchUserIdsRule($idsFromRequest)]
+            'users_roles' => ['nullable', 'array', new MatchUserIdsRule($idsFromRequest)],
+            'users_roles.*' => ['exists:roles,id']
         ]);
 
         $requester = auth()->user();
@@ -190,6 +193,43 @@ class GroupController extends Controller
         return response()->json([
             'message' => 'Deleted',
             'data' => array_values($data['users_ids'])
+        ], 200);
+    }
+
+    public function updateMembers(Request $request, Group $group): JsonResponse
+    {
+        $data = $request->validate([
+            'users_roles' => ['required', 'array', new MapKeysExist('users', 'id')],
+            'users_roles.*' => ['exists:roles,id']
+        ]);
+
+        $memberships = [];
+        foreach ($data['users_roles'] as $userId => $roleId) {
+            $memberships[] = Membership::where('user_id', $userId)
+                ->where('group_id', $group->id)
+                ->update(['role_id' => $roleId]);
+        }
+
+        return response()->json([
+            'message' => "Updated users' roles",
+            'data' => $memberships
+        ], 200);
+    }
+
+    public function updateMember(Request $request, Group $group): JsonResponse
+    {
+        $data = $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+            'role_id' => ['required', 'exists:roles,id'],
+        ]);
+
+        $membership = Membership::where('user_id', $data['user_id'])
+            ->where('group_id', $group->id)
+            ->update(['role_id' => $data['role_id']]);
+
+        return response()->json([
+            'message' => "Updated user's membership",
+            'data' => $membership
         ], 200);
     }
 
