@@ -214,7 +214,7 @@ saveBtn?.addEventListener("click", async () => {
     });
 
     if (imageUploadInput?.files?.[0]) {
-        formData.append('picture', imageUploadInput.files[0]);
+        formData.append('img', imageUploadInput.files[0]);
     }
 
     if (deletePictureFlag) {

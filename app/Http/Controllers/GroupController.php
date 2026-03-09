@@ -54,12 +54,19 @@ class GroupController extends Controller
                 'name' => ['required', 'string', 'max:128'],
                 'description' => ['nullable', 'string'],
                 'users_ids' => ['nullable', 'array'],
-                'users_ids.*' => ['exists:users,id']
+                'users_ids.*' => ['exists:users,id'],
+                'img' => ['nullable', 'image', 'max:4096']
             ]);
+
+            $imgPath = null;
+            if ($request->hasFile('img')) {
+                $imgPath = $request->file('img')->store('thumbnails', 'public');
+            }
 
             $group = Group::create([
                 'name' => $data['name'],
-                'description' => $data['description']
+                'description' => $data['description'],
+                'picture_url' => $imgPath ?? ''
             ]);
 
             $group->users()->attach(auth()->id(), [
@@ -90,10 +97,16 @@ class GroupController extends Controller
      */
     public function update(Request $request, Group $group): JsonResponse // TODO update members
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => ['nullable', 'string', 'max:128'],
             'description' => ['nullable', 'string'],
+            'img' => ['nullable', 'image', 'max:4096']
         ]);
+
+        $imgPath = null;
+        if ($request->hasFile('img')) {
+            $imgPath = $request->file('img')->store('thumbnails', 'public');
+        }
 
         $requester = auth()->user();
 
@@ -101,7 +114,11 @@ class GroupController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $group->update($request->only(['name', 'description']));
+        $group->update([
+            'name' => $data['name'],
+            'description' => $data['description'],
+            'picture_url' => $imgPath ?? ''
+        ]);
 
         return response()->json([
             'message' => 'Updated',

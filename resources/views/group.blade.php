@@ -26,9 +26,9 @@
                     @endphp
                     <div class="col-12 col-md-6 col-lg-4 col-xl-3">
                         <div class="card border-0 shadow-sm rounded-4 text-center p-4 h-100 bg-white group-card" role="button" data-bs-toggle="modal" data-bs-target="#groupModal" data-id="{{ $group->id }}" data-name="{{ $group->name }}" data-description="{{ $group->description }}" data-is-creator="{{ $myRoleId == 3 ? 'true' : 'false' }}" data-members="{{ json_encode($existingMembers) }}" data-picture="{{ $group->picture }}">
-                            @if($group->picture)
+                            @if($group->picture_url)
                                 <div class="ratio ratio-21x9 mb-3 rounded-3 overflow-hidden">
-                                    <img src="{{ asset('storage/' . $group->picture) }}" class="w-100 h-100 object-fit-cover" alt="Group Thumbnail">
+                                    <img src="{{ asset('storage/' . $group->picture_url) }}" class="w-100 h-100 object-fit-cover" alt="Group Thumbnail">
                                 </div>
                             @endif
                             <span class="fw-bold text-secondary fs-6">{{ $group->name }}</span>

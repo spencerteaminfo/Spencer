@@ -141,7 +141,7 @@ class EventController extends Controller
             'starts_at' => $data['from'],
             'ends_at' => $data['to'],
             'group_id' => $data['group_id'],
-            'thumbnail_url' => $imgPath
+            'thumbnail_url' => $imgPath ?? ''
         ]);
 
         $memberships = $event->group->memberships;

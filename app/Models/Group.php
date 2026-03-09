@@ -20,7 +20,7 @@ class Group extends Model
     protected $fillable = [
         'name',
         'description',
-        'picture'
+        'picture_url'
     ];
 
     protected function casts(): array
