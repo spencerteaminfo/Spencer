@@ -12,10 +12,12 @@ document.addEventListener("DOMContentLoaded", async()=>{
     const event = TrueAttendece?.dataset.eventid;
     const res = await api.get("/api/group/"+groupId+"/members"); 
     const members = res.data.data;
-    console.log(members)
     const groupRes = await api.get("/api/groups", { params: { title: "" } });
     const groups = groupRes.data.data;
     const currentGroup = groups.find((g: any) => g.id == groupId);
+    const currentUserId = document.querySelector('meta[name="current-user-id"]')?.getAttribute('content');
+    const a = await api.get('/api/event/'+event+'/attendance');
+    console.log(a);
 
     if (currentGroup && addedMembersContainer) {
         const card = document.createElement('div');
@@ -41,17 +43,24 @@ document.addEventListener("DOMContentLoaded", async()=>{
             <span class="small fw-medium">${member.email}</span>`;
         
         // console.log(member.email)
-        console.log(member.pivot.user_id)
         notIterestedContainer?.append(notIterestedDiv);
     });
     console.log(members);
     
     TrueAttendece?.addEventListener("click", async ()=>{
-    const response = await api.patch("/api/event/"+event+"/set-attends", {params: {
-        user_id: "smth",
-        attends: "True",
-    }});
-})
+        const response = await api.patch("/api/event/"+event+"/attendance", {
+            user_id: currentUserId,
+            attends: true,
+        });
+        console.log(response)
+    })
+    FalseAttendence?.addEventListener("click", async ()=>{
+        const response = await api.patch("/api/event/"+event+"/attendance", {
+            user_id: currentUserId,
+            attends: false,
+        });
+        console.log(response)
+    })
 })
 
 

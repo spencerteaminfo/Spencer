@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
-<x-head title="Show Event">@vite(['resources/js/showImg.ts', 'resources/js/createEvent.ts', 'resources/js/detailEvent.ts'])</x-head>
+<x-head title="Show Event">@vite(['resources/js/showImg.ts', 'resources/js/createEvent.ts', 'resources/js/detailEvent.ts'])
+    <meta name="current-user-id" content="{{ auth()->user()->id }}">
+</x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
 <x-header />
 <main class="d-flex">
@@ -15,6 +17,7 @@
                             <label class="form-label small text-muted">Title</label>
                             <p>{{ $event->title }}</p>
                             <p>{{ $event }}</p>
+                            <p>{{auth()->user()->id}}</p>
                         </div>
 
                         <div id="description-div" class="mb-3">
