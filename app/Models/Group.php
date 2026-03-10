@@ -41,8 +41,15 @@ class Group extends Model
         return $this->hasMany(Membership::class, 'group_id', 'group_id');
     }
 
+    /**
+     * Get the users that are in this group.
+     *
+     * @return BelongsToMany
+     */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'memberships', 'group_id', 'user_id');
+        return $this->belongsToMany(User::class, 'memberships', 'group_id', 'user_id')
+            ->withPivot('role_id')
+            ->withTimestamps();
     }
 }

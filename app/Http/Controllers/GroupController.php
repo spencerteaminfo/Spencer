@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RoleType;
 use App\Models\Group;
 use App\Models\Membership;
 use App\Models\Role;
@@ -93,7 +94,7 @@ class GroupController extends Controller
             return response()->json([
                 'message' => 'Created',
                 'data' => $group
-            ], 200);
+            ], 201);
         });
     }
 
@@ -102,17 +103,15 @@ class GroupController extends Controller
      */
     public function update(Request $request, Group $group): JsonResponse // TODO update members
     {
+        if (!$this->requesterHasAtLeastRole($group, RoleType::CASHIER)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $data = $request->validate([
             'name' => ['nullable', 'string', 'max:128'],
             'description' => ['nullable', 'string'],
             'img' => ['nullable', 'image', 'max:4096']
         ]);
-
-        $requester = auth()->user();
-
-        if (!$this->hasRole($requester, $group, 'owner') && !$this->hasRole($requester, $group, 'cashier')) {
-            abort(403, 'Unauthorized action.');
-        }
 
         $group->update([
             'name' => $data['name'],
@@ -141,6 +140,13 @@ class GroupController extends Controller
      */
     public function addMembers(Request $request, Group $group): JsonResponse
     {
+        $requester = auth()->user();
+        $requesterMembership = $this->userMembership($requester, $group);
+
+        if (!$requesterMembership->hasAtLeastRole(RoleType::CASHIER)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $idsFromRequest = $request->input('users_ids', []);
 
         $data = $request->validate([
@@ -149,12 +155,6 @@ class GroupController extends Controller
             'users_roles' => ['nullable', 'array', new MatchUserIdsRule($idsFromRequest)],
             'users_roles.*' => ['exists:roles,id']
         ]);
-
-        $requester = auth()->user();
-
-        if (!$this->hasRole($requester, $group, 'owner') && !$this->hasRole($requester, $group, 'cashier')) {
-            abort(403, 'Unauthorized action.');
-        }
 
         $addedUserIds = [];
 
@@ -182,14 +182,14 @@ class GroupController extends Controller
      */
     public function destroyMembers(Request $request, Group $group): JsonResponse
     {
+        if (!$this->requesterHasAtLeastRole($group, RoleType::CASHIER)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $data = $request->validate([
             'users_ids' => ['nullable', 'array'],
             'users_ids.*' => ['exists:users,id']
         ]);
-
-        if (!$this->hasRole(auth()->user(), $group, 'owner') && !$this->hasRole(auth()->user(), $group, 'cashier')) {
-            abort(403, 'Unauthorized action.');
-        }
 
         $group->users()->detach($data['users_ids']);
 
@@ -201,6 +201,10 @@ class GroupController extends Controller
 
     public function updateMembers(Request $request, Group $group): JsonResponse
     {
+        if (!$this->requesterHasAtLeastRole($group, RoleType::OWNER)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $data = $request->validate([
             'users_roles' => ['required', 'array', new MapKeysExist('users', 'id')],
             'users_roles.*' => ['exists:roles,id']
@@ -221,6 +225,10 @@ class GroupController extends Controller
 
     public function updateMember(Request $request, Group $group): JsonResponse
     {
+        if (!$this->requesterHasAtLeastRole($group, RoleType::OWNER)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $data = $request->validate([
             'user_id' => ['required', 'exists:users,id'],
             'role_id' => ['required', 'exists:roles,id'],
@@ -241,6 +249,13 @@ class GroupController extends Controller
      */
     public function destroy(Group $group): JsonResponse
     {
+        $requester = auth()->user();
+        $requesterMembership = $this->userMembership($requester, $group);
+
+        if (!$requesterMembership->hasAtLeastRole(RoleType::OWNER)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $group->delete();
         return response()->json([
             'message' => 'Deleted',
@@ -248,12 +263,10 @@ class GroupController extends Controller
         ], 200);
     }
 
-    // HELPER FUNCTIONS
-    private function hasRole(Authenticatable $user, Group $group, string $roleName): bool
+    private function requesterHasAtLeastRole(Group $group, RoleType $roleType): bool
     {
-        $membership = $this->userMembership($user, $group);
-
-        return $membership && $membership->role->name === $roleName;
+        $requesterMembership = $this->userMembership(auth()->user(), $group);
+        return $requesterMembership->hasAtLeastRole($roleType);
     }
 
     private function userMembership(Authenticatable $user, Group $group): ?Membership
@@ -270,14 +283,16 @@ class GroupController extends Controller
             ->exists();
     }
 
-    private function storeMember(int $userId, Group $group, int $roleId = null): void
+    private function storeMember(int $userId, Group $group, RoleType $roleType = RoleType::MEMBER): void
     {
-        if ($roleId == null) {
-            $roleId = Role::first()->id;
+        static $roleCache = [];
+
+        if (!isset($roleCache[$roleType->value])) {
+            $roleCache[$roleType->value] = Role::findByType($roleType)->id;
         }
 
         $group->users()->attach($userId, [
-            'role_id' => $roleId,
+            'role_id' => $roleCache[$roleType->value],
             'created_at' => now(),
             'updated_at' => now()
         ]);
