@@ -14,7 +14,7 @@
                         <div id="title-div" class="mb-3">
                             <label class="form-label small text-muted">Title</label>
                             <p>{{ $event->title }}</p>
-                            {{--<p>{{ $event }}</p>--}}
+                            <p>{{ $event }}</p>
                         </div>
 
                         <div id="description-div" class="mb-3">
@@ -37,7 +37,9 @@
                         </div>
                         <div id="img-preview-div" class="ratio ratio-21x9 bg-light rounded-4 border border-secondary border-opacity-25 mb-2 position-relative">
                             {{$pathwayImg = $event->thumbnail_url}}
-                            <img id="img-preview" src="{{  asset('storage/'.$pathwayImg)}}" class="w-100 h-100 top-0 start-0 rounded-4 z-1" style="object-fit: cover; pointer-events: none" alt="img-preview">
+                            @if(!empty($pathwayImg))
+                                <img id="img-preview" src="{{  asset('storage/'.$pathwayImg)}}" class="w-100 h-100 top-0 start-0 rounded-4 z-1" style="object-fit: cover; pointer-events: none" alt="img-preview">
+                            @endif
                             <label for="event-image-upload" class="d-flex flex-column justify-content-center align-items-center w-100 h-100">
                                 <img id="input-img" src="{{ Vite::asset('resources/svg/file.svg') }}" alt="Upload" class="opacity-50 mb-2" style="width: 80px; height: auto;">
                             </label>

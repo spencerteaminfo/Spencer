@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
     const event = TrueAttendece?.dataset.eventid;
     const res = await api.get("/api/group/"+groupId+"/members"); 
     const members = res.data.data;
-    // console.log(members)
+    console.log(members)
     const groupRes = await api.get("/api/groups", { params: { title: "" } });
     const groups = groupRes.data.data;
     const currentGroup = groups.find((g: any) => g.id == groupId);
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
             </div>
             <span class="small fw-medium">${member.email}</span>`;
         
-        console.log(member.email)
+        // console.log(member.email)
         console.log(member.pivot.user_id)
         notIterestedContainer?.append(notIterestedDiv);
     });

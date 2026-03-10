@@ -51,6 +51,8 @@ submitBtn.addEventListener("click", async (e)=>{
 
     if (img.files && img.files?.[0]) {
         formData.append("img", img.files?.[0]);
+    } else{
+        formData.append("img", "");
     }
     try{
         submitBtn.disabled=true;
