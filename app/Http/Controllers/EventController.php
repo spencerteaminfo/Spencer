@@ -125,7 +125,7 @@ class EventController extends Controller
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:256'],
-            'description' => ['required', 'string'],
+            'description' => ['nullable', 'string'],
             'deadline' => ['nullable', 'date'],
             'from' => ['required', 'date'],
             'to' => ['required', 'date'],
@@ -140,7 +140,7 @@ class EventController extends Controller
             'starts_at' => $data['from'],
             'ends_at' => $data['to'],
             'group_id' => $data['group_id'],
-            'thumbnail_url' => $this->storageService->image($data['img'])
+            'thumbnail_url' => $this->storageService->image($request->file('img')),
         ]);
 
         $memberships = $event->group->memberships;

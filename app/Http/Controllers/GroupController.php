@@ -71,7 +71,7 @@ class GroupController extends Controller
             $group = Group::create([
                 'name' => $data['name'],
                 'description' => $data['description'],
-                'picture_url' => $this->storageService->image($data['img'])
+                'picture_url' => $this->storageService->image($request->file('img'))
             ]);
 
             $group->users()->attach(auth()->id(), [
@@ -116,7 +116,7 @@ class GroupController extends Controller
         $group->update([
             'name' => $data['name'],
             'description' => $data['description'],
-            'picture_url' => $this->storageService->image($data['img'])
+            'picture_url' => $this->storageService->image($request->file('img'))
         ]);
 
         return response()->json([
@@ -283,16 +283,28 @@ class GroupController extends Controller
             ->exists();
     }
 
-    private function storeMember(int $userId, Group $group, RoleType $roleType = RoleType::MEMBER): void
+    /**
+     * Add a user to a group with a specific role.
+     * Accepts either a role ID (int) or a RoleType Enum.
+     */
+    private function storeMember(int $userId, Group $group, int|RoleType|null $role = null): void
     {
-        static $roleCache = [];
+        $role = $role ?? RoleType::MEMBER;
 
-        if (!isset($roleCache[$roleType->value])) {
-            $roleCache[$roleType->value] = Role::findByType($roleType)->id;
+        if ($role instanceof RoleType) {
+            static $roleCache = [];
+
+            if (!isset($roleCache[$role->value])) {
+                $roleCache[$role->value] = Role::findByType($role)->id;
+            }
+
+            $roleId = $roleCache[$role->value];
+        } else {
+            $roleId = $role;
         }
 
         $group->users()->attach($userId, [
-            'role_id' => $roleCache[$roleType->value],
+            'role_id' => $roleId,
             'created_at' => now(),
             'updated_at' => now()
         ]);
