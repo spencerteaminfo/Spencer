@@ -69,22 +69,9 @@
                 <div class="col-lg-4" id="attendance-panel">
                     <div class="card shadow-sm border-0 rounded-4 p-4 h-100">
                         <h2 class="h4 text-center fw-bold mb-4 text-secondary">Attendance</h2>
-
-                        <div class="mb-4">
+                        <div>
                             <span class="d-block small text-muted mb-3">Interested</span>
-                            @foreach(range(1, 3) as $i)
-                                <div class="d-flex align-items-center mb-3">
-                                    <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 flex-shrink-0" style="width: 24px; height: 24px;">
-                                        <img src="{{ Vite::asset('resources/svg/user.svg') }}" class="w-100" alt="user">
-                                    </div>
-                                    <span class="small fw-medium flex-grow-1">John Doe</span>
-                                    <div class="d-flex gap-2">
-                                        <img src="{{ Vite::asset('resources/svg/check.svg') }}" class="opacity-100" alt="yes" role="button">
-                                        <img src="{{ Vite::asset('resources/svg/x.svg') }}" class="opacity-25" alt="no" role="button">
-                                        <img src="{{ Vite::asset('resources/svg/clock.svg') }}" class="opacity-25" alt="clock" role="button">
-                                    </div>
-                                </div>
-                            @endforeach
+                            <div id="interested-container"></div>                            
                         </div>
 
                         <div>

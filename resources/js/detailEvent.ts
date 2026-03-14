@@ -1,23 +1,25 @@
 import api from './bootstrap'; 
 
 document.addEventListener("DOMContentLoaded", async()=>{
-    await api.get('/sanctum/csrf-cookie');
     const addedMembersContainer = document.getElementById("userBulletList") as HTMLDivElement;
     const groupId: string | undefined = addedMembersContainer.dataset.groupid;
     const notIterestedContainer = document.getElementById("not-interested-container");
+    const iterestedContainer = document.getElementById("interested-container");
     let nazev:string = ""
     let user_id:string = "";
     const TrueAttendece = document.getElementById("interested");
     const FalseAttendence = document.getElementById("not-interested");
     const event = TrueAttendece?.dataset.eventid;
-    const res = await api.get("/api/group/"+groupId+"/members"); 
-    const members = res.data.data;
+    const membersGroup = await api.get("/api/group/"+groupId+"/members"); 
+    const members = membersGroup.data.data;
     const groupRes = await api.get("/api/groups", { params: { title: "" } });
     const groups = groupRes.data.data;
+    console.log(groups)
     const currentGroup = groups.find((g: any) => g.id == groupId);
     const currentUserId = document.querySelector('meta[name="current-user-id"]')?.getAttribute('content');
-    const a = await api.get('/api/event/'+event+'/attendance');
-    console.log(a);
+    const attendance = await api.get('/api/event/'+event+'/attendance');
+    const attendanceData = attendance.data.data
+    console.log(attendance);
 
     if (currentGroup && addedMembersContainer) {
         const card = document.createElement('div');
@@ -34,6 +36,11 @@ document.addEventListener("DOMContentLoaded", async()=>{
         addedMembersContainer.appendChild(card);
     }
     members.forEach((member:any) => {
+        const member_id = member.pivot.user_id;
+        const currentAttendance = attendanceData.find((a: any) => a.membership_id == member_id);
+        const attends = currentAttendance.attends;
+        console.log(attends);
+        const attendanceBox = attends ? iterestedContainer:  notIterestedContainer;
         const notIterestedDiv = document.createElement('div');
         notIterestedDiv.className = "d-flex align-items-center mb-3";
         notIterestedDiv.innerHTML = `
@@ -42,10 +49,8 @@ document.addEventListener("DOMContentLoaded", async()=>{
             </div>
             <span class="small fw-medium">${member.email}</span>`;
         
-        // console.log(member.email)
-        notIterestedContainer?.append(notIterestedDiv);
+        attendanceBox?.append(notIterestedDiv);
     });
-    console.log(members);
     
     TrueAttendece?.addEventListener("click", async ()=>{
         const response = await api.patch("/api/event/"+event+"/attendance", {
