@@ -38,7 +38,7 @@ class Group extends Model
      */
     public function memberships(): HasMany
     {
-        return $this->hasMany(Membership::class, 'group_id', 'group_id');
+        return $this->hasMany(Membership::class);
     }
 
     /**
