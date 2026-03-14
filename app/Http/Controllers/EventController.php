@@ -204,7 +204,7 @@ class EventController extends Controller
 
     public function attendances(Event $event): JsonResponse
     {
-        $attendances = $event->attendances();
+        $attendances = $event->attendances()->get();
 
         return response()->json([
             'message' => 'Attendance of users was retrieved successfully.',
