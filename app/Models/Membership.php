@@ -46,4 +46,23 @@ class Membership extends Model
     {
         return $this->role->value >= Role::findByType($roleType)->value;
     }
+
+    protected static function booted(): void
+    {
+        static::created(function (Membership $membership) {
+            $events = Event::where('group_id', $membership->group_id)->get();
+
+            foreach ($events as $event) {
+                Attendance::create([
+                    'event_id' => $event->id,
+                    'membership_id' => $membership->id,
+                    'attends' => false,
+                ]);
+            }
+        });
+
+        static::deleted(function (Membership $membership) {
+            Attendance::where('membership_id', $membership->id)->delete();
+        });
+    }
 }
