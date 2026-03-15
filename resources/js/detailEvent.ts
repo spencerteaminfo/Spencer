@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
     members.forEach((member:any) => {
         const member_id = member.pivot.user_id;
         const currentAttendance = attendanceData.find((a: any) => a.membership_id == member_id);
-        const attends = currentAttendance.attends;
+        const attends = currentAttendance?.attends || false;
         console.log(attends);
         const attendanceBox = attends ? iterestedContainer:  notIterestedContainer;
         const notIterestedDiv = document.createElement('div');
