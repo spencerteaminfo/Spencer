@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
-<x-head title="Spencer">@vite(['resources/js/loadMainPage.ts'])</x-head>
+<x-head title="Spencer">
+    @vite(['resources/js/loadMainPage.ts', 'resources/js/group/loadGroup.ts'])
+</x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
 <x-header/>
 <main class="d-flex">
@@ -13,11 +15,12 @@
             </div>
             <div class="col-md-6 column g-4">
                 <h2 class="mb-4">Recent Groups</h2>
-                <div id="container-groups" data-url="{{ Vite::asset('resources/svg/users.svg') }}"></div>
+                <div id="container-groups" class="row g-3" data-url="{{ Vite::asset('resources/svg/users.svg') }}"></div>
             </div>
         </div>
     </div>
 </main>
+<x-group.groupSimple />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

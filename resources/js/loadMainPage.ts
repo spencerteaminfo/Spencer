@@ -1,5 +1,5 @@
 import api from './bootstrap';
-import './loadGroup';
+import './group/loadGroup';
 
 interface EventData {
     title: string;

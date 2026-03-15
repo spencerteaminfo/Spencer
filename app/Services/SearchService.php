@@ -54,6 +54,7 @@ class SearchService
         }
         return $requester->groups()
             ->whereLike('name', '%' . $request->title . '%')
+            ->with('users')
             ->limit(10)
             ->get();
     }
@@ -62,6 +63,7 @@ class SearchService
     private function relatedGroups(Authenticatable $user): Collection|array
     {
         return $user->groups()
+            ->with('users')
             ->latest()
             ->limit(10)
             ->get();

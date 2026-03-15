@@ -1,4 +1,5 @@
 import api from './bootstrap';
+
 import ErrorHandlingForm from './errorHandling';
 import type { Group } from './models';
 const title = document.getElementById("input-title") as HTMLInputElement;
@@ -34,7 +35,7 @@ submitBtn.addEventListener("click", async (e)=>{
         return;
     }
     if (!to?.value) {
-        ErrorHandlingForm(to, "toErrorBlock", "Event musi nekdy koncit");        
+        ErrorHandlingForm(to, "toErrorBlock", "Event musi nekdy koncit");
         to?.focus();
         return;
     }
