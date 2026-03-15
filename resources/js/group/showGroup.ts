@@ -38,7 +38,7 @@ async function loadGroups() {
             const myMembership = group.users?.find(u => u.id === currentUserId);
             const myRoleId = myMembership?.pivot?.role_id ?? 4;
             const isCreator = myRoleId === 3;
-            const roleName = isCreator ? 'Owner' : (myRoleId === 6 ? 'Cashier' : 'Member');
+            const roleName = isCreator ? 'Owner' : (myRoleId === 5 ? 'Cashier' : 'Member');
             clone.querySelector('.js-name')!.textContent = group.name;
             clone.querySelector('.js-role')!.textContent = roleName;
 

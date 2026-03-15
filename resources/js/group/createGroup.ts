@@ -145,7 +145,7 @@ function addMemberToGroup(user: any, canDelete: boolean = true) {
         <div class="d-flex align-items-center gap-2">
             <select class="form-select form-select-sm role-select">
                 <option value="4" ${role == 4 ? 'selected' : ''}>Member</option>
-                <option value="6" ${role == 6 ? 'selected' : ''}>Cashier</option>
+                <option value="5" ${role == 5 ? 'selected' : ''}>Cashier</option>
             </select>
             <span class="text-danger cursor-pointer remove-user">✕</span>
         </div>` : ''}`;
