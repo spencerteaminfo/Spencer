@@ -18,25 +18,29 @@ let selectedGroupsIds: number[] = [];
 
 
 submitBtn.addEventListener("click", async (e)=>{
+    let countError = 0;
     e.preventDefault();
     if (!title?.value.trim()) {
         ErrorHandlingForm(title, "titleErrorBlock", "title je povinny");
         title?.focus();
-        return;
+        countError++;
     }
     if (!deadline?.value) {
         ErrorHandlingForm(deadline, "deadlineErrorBlock", "deadline je povinny");
         deadline?.focus();
-        return;
+        countError++;
     }
     if (!from?.value) {
         ErrorHandlingForm(from, "fromErrorBlock", "Event musí někdy začít");
         from?.focus();
-        return;
+        countError++;
     }
     if (!to?.value) {
         ErrorHandlingForm(to, "toErrorBlock", "Event musi nekdy koncit");
         to?.focus();
+        countError++;
+    }
+    if (countError > 0) {
         return;
     }
     const formData = new FormData();

@@ -9,12 +9,11 @@ function ErrorHandlingMessage(id:string, text:string, classD :string = ""):HTMLD
 }
 
 function ErrorHandlingForm(idInput:any, idDiv:string, text:string, classD:string =""){
-    const input = document.getElementById(idInput) as HTMLInputElement;
-    input?.classList.add("border", "border-danger", "text-danger");
+    idInput?.classList.add("border", "border-danger", "text-danger");
     const errorDivMessage = ErrorHandlingMessage(idDiv, text, classD);
-    input.insertAdjacentElement("afterend", errorDivMessage);
-    input.addEventListener("change", () => {
-        input?.classList.remove("border", "border-danger", "text-danger");
+    idInput.insertAdjacentElement("afterend", errorDivMessage);
+    idInput.addEventListener("input", () => {
+        idInput?.classList.remove("border", "border-danger", "text-danger");
         errorDivMessage?.remove();
     })
 }
