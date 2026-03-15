@@ -12,7 +12,6 @@ const submitBtn = document.getElementById("save-changes") as HTMLButtonElement;
 const addedMembersContainer = document.getElementById('addedMembers') as HTMLDivElement | null;
 const searchInput = document.getElementById("searchInput") as HTMLInputElement | null;
 
-
 let timeout: ReturnType<typeof setTimeout>;
 let selectedGroupsIds: number[] = [];
 
@@ -20,6 +19,27 @@ let selectedGroupsIds: number[] = [];
 submitBtn.addEventListener("click", async (e)=>{
     let countError = 0;
     e.preventDefault();
+    console.log(from.value)
+    console.log(to.value)
+    console.log(deadline.value)
+    if (from.value > to.value) {
+        console.log("ahoj from je vetsi nez to")
+        ErrorHandlingForm(from, "fromNotErrorBlock", "Event nemůže skončit dříve než začne");
+        from?.focus();
+        countError++;
+    }
+    if (deadline.value > to.value) {
+        console.log("ahoj deadline je vetsi nez to")
+        ErrorHandlingForm(deadline, "deadlineBadInputToToErrorBlock", "Deadline nemůže být později než by skončil event");
+        deadline?.focus();
+        countError++;
+    }
+    if (deadline.value > from.value) {
+        console.log("ahoj deadline je vetsi nez from")
+        ErrorHandlingForm(deadline, "deadlineBadInputToFromErrorBlock", "Deadline nemůže být později než by začal Event");
+        deadline?.focus();
+        countError++;
+    }
     if (!title?.value.trim()) {
         ErrorHandlingForm(title, "titleErrorBlock", "title je povinny");
         title?.focus();
