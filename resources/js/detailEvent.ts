@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
     const currentUserId = document.querySelector('meta[name="current-user-id"]')?.getAttribute('content');
     const attendance = await api.get('/api/event/'+event+'/attendance');
     const attendanceData = attendance.data.data
-
+    console.log(attendance);
     if (currentGroup && addedMembersContainer) {
         const card = document.createElement('div');
         card.className = "card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100";
