@@ -2,6 +2,7 @@ import api from '../bootstrap';
 
 let timeout: ReturnType<typeof setTimeout>;
 let selectedUsers: { id: number, role: number }[] = [];
+let initialUserIds: number[] = [];
 let currentGroupId: string | null = null;
 let deletePictureFlag = false;
 
@@ -32,6 +33,7 @@ function setupModalEvents() {
             (document.getElementById('descriptionInput') as HTMLTextAreaElement).value = button.dataset.description || '';
 
             const membersData = JSON.parse(button.dataset.members || '[]');
+            initialUserIds = membersData.map((u: any) => u.id);
             membersData.forEach((user: any) => addMemberToGroup(user, isCreator));
 
             const picUrl = button.dataset.picture;
@@ -88,6 +90,7 @@ function setupModalEvents() {
 function resetModal() {
     currentGroupId = null;
     selectedUsers = [];
+    initialUserIds = [];
     deletePictureFlag = false;
 
     const title = document.getElementById('titleInput') as HTMLInputElement;
@@ -171,34 +174,75 @@ async function saveGroupData() {
     formData.append('name', title);
     formData.append('description', (document.getElementById('descriptionInput') as HTMLTextAreaElement).value.trim());
 
+    let userIds: number[] = [];
+    const rolesMap: Record<string, number> = {};
     selectedUsers.forEach(u => {
-        formData.append('users_ids[]', u.id.toString());
-        formData.append('users_roles[' + u.id + ']', u.role.toString());
+        userIds.push(u.id);
+        rolesMap[u.id.toString()] = u.role;
     });
 
     const imgInput = document.getElementById('event-image-upload') as HTMLInputElement;
     if (imgInput?.files?.[0]) formData.append('img', imgInput.files[0]);
-
     if (deletePictureFlag) formData.append('delete_picture', 'true');
-    if (currentGroupId) formData.append('_method', 'PATCH');
 
     const saveBtn = document.getElementById('saveGroup') as HTMLButtonElement;
-    try {
-        saveBtn.disabled = true; saveBtn.innerText = "Saving...";
-        await api.post(
-            currentGroupId ? `/api/group/${currentGroupId}` : '/api/group',
-            formData,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+    saveBtn.disabled = true;
+    saveBtn.innerText = "Saving...";
+
+    if (currentGroupId) {
+        try {
+            formData.append('_method', 'PATCH');
+
+            const toAdd = userIds.filter(id => !initialUserIds.includes(id));
+            const toDelete = initialUserIds.filter(id => !userIds.includes(id));
+
+            await api.post(`/api/group/${currentGroupId}`, formData);
+
+            if (Object.keys(rolesMap).length > 0) {
+                await api.patch(`/api/group/${currentGroupId}/members`, { users_roles: rolesMap });
             }
-        );
-        window.location.reload();
-    } catch (e: any) {
-        saveBtn.disabled = false; saveBtn.innerText = currentGroupId ? "Update Group" : "Save Group";
-        const errorMsg = e.response?.data?.message || "Error saving.";
-        document.getElementById('errorHandler')!.innerHTML = errorMsg;
+
+            if (toAdd.length > 0) {
+                await api.post(`/api/group/${currentGroupId}/members`, {
+                    users_ids: toAdd,
+                    users_roles: rolesMap
+                });
+            }
+
+            if (toDelete.length > 0) {
+                await api.delete(`/api/group/${currentGroupId}/members`, {
+                    data: { users_ids: toDelete }
+                });
+            }
+
+            window.location.reload();
+        } catch (error: any) {
+            console.error(error.response?.data || error);
+            const errHandler = document.getElementById('errorHandler');
+            if (errHandler) errHandler.innerHTML = "Error updating group.";
+            saveBtn.disabled = false;
+            saveBtn.innerText = "Update Group";
+        }
+    } else {
+        try {
+            const res = await api.post(`/api/group`, formData);
+            const newGroupId = res.data.data.id;
+
+            if (userIds.length > 0) {
+                await api.post(`/api/group/${newGroupId}/members`, {
+                    users_ids: userIds,
+                    users_roles: rolesMap
+                });
+            }
+
+            window.location.reload();
+        } catch (e: any) {
+            console.error(e.response?.data || e);
+            const errHandler = document.getElementById('errorHandler');
+            if (errHandler) errHandler.innerHTML = "Error creating group.";
+            saveBtn.disabled = false;
+            saveBtn.innerText = "Save Group";
+        }
     }
 }
 
