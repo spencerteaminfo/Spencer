@@ -56,9 +56,12 @@ document.addEventListener("DOMContentLoaded", async()=>{
                 user_id: currentUserId,
                 attends: true,
             });
+ 
+
             const memberDiv = document?.getElementById("member-"+currentUserId) as HTMLDivElement;
             memberDiv?.remove();
             iterestedContainer?.append(memberDiv);
+            showAttendanceSuccessNotification();
         } catch (e: any){
             console.error("Error: "+e);
         }
@@ -73,11 +76,32 @@ document.addEventListener("DOMContentLoaded", async()=>{
             const memberDiv = document?.getElementById("member-"+currentUserId) as HTMLDivElement;
             memberDiv?.remove();
             notIterestedContainer?.append(memberDiv);
+            showAttendanceSuccessNotification();
         } catch (e: any){
             console.log("Error: "+e);
         }
         
     })
 })
+function showAttendanceSuccessNotification(message: string = 'Attendance byla úspěšně změněna'): void {
+    const alertDiv: HTMLDivElement = document.createElement('div');
+
+    alertDiv.className = 'mt-2 alert alert-success alert-dismissible fade show shadow-sm';
+    alertDiv.setAttribute('role', 'alert');
+
+    alertDiv.innerHTML = `${message}`;
+
+    const container: HTMLElement | null = document.getElementById('interest-conteiner');
+    
+    if (container) {
+        container.append(alertDiv);
+    }
+
+    setTimeout(() => {
+        alertDiv.classList.remove('show');
+        
+        setTimeout(() => alertDiv.remove(), 150);
+    }, 3000);
+}
 
 
