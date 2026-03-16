@@ -19,9 +19,6 @@ let selectedGroupsIds: number[] = [];
 submitBtn.addEventListener("click", async (e)=>{
     let countError = 0;
     e.preventDefault();
-    console.log(from.value)
-    console.log(to.value)
-    console.log(deadline.value)
     if (from.value > to.value) {
         console.log("ahoj from je vetsi nez to")
         ErrorHandlingForm(from, "fromNotErrorBlock", "Event nemůže skončit dříve než začne");
@@ -58,6 +55,10 @@ submitBtn.addEventListener("click", async (e)=>{
     if (!to?.value) {
         ErrorHandlingForm(to, "toErrorBlock", "Event musi nekdy koncit");
         to?.focus();
+        countError++;
+    }
+    if (selectedGroupsIds.length < 1) {
+        console.log("Musise tam dat alespon jedna groupka")
         countError++;
     }
     if (countError > 0) {

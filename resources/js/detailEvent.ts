@@ -14,12 +14,10 @@ document.addEventListener("DOMContentLoaded", async()=>{
     const members = membersGroup.data.data;
     const groupRes = await api.get("/api/groups", { params: { title: "" } });
     const groups = groupRes.data.data;
-    console.log(groups)
     const currentGroup = groups.find((g: any) => g.id == groupId);
     const currentUserId = document.querySelector('meta[name="current-user-id"]')?.getAttribute('content');
     const attendance = await api.get('/api/event/'+event+'/attendance');
     const attendanceData = attendance.data.data
-    console.log(attendance);
 
     if (currentGroup && addedMembersContainer) {
         const card = document.createElement('div');
@@ -39,10 +37,10 @@ document.addEventListener("DOMContentLoaded", async()=>{
         const member_id = member.pivot.user_id;
         const currentAttendance = attendanceData.find((a: any) => a.membership_id == member_id);
         const attends = currentAttendance?.attends || false;
-        console.log(attends);
         const attendanceBox = attends ? iterestedContainer:  notIterestedContainer;
         const notIterestedDiv = document.createElement('div');
         notIterestedDiv.className = "d-flex align-items-center mb-3";
+        notIterestedDiv.id = "member-"+member_id;
         notIterestedDiv.innerHTML = `
             <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 flex-shrink-0" style="width: 24px; height: 24px;">
                 <img src="https://ui-avatars.com/api/?name=${member.email}&background=198754&color=fff" class="w-100" alt="user">
@@ -53,18 +51,32 @@ document.addEventListener("DOMContentLoaded", async()=>{
     });
     
     TrueAttendece?.addEventListener("click", async ()=>{
-        const response = await api.patch("/api/event/"+event+"/attendance", {
-            user_id: currentUserId,
-            attends: true,
-        });
-        console.log(response)
+        try{
+            const response = await api.patch("/api/event/"+event+"/attendance", {
+                user_id: currentUserId,
+                attends: true,
+            });
+            const memberDiv = document?.getElementById("member-"+currentUserId) as HTMLDivElement;
+            memberDiv?.remove();
+            iterestedContainer?.append(memberDiv);
+        } catch (e: any){
+            console.error("Error: "+e);
+        }
+        
     })
     FalseAttendence?.addEventListener("click", async ()=>{
-        const response = await api.patch("/api/event/"+event+"/attendance", {
-            user_id: currentUserId,
-            attends: false,
-        });
-        console.log(response)
+        try{
+            const response = await api.patch("/api/event/"+event+"/attendance", {
+                user_id: currentUserId,
+                attends: false,
+            });
+            const memberDiv = document?.getElementById("member-"+currentUserId) as HTMLDivElement;
+            memberDiv?.remove();
+            notIterestedContainer?.append(memberDiv);
+        } catch (e: any){
+            console.log("Error: "+e);
+        }
+        
     })
 })
 
