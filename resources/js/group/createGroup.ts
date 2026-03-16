@@ -195,15 +195,12 @@ async function saveGroupData() {
 
             const toAdd = userIds.filter(id => !initialUserIds.includes(id));
             const toDelete = initialUserIds.filter(id => !userIds.includes(id));
-
-            await api.post(`/api/group/${currentGroupId}`, formData);
-
-            if (Object.keys(rolesMap).length > 0) {
-                await api.patch(`/api/group/${currentGroupId}/members`, { users_roles: rolesMap });
-            }
+            await api.post(`/api/group/${currentGroupId}`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            if (Object.keys(rolesMap).length > 0) {await api.patch(`/api/group/${currentGroupId}/members`, { users_roles: rolesMap });}
             addMembers(toAdd, rolesMap);
-            deleteMembers(toDelete)
-
+            deleteMembers(toDelete);
             window.location.reload();
         } catch (error: any) {
             console.error(error.response?.data || error);
@@ -214,7 +211,9 @@ async function saveGroupData() {
         }
     } else {
         try {
-            const res = await api.post(`/api/group`, formData);
+            const res = await api.post(`/api/group`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
             const newGroupId = res.data.data.id;
 
             if (userIds.length > 0) {
