@@ -113,11 +113,16 @@ class GroupController extends Controller
             'img' => ['nullable', 'image', 'max:4096']
         ]);
 
-        $group->update([
-            'name' => $data['name'],
-            'description' => $data['description'],
-            'picture_url' => $this->storageService->image($request->file('img'))
-        ]);
+        $updateData = [
+            'name' => $data['name'] ?? $group->name,
+            'description' => $data['description'] ?? $group->description,
+        ];
+
+        if ($request->hasFile('img')) {
+            $updateData['picture_url'] = $this->storageService->image($request->file('img'));
+        }
+
+        $group->update($updateData);
 
         return response()->json([
             'message' => 'Updated',
