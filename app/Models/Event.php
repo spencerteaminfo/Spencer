@@ -24,7 +24,7 @@ class Event extends Model
         'deadline',
         'starts_at',
         'ends_at',
-        'group_id', //TODO Groupy
+        'group_id',
         'thumbnail_url'
     ];
 

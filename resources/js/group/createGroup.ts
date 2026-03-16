@@ -201,19 +201,8 @@ async function saveGroupData() {
             if (Object.keys(rolesMap).length > 0) {
                 await api.patch(`/api/group/${currentGroupId}/members`, { users_roles: rolesMap });
             }
-
-            if (toAdd.length > 0) {
-                await api.post(`/api/group/${currentGroupId}/members`, {
-                    users_ids: toAdd,
-                    users_roles: rolesMap
-                });
-            }
-
-            if (toDelete.length > 0) {
-                await api.delete(`/api/group/${currentGroupId}/members`, {
-                    data: { users_ids: toDelete }
-                });
-            }
+            addMembers(toAdd, rolesMap);
+            deleteMembers(toDelete)
 
             window.location.reload();
         } catch (error: any) {
@@ -243,6 +232,23 @@ async function saveGroupData() {
             saveBtn.disabled = false;
             saveBtn.innerText = "Save Group";
         }
+    }
+}
+
+async function deleteMembers(toDelete: number[]) {
+    if (toDelete.length < 1) return;
+
+    await api.delete(`/api/group/${currentGroupId}/members`, {
+        data: { users_ids: toDelete }
+    });
+}
+
+async function addMembers(toAdd: number[], rolesMap: Record<number, number>) {
+    if (toAdd.length > 0) {
+        await api.post(`/api/group/${currentGroupId}/members`, {
+            users_ids: toAdd,
+            users_roles: rolesMap
+        });
     }
 }
 
