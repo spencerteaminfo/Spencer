@@ -101,7 +101,7 @@ class GroupController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Group $group): JsonResponse // TODO update members
+    public function update(Request $request, Group $group): JsonResponse
     {
         if (!$this->requesterHasAtLeastRole($group, RoleType::CASHIER)) {
             abort(403, 'Unauthorized action.');
