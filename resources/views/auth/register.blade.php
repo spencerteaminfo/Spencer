@@ -2,7 +2,7 @@
 <html lang="en">
 <x-head title="Register">@vite(['resources/js/auth.ts'])</x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
-<x-basic-header/>
+<x-basicHeader/>
 <main>
     <div class="d-flex flex-column justify-content-center align-items-center auth-container">
         <div class="card shadow-sm p-4">

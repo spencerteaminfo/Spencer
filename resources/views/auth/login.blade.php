@@ -4,7 +4,7 @@
     <x-head title="Login">@vite(['resources/js/auth.ts'])</x-head>
 </head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
-<x-basic-header/>
+<x-basicHeader/>
 <main>
     <div class="d-flex justify-content-center align-items-center flex-column auth-container">
         <div class="card shadow-sm p-4">
