@@ -157,6 +157,7 @@ class EventController extends Controller
         $event = Event::create([
             'title' => $data['title'],
             'description' => $data['description'],
+            'creator_id' => auth()->user()->id,
             'deadline' => $data['deadline'],
             'starts_at' => $data['from'],
             'ends_at' => $data['to'],
