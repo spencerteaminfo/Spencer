@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\RoleType;
 use App\Models\Attendance;
 use App\Models\Event;
-use App\Models\User;
 use App\Services\MembershipService;
 use App\Services\SearchService;
 use App\Services\StorageService;
@@ -74,7 +73,9 @@ class EventController extends Controller
      */
     public function searchUsersAndGroups(Request $request) : JsonResponse
     {
-        $groupIDs = auth()->user()->groups()->pluck('groups.id');
+        $user = auth()->user();
+
+        $groupIDs = $user->groups()->pluck('groups.id');
         $users = $this->searchService->users($request);
         $groups = $this->searchService->groups($request)
             ->whereIn('id', $groupIDs)
@@ -197,6 +198,8 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event): JsonResponse
     {
+        $this->abortIfRequesterIsNotCreator($event);
+
         $data = $request->validate([
             'title'       => ['nullable', 'string', 'max:256'],
             'description' => ['nullable', 'string'],
@@ -228,6 +231,8 @@ class EventController extends Controller
      */
     public function destroy(Event $event): JsonResponse
     {
+        $this->abortIfRequesterIsNotCreator($event);
+
         $event->delete();
         return response()->json(['message' => 'Event was successfully destroyed', 'data' => $event->id], 200);
     }
@@ -340,5 +345,14 @@ class EventController extends Controller
             $attendanceEntries->push($this->makeAttendanceRow($event->id, $membership->user_id, $membership->group_id));
         }
         return $attendanceEntries;
+    }
+
+    private function abortIfRequesterIsNotCreator(Event $event): void
+    {
+        $user = auth()->user();
+
+        if ($event->cretor_id != $user->id) {
+            abort(403, 'Unauthorized action.');
+        }
     }
 }
