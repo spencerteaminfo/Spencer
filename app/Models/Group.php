@@ -52,4 +52,12 @@ class Group extends Model
             ->withPivot('role_id')
             ->withTimestamps();
     }
+
+    /**
+     * The events this group is attached to.
+     */
+    public function events(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class)->withTimestamps();
+    }
 }

@@ -41,17 +41,26 @@ class Event extends Model
     }
 
     /**
-     * Get the attendance of users for this group.
-     *
-     * @return HasMany
+     * The groups associated with this event.
+     */
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class)->withTimestamps();
+    }
+
+    /**
+     * The users individually bound/invited to this event.
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)->withTimestamps();
+    }
+
+    /**
+     * The attendance records for this event.
      */
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
-    }
-
-    public function group(): BelongsTo
-    {
-        return $this->belongsTo(Group::class);
     }
 }

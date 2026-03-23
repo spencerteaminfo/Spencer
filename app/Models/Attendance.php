@@ -23,6 +23,9 @@ class Attendance extends Model
         ];
     }
 
+    /**
+     * The event this attendance record is for.
+     */
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);
