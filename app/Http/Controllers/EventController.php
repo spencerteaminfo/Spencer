@@ -10,6 +10,8 @@ use App\Services\StorageService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -120,18 +122,31 @@ class EventController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * @throws ValidationException
      */
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'title' => ['required', 'string', 'max:256'],
-            'description' => ['nullable', 'string'],
+            'title' => ['required', 'string', 'max:128'],
+            'description' => ['nullable', 'string', 'max:60'],
             'deadline' => ['nullable', 'date'],
             'from' => ['required', 'date'],
             'to' => ['required', 'date'],
-            'group_id' => ['required', 'integer', 'exists:groups,id'],
+            'group_ids' => ['nullable', 'array'],
+            'group_ids.*' => ['integer', 'exists:groups,id'],
+            'user_ids' => ['nullable', 'array'],
+            'user_ids.*' => ['integer', 'exists:users,id'],
             'img' => ['nullable', 'image', 'max:4096']
         ]);
+
+        $groupIds = collect($data['group_ids'] ?? []);
+        $userIds = collect($data['user_ids'] ?? []);
+
+        if ($groupIds->isEmpty() && $userIds->isEmpty()) {
+            throw ValidationException::withMessages([
+                'targets' => ['You must provide either a group or an individual user to bind an event.']
+            ]);
+        }
 
         $event = Event::create([
             'title' => $data['title'],
@@ -139,25 +154,35 @@ class EventController extends Controller
             'deadline' => $data['deadline'],
             'starts_at' => $data['from'],
             'ends_at' => $data['to'],
-            'group_id' => $data['group_id'],
-            'thumbnail_url' => $this->storageService->image($request->file('img')),
+            'thumbnail_url' => $this->storageService->image($request->file('img'))
         ]);
 
-        $memberships = $event->group->memberships;
-
-        foreach ($memberships as $membership) {
-            Attendance::create([
-                'membership_id'  => $membership->id,
-                'event_id' => $event->id,
-                'attends' => false,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
+        if (!$groupIds->isEmpty()) {
+            $event->groups()->sync($groupIds);
         }
+        if (!$userIds->isEmpty()) {
+            $event->users()->sync($userIds);
+        }
+
+        $usersFromGroups = DB::table('memberships')
+            ->whereIn('group_id', $groupIds)
+            ->pluck('user_id');
+
+        $allUniqueUserIds = $userIds->merge($usersFromGroups)->unique();
+
+        $attendanceData = $allUniqueUserIds->map(fn($id) => [
+            'user_id' => $id,
+            'event_id' => $event->id,
+            'attends' => 'PENDING',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ])->toArray();
+
+        Attendance::insert($attendanceData);
 
         return response()->json([
             'message' => 'Event created successfully',
-            'data' => $event
+            'data' => $event->load(['groups', 'users'])
         ], 201);
     }
 
@@ -167,11 +192,11 @@ class EventController extends Controller
     public function update(Request $request, Event $event): JsonResponse
     {
         $data = $request->validate([
-            'title'       => ['required', 'string', 'max:256'],
-            'description' => ['required', 'string'],
+            'title'       => ['nullable', 'string', 'max:256'],
+            'description' => ['nullable', 'string'],
             'deadline'    => ['nullable', 'date'],
-            'from'        => ['required', 'date'],
-            'to'          => ['required', 'date'],
+            'from'        => ['nullable', 'date'],
+            'to'          => ['nullable', 'date'],
             'img'         => ['nullable', 'image', 'max:4096']
         ]);
 
@@ -197,9 +222,14 @@ class EventController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Event $event)
+    public function destroy(Event $event): JsonResponse
     {
-        //
+        $event->delete();
+
+        return response()->json([
+            'message' => 'Event was successfully destroyed',
+            'data' => $event->id
+        ], 200);
     }
 
     public function attendances(Event $event): JsonResponse
@@ -242,6 +272,103 @@ class EventController extends Controller
         return response()->json([
             'message' => 'Attendance updated successfully',
             'data' => $attendance
+        ], 200);
+    }
+
+    /**
+     * Post new group/user attendees to the event
+     * @throws ValidationException
+     */
+    public function storeAttendees(Request $request, Event $event): JsonResponse
+    {
+        $data = $request->validate([
+            'group_ids' => ['nullable', 'array'],
+            'group_ids.*' => ['integer', 'exists:groups,id'],
+            'user_ids' => ['nullable', 'array'],
+            'user_ids.*' => ['integer', 'exists:users,id']
+        ]);
+
+        $groupIds = collect($data['group_ids'] ?? []);
+        $userIds = collect($data['user_ids'] ?? []);
+
+        if ($groupIds->isEmpty() && $userIds->isEmpty()) {
+            throw ValidationException::withMessages([
+                'targets' => ['You must provide either a group or an individual user.']
+            ]);
+        }
+
+        $event->groups()->sync($groupIds);
+        $event->users()->sync($userIds);
+
+        $usersFromGroups = DB::table('memberships')
+            ->whereIn('group_id', $groupIds)
+            ->pluck('user_id');
+
+        $allTargetUserIds = $userIds->merge($usersFromGroups)->unique();
+
+        $existingAttendanceIds = $event->attendances()->pluck('user_id')->toArray();
+        $newUsersToInvite = $allTargetUserIds->diff($existingAttendanceIds);
+
+        if ($newUsersToInvite->isNotEmpty()) {
+            $attendanceData = $newUsersToInvite->map(fn($id) => [
+                'user_id' => $id,
+                'event_id' => $event->id,
+                'attends' => 'PENDING',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->toArray();
+
+            Attendance::insert($attendanceData);
+        }
+
+        $event->attendances()->whereNotIn('user_id', $allTargetUserIds)->delete();
+
+        return response()->json([
+            'message' => 'Attendees updated successfully',
+            'data' => $event->load(['groups', 'users'])
+        ], 200);
+    }
+
+    /**
+     * Delete requested group/user attendees from the event
+     * @throws ValidationException
+     */
+    public function destroyAttendees(Request $request, Event $event): JsonResponse
+    {
+        $data = $request->validate([
+            'group_ids' => ['nullable', 'array'],
+            'group_ids.*' => ['integer', 'exists:groups,id'],
+            'user_ids' => ['nullable', 'array'],
+            'user_ids.*' => ['integer', 'exists:users,id']
+        ]);
+
+        $groupIds = collect($data['group_ids'] ?? []);
+        $userIds = collect($data['user_ids'] ?? []);
+
+        if ($groupIds->isEmpty() && $userIds->isEmpty()) {
+            throw ValidationException::withMessages([
+                'targets' => ['You must provide at least one group or user to remove.']
+            ]);
+        }
+
+        if ($groupIds->isNotEmpty()) {
+            $event->groups()->detach($groupIds);
+        }
+        if ($userIds->isNotEmpty()) {
+            $event->users()->detach($userIds);
+        }
+
+        $usersFromRemovedGroups = DB::table('memberships')
+            ->whereIn('group_id', $groupIds)
+            ->pluck('user_id');
+
+        $allUserIdsToRemove = $userIds->merge($usersFromRemovedGroups)->unique();
+
+        $event->attendances()->whereIn('user_id', $allUserIdsToRemove)->delete();
+
+        return response()->json([
+            'message' => 'Attendees removed successfully',
+            'data' => $event->load(['groups', 'users'])
         ], 200);
     }
 }
