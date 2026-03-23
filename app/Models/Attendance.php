@@ -10,7 +10,8 @@ class Attendance extends Model
 {
     protected $fillable = [
         'event_id',
-        'membership_id',
+        'user_id',
+        'group_id',
         'attends'
     ];
 
@@ -18,7 +19,8 @@ class Attendance extends Model
     {
         return [
             'event_id' => 'integer',
-            'membership_id' => 'integer',
+            'user_id' => 'integer',
+            'group_id' => 'integer',
             'attends' => 'boolean',
         ];
     }

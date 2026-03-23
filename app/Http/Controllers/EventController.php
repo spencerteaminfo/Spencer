@@ -42,7 +42,6 @@ class EventController extends Controller
         return view('events/create');
     }
 
-    // FIXME this is now the exact same thing as show(Event $event).
     /**
      * Show the form for editing the specified resource.
      */
@@ -57,8 +56,9 @@ class EventController extends Controller
     public function show(Event $event): View
     {
         $user = auth()->user();
+        $eventGroupIds = $event->groups()->pluck('groups.id');
 
-        if (!$user->groups->contains($event->group_id)) {
+        if (!$user->groups->pluck('id')->intersect($eventGroupIds)->count()) {
             return back();
         }
 
@@ -73,8 +73,8 @@ class EventController extends Controller
         $groupIDs = auth()->user()->groups()->pluck('groups.id');
         $users = $this->searchService->users($request);
         $groups = $this->searchService->groups($request)
-        ->whereIn('id', $groupIDs)
-        ->values();
+            ->whereIn('id', $groupIDs)
+            ->values();
 
         return response()->json([
             'message' => 'Search was successful',
@@ -101,28 +101,30 @@ class EventController extends Controller
             return response()->json($this->relatedEvents($requester, $groupIDs));
         }
 
-        $events = Event::with('group')
-        ->whereIn('group_id', $groupIDs)
-        ->whereLike('title', '%' . $data['title'] . '%')
-        ->latest()
-        ->get();
+        $events = Event::whereHas('groups', function($q) use ($groupIDs) {
+            $q->whereIn('groups.id', $groupIDs);
+        })
+            ->where('title', 'like', '%' . $data['title'] . '%')
+            ->latest()
+            ->get();
 
         return response()->json([
             'message' => 'Search was successful',
             'data' => $events
         ], 200);
     }
+
     private function relatedEvents(Authenticatable $user, $groupIDs): Collection
     {
-        return Event::with('group')
-        ->whereIn('group_id', $groupIDs)
-        ->latest()
-        ->get();
+        return Event::whereHas('groups', function($q) use ($groupIDs) {
+            $q->whereIn('groups.id', $groupIDs);
+        })
+            ->latest()
+            ->get();
     }
 
     /**
      * Store a newly created resource in storage.
-     * @throws ValidationException
      */
     public function store(Request $request): JsonResponse
     {
@@ -144,7 +146,7 @@ class EventController extends Controller
 
         if ($groupIds->isEmpty() && $userIds->isEmpty()) {
             throw ValidationException::withMessages([
-                'targets' => ['You must provide either a group or an individual user to bind an event.']
+                'targets' => ['You must provide either a group or an individual user.']
             ]);
         }
 
@@ -157,33 +159,32 @@ class EventController extends Controller
             'thumbnail_url' => $this->storageService->image($request->file('img'))
         ]);
 
-        if (!$groupIds->isEmpty()) {
-            $event->groups()->sync($groupIds);
-        }
-        if (!$userIds->isEmpty()) {
-            $event->users()->sync($userIds);
-        }
+        if ($groupIds->isNotEmpty()) $event->groups()->sync($groupIds);
+        if ($userIds->isNotEmpty()) $event->users()->sync($userIds);
 
-        $usersFromGroups = DB::table('memberships')
-            ->whereIn('group_id', $groupIds)
-            ->pluck('user_id');
+        $attendanceEntries = $this->collectAttendanceEntries($userIds, $event, $groupIds);
 
-        $allUniqueUserIds = $userIds->merge($usersFromGroups)->unique();
-
-        $attendanceData = $allUniqueUserIds->map(fn($id) => [
-            'user_id' => $id,
-            'event_id' => $event->id,
-            'attends' => 'PENDING',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ])->toArray();
-
-        Attendance::insert($attendanceData);
+        Attendance::insert($attendanceEntries->unique(fn($i) => $i['user_id'].$i['group_id'])->toArray());
 
         return response()->json([
             'message' => 'Event created successfully',
             'data' => $event->load(['groups', 'users'])
         ], 201);
+    }
+
+    /**
+     * Helper to format attendance row
+     */
+    private function makeAttendanceRow($eventId, $userId, $groupId = null): array
+    {
+        return [
+            'event_id'   => $eventId,
+            'user_id'    => $userId,
+            'group_id'   => $groupId,
+            'attends'    => 'PENDING',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
     }
 
     /**
@@ -200,23 +201,22 @@ class EventController extends Controller
             'img'         => ['nullable', 'image', 'max:4096']
         ]);
 
-        if ($request->hasFile('img')) { // TODO img deletion!!!!!!
-            $data['img_path'] = $request->file('img')->store('thumbnails', 'public');
+        $imgPath = $event->thumbnail_url;
+        if ($request->hasFile('img')) {
+            // Suggestion: delete old image here
+            $imgPath = $this->storageService->image($request->file('img'));
         }
 
         $event->update([
-            'title'       => $data['title'],
-            'description' => $data['description'],
-            'deadline'    => $data['deadline'],
-            'starts_at'   => $data['from'],
-            'ends_at'     => $data['to'],
-            'thumbnail_url'    => $data['img_path'] ?? $event->img_path,
+            'title'       => $data['title'] ?? $event->title,
+            'description' => $data['description'] ?? $event->description,
+            'deadline'    => $data['deadline'] ?? $event->deadline,
+            'starts_at'   => $data['from'] ?? $event->starts_at,
+            'ends_at'     => $data['to'] ?? $event->ends_at,
+            'thumbnail_url' => $imgPath,
         ]);
 
-        return response()->json([
-            'message' => 'Event updated successfully',
-            'data' => $event
-        ], 200);
+        return response()->json(['message' => 'Event updated successfully', 'data' => $event], 200);
     }
 
     /**
@@ -225,59 +225,17 @@ class EventController extends Controller
     public function destroy(Event $event): JsonResponse
     {
         $event->delete();
-
-        return response()->json([
-            'message' => 'Event was successfully destroyed',
-            'data' => $event->id
-        ], 200);
+        return response()->json(['message' => 'Event was successfully destroyed', 'data' => $event->id], 200);
     }
 
     public function attendances(Event $event): JsonResponse
     {
-        $attendances = $event->attendances()->with('user')->get();
-
-        return response()->json([
-            'message' => 'Attendance of users was retrieved successfully.',
-            'data' => $attendances
-        ], 200);
-    }
-
-    /**
-     * Set attendance of user for event
-     */
-    public function setAttendance(Request $request, Event $event): JsonResponse
-    {
-        $data = $request->validate([
-            'user_id' => ['required', 'integer', 'exists:users,id'],
-            'attends' => ['required', 'boolean']
-        ]);
-
-        $membership = Membership::where('user_id', $data['user_id'])
-            ->where('group_id', $event->group_id)
-            ->first();
-
-        if (!$membership) {
-            return response()->json(['message' => 'User is not a member of this group.',], 401);
-        }
-
-        $attendance = Attendance::where('event_id', $event->id)
-            ->where('membership_id', $membership->id)
-            ->first();
-
-        if ($attendance) {
-            $attendance->attends = $data['attends'];
-            $attendance->save();
-        }
-
-        return response()->json([
-            'message' => 'Attendance updated successfully',
-            'data' => $attendance
-        ], 200);
+        $attendances = $event->attendances()->with(['user', 'group'])->get();
+        return response()->json(['message' => 'Success', 'data' => $attendances], 200);
     }
 
     /**
      * Post new group/user attendees to the event
-     * @throws ValidationException
      */
     public function storeAttendees(Request $request, Event $event): JsonResponse
     {
@@ -291,47 +249,26 @@ class EventController extends Controller
         $groupIds = collect($data['group_ids'] ?? []);
         $userIds = collect($data['user_ids'] ?? []);
 
-        if ($groupIds->isEmpty() && $userIds->isEmpty()) {
-            throw ValidationException::withMessages([
-                'targets' => ['You must provide either a group or an individual user.']
-            ]);
+        $event->groups()->syncWithoutDetaching($groupIds);
+        $event->users()->syncWithoutDetaching($userIds);
+
+        $attendanceEntries = $this->collectAttendanceEntries($userIds, $event, $groupIds);
+
+        $existing = Attendance::where('event_id', $event->id)->get(['user_id', 'group_id']);
+
+        $toInsert = $attendanceEntries->filter(function($row) use ($existing) {
+            return !$existing->where('user_id', $row['user_id'])->where('group_id', $row['group_id'])->first();
+        });
+
+        if ($toInsert->isNotEmpty()) {
+            Attendance::insert($toInsert->toArray());
         }
 
-        $event->groups()->sync($groupIds);
-        $event->users()->sync($userIds);
-
-        $usersFromGroups = DB::table('memberships')
-            ->whereIn('group_id', $groupIds)
-            ->pluck('user_id');
-
-        $allTargetUserIds = $userIds->merge($usersFromGroups)->unique();
-
-        $existingAttendanceIds = $event->attendances()->pluck('user_id')->toArray();
-        $newUsersToInvite = $allTargetUserIds->diff($existingAttendanceIds);
-
-        if ($newUsersToInvite->isNotEmpty()) {
-            $attendanceData = $newUsersToInvite->map(fn($id) => [
-                'user_id' => $id,
-                'event_id' => $event->id,
-                'attends' => 'PENDING',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ])->toArray();
-
-            Attendance::insert($attendanceData);
-        }
-
-        $event->attendances()->whereNotIn('user_id', $allTargetUserIds)->delete();
-
-        return response()->json([
-            'message' => 'Attendees updated successfully',
-            'data' => $event->load(['groups', 'users'])
-        ], 200);
+        return response()->json(['message' => 'Attendees updated', 'data' => $event->load(['groups', 'users'])], 200);
     }
 
     /**
      * Delete requested group/user attendees from the event
-     * @throws ValidationException
      */
     public function destroyAttendees(Request $request, Event $event): JsonResponse
     {
@@ -345,30 +282,37 @@ class EventController extends Controller
         $groupIds = collect($data['group_ids'] ?? []);
         $userIds = collect($data['user_ids'] ?? []);
 
-        if ($groupIds->isEmpty() && $userIds->isEmpty()) {
-            throw ValidationException::withMessages([
-                'targets' => ['You must provide at least one group or user to remove.']
-            ]);
-        }
-
         if ($groupIds->isNotEmpty()) {
             $event->groups()->detach($groupIds);
+            $event->attendances()->whereIn('group_id', $groupIds)->delete();
         }
+
         if ($userIds->isNotEmpty()) {
             $event->users()->detach($userIds);
+            $event->attendances()->whereIn('user_id', $userIds)->whereNull('group_id')->delete();
         }
 
-        $usersFromRemovedGroups = DB::table('memberships')
-            ->whereIn('group_id', $groupIds)
-            ->pluck('user_id');
+        return response()->json(['message' => 'Removed', 'data' => $event->load(['groups', 'users'])], 200);
+    }
 
-        $allUserIdsToRemove = $userIds->merge($usersFromRemovedGroups)->unique();
+    /**
+     * @param Collection $userIds
+     * @param Event $event
+     * @param Collection $groupIds
+     * @return Collection
+     */
+    private function collectAttendanceEntries(Collection $userIds, Event $event, Collection $groupIds): Collection
+    {
+        $attendanceEntries = collect();
 
-        $event->attendances()->whereIn('user_id', $allUserIdsToRemove)->delete();
+        foreach ($userIds as $userId) {
+            $attendanceEntries->push($this->makeAttendanceRow($event->id, $userId, null));
+        }
 
-        return response()->json([
-            'message' => 'Attendees removed successfully',
-            'data' => $event->load(['groups', 'users'])
-        ], 200);
+        $memberships = DB::table('memberships')->whereIn('group_id', $groupIds)->get();
+        foreach ($memberships as $membership) {
+            $attendanceEntries->push($this->makeAttendanceRow($event->id, $membership->user_id, $membership->group_id));
+        }
+        return $attendanceEntries;
     }
 }
