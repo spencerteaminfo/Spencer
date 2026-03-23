@@ -9,8 +9,8 @@ use App\Models\Role;
 use App\Models\User;
 use App\Rules\MapKeysExist;
 use App\Rules\MatchUserIdsRule;
+use App\Services\MembershipService;
 use App\Services\StorageService;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use App\Services\SearchService;
 use Illuminate\Http\Request;
@@ -21,11 +21,13 @@ class GroupController extends Controller
 {
     protected SearchService $searchService;
     protected StorageService $storageService;
+    protected MembershipService $membershipService;
 
-    public function __construct(SearchService $groupService, StorageService $storageService)
+    public function __construct(SearchService $groupService, StorageService $storageService, MembershipService $membershipService)
     {
         $this->searchService = $groupService;
         $this->storageService = $storageService;
+        $this->membershipService = $membershipService;
     }
 
     /**
@@ -103,7 +105,7 @@ class GroupController extends Controller
      */
     public function update(Request $request, Group $group): JsonResponse
     {
-        if (!$this->requesterHasAtLeastRole($group, RoleType::CASHIER)) {
+        if (!$this->membershipService->hasAtLeastRole(auth()->user(), $group, RoleType::CASHIER)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -187,7 +189,7 @@ class GroupController extends Controller
      */
     public function destroyMembers(Request $request, Group $group): JsonResponse
     {
-        if (!$this->requesterHasAtLeastRole($group, RoleType::CASHIER)) {
+        if (!$this->membershipService->hasAtLeastRole(auth()->user(), $group, RoleType::CASHIER)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -206,7 +208,7 @@ class GroupController extends Controller
 
     public function updateMembers(Request $request, Group $group): JsonResponse
     {
-        if (!$this->requesterHasAtLeastRole($group, RoleType::OWNER)) {
+        if (!$this->membershipService->hasAtLeastRole(auth()->user(), $group, RoleType::OWNER)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -230,7 +232,7 @@ class GroupController extends Controller
 
     public function updateMember(Request $request, Group $group): JsonResponse
     {
-        if (!$this->requesterHasAtLeastRole($group, RoleType::OWNER)) {
+        if (!$this->membershipService->hasAtLeastRole(auth()->user(), $group, RoleType::OWNER)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -266,19 +268,6 @@ class GroupController extends Controller
             'message' => 'Deleted',
             'data' => $group->id
         ], 200);
-    }
-
-    private function requesterHasAtLeastRole(Group $group, RoleType $roleType): bool
-    {
-        $requesterMembership = $this->userMembership(auth()->user(), $group);
-        return $requesterMembership->hasAtLeastRole($roleType);
-    }
-
-    private function userMembership(Authenticatable $user, Group $group): ?Membership
-    {
-        return Membership::where('user_id', $user->id)
-            ->where('group_id', $group->id)
-            ->first();
     }
 
     private function isMember(int $userId, Group $group): bool

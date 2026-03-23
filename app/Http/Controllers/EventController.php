@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\Event;
+use App\Models\Group;
 use App\Models\Membership;
 use App\Services\SearchService;
 use App\Services\StorageService;
@@ -299,9 +300,9 @@ class EventController extends Controller
      * @param Collection $userIds
      * @param Event $event
      * @param Collection $groupIds
-     * @return Collection
+     * @return \Illuminate\Support\Collection
      */
-    private function collectAttendanceEntries(Collection $userIds, Event $event, Collection $groupIds): Collection
+    private function collectAttendanceEntries(Collection $userIds, Event $event, Collection $groupIds): \Illuminate\Support\Collection
     {
         $attendanceEntries = collect();
 
