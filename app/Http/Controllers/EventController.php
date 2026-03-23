@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RoleType;
 use App\Models\Attendance;
 use App\Models\Event;
-use App\Models\Group;
-use App\Models\Membership;
+use App\Models\User;
+use App\Services\MembershipService;
 use App\Services\SearchService;
 use App\Services\StorageService;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -20,11 +21,13 @@ class EventController extends Controller
 {
     protected SearchService $searchService;
     protected StorageService $storageService;
+    protected MembershipService $membershipService;
 
-    public function __construct(SearchService $userService, StorageService $storageService)
+    public function __construct(SearchService $userService, StorageService $storageService, MembershipService $membershipService)
     {
         $this->searchService = $userService;
         $this->storageService = $storageService;
+        $this->membershipService = $membershipService;
     }
 
     /**
@@ -204,7 +207,6 @@ class EventController extends Controller
 
         $imgPath = $event->thumbnail_url;
         if ($request->hasFile('img')) {
-            // Suggestion: delete old image here
             $imgPath = $this->storageService->image($request->file('img'));
         }
 
@@ -240,6 +242,17 @@ class EventController extends Controller
      */
     public function storeAttendees(Request $request, Event $event): JsonResponse
     {
+        $user = auth()->user();
+
+        $attendance = Attendance::with('group')
+            ->where('event_id', $event->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($attendance && $this->membershipService->hasAtLeastRole($user, $attendance->group, RoleType::CASHIER)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $data = $request->validate([
             'group_ids' => ['nullable', 'array'],
             'group_ids.*' => ['integer', 'exists:groups,id'],
@@ -273,6 +286,17 @@ class EventController extends Controller
      */
     public function destroyAttendees(Request $request, Event $event): JsonResponse
     {
+        $user = auth()->user();
+
+        $attendance = Attendance::with('group')
+            ->where('event_id', $event->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($attendance && $this->membershipService->hasAtLeastRole($user, $attendance->group, RoleType::CASHIER)) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $data = $request->validate([
             'group_ids' => ['nullable', 'array'],
             'group_ids.*' => ['integer', 'exists:groups,id'],

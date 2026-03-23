@@ -38,6 +38,11 @@ class Attendance extends Model
         return $this->belongsTo(Membership::class);
     }
 
+    public function group(): BelongsTo
+    {
+        return $this->belongsTo(Group::class);
+    }
+
     public function user(): HasOneThrough
     {
         return $this->hasOneThrough(
