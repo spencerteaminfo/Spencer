@@ -148,7 +148,7 @@ class GroupController extends Controller
     public function addMembers(Request $request, Group $group): JsonResponse
     {
         $requester = auth()->user();
-        $requesterMembership = $this->userMembership($requester, $group);
+        $requesterMembership = $this->membershipService->getUserMembership($requester, $group);
 
         if (!$requesterMembership->hasAtLeastRole(RoleType::CASHIER)) {
             abort(403, 'Unauthorized action.');
@@ -257,7 +257,7 @@ class GroupController extends Controller
     public function destroy(Group $group): JsonResponse
     {
         $requester = auth()->user();
-        $requesterMembership = $this->userMembership($requester, $group);
+        $requesterMembership = $this->membershipService->getUserMembership($requester, $group);
 
         if (!$requesterMembership->hasAtLeastRole(RoleType::OWNER)) {
             abort(403, 'Unauthorized action.');
