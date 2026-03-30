@@ -47,6 +47,9 @@
                     </div>
 
                     <div class="mb-4">
+                        <div class="small text-muted text-end mb-2 mx-2">
+                            <span>Don´t have an group <a href="/groups">create it</a></span>
+                        </div>
                         <div class="position-relative">
                             <input id="searchInput" type="text" class="form-control rounded-pill py-3 px-4 shadow-sm border-0" placeholder="Search for a person or a group">
                             <span class="position-absolute end-0 top-50 translate-middle-y me-4">
