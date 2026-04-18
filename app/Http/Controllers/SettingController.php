@@ -76,7 +76,6 @@ class SettingController extends Controller
         return response()->json([
             'message' => 'Settings updated successfully',
             'data' => $updatedSettings
-            // TODO maybe something should be returned here in 'data'
         ]);
     }
 
