@@ -3,7 +3,7 @@ import api from './bootstrap';
 addEventListener("DOMContentLoaded", () => {
     const firstName = document.getElementById("firstName") as HTMLInputElement;
     const lastName = document.getElementById("lastName") as HTMLInputElement;
-    const checkboxes = document.querySelectorAll('input[name^="options["]');
+    const settingInputs = document.querySelectorAll('input[name^="options["], select[name^="options["]');
     const editFirstBtn = document.getElementById("editFirstName");
     const editLastBtn = document.getElementById("editLastName");
     const saveSuccess = document.getElementById("saveSuccess");
@@ -69,12 +69,21 @@ addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener("change", async () => {
+    settingInputs.forEach(input => {
+        input.addEventListener("change", async () => {
             let selectedIds: string[] = [];
+
+            // checkbox
             const checkedBoxes = document.querySelectorAll('input[name^="options["]:checked');
             checkedBoxes.forEach(checkedBox => {
                 selectedIds.push((checkedBox as HTMLInputElement).value);
+            });
+
+            // dropdown
+            const selects = document.querySelectorAll('select[name^="options["]');
+            selects.forEach(sel => {
+                const val = (sel as HTMLSelectElement).value;
+                if (val) selectedIds.push(val);
             });
 
             try {
