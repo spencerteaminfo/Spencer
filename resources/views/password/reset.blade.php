@@ -27,22 +27,22 @@
 <x-head title="Reset Password"></x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
     <div class="card shadow-sm border-0 rounded-4 p-4 mb-4 w-50" style="position:fixed; left: 50%; top: 50%;transform: translate(-50%, -50%);">
-        <h2 class="h3 fw-bold mb-4 text-secondary">Reset password</h2>
+        <h2 class="h3 fw-bold mb-4 text-secondary">{{__('auth.reset_password')}}</h2>
         <form method="POST" action="{{ route('api.password.update') }}" class="d-flex flex-column gap-2">
             @csrf
             <input type="hidden" name="token" value="{{ $token }}">
             <div>
-                <input type="email" name="email" value="{{ $email ?? old('email') }}" required class="form-control rounded-3" placeholder="Enter your email">
-            </div>
-            
-            <div>
-                <input type="password" name="password" required class="form-control rounded-3" placeholder="Enter your new password">
+                <input type="email" name="email" value="{{ $email ?? old('email') }}" required class="form-control rounded-3" placeholder="{{__('auth.enter_email')}}">
             </div>
 
             <div>
-                <input type="password" name="password_confirmation"" required class="form-control rounded-3" placeholder="Enter password confirmation">
+                <input type="password" name="password" required class="form-control rounded-3" placeholder="{{__('auth.enter_new_pass')}}">
             </div>
-            <button type="submit" id="save-changes" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">Update password</button>
+
+            <div>
+                <input type="password" name="password_confirmation" required class="form-control rounded-3" placeholder="{{__('auth.confirm_new_pass')}}">
+            </div>
+            <button type="submit" id="save-changes" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">{{__('auth.submit.update_pass')}}</button>
         </form>
     </div>
 </body>

@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 rounded-4 shadow-lg p-4">
             <div class="mb-3 d-flex justify-content-between align-items-start">
-                <h5 class="fw-bold text-secondary mb-3" id="modalTitle">Group</h5>
+                <h5 class="fw-bold text-secondary mb-3" id="modalTitle">{{__('group.title')}}</h5>
                 <img id="deleteBtn" class="cursor-pointer d-none" src="{{ Vite::asset('resources/svg/trash.svg') }}" alt="delete" width="20" height="20">
             </div>
             <div class="mb-3">
@@ -12,7 +12,7 @@
 
                         <div id="img-label-text" class="d-flex flex-column align-items-center z-0">
                             <img src="{{ Vite::asset('resources/svg/file.svg') }}" alt="Upload" class="opacity-50 mb-2" style="width: 80px; height: auto;">
-                            <span class="small text-muted fw-bold">Click to upload image</span>
+                            <span class="small text-muted fw-bold">{{__('group.create.img_placeholder')}}</span>
                         </div>
 
                         <input type="file" id="event-image-upload" class="d-none" accept="image/png, image/jpg, image/webp, image/jpeg">
@@ -21,23 +21,23 @@
                 </div>
             </div>
             <div class="mb-3">
-                <input type="text" id="titleInput" class="form-control rounded-pill border-secondary-subtle px-4 py-2" placeholder="Group name">
-                <textarea id="descriptionInput" class="form-control rounded-4 border-secondary-subtle px-4 py-2 mt-2" placeholder="Description" rows="2"></textarea>
+                <input type="text" id="titleInput" class="form-control rounded-pill border-secondary-subtle px-4 py-2" placeholder="{{__('group.create.title_placeholder')}}">
+                <textarea id="descriptionInput" class="form-control rounded-4 border-secondary-subtle px-4 py-2 mt-2" placeholder="{{__('group.create.description_placeholder')}}" rows="2"></textarea>
             </div>
             <div id="searchSection">
                 <div class="position-relative mb-1">
-                    <input type="text" id="searchInput" class="form-control rounded-pill border-secondary-subtle px-4 py-2" placeholder="Search for a person">
+                    <input type="text" id="searchInput" class="form-control rounded-pill border-secondary-subtle px-4 py-2" placeholder="{{__('group.create.search')}}">
                 </div>
                 <div id="userBulletList" class="d-flex flex-column gap-1 mb-2"></div>
             </div>
             <div class="mt-3">
-                <label class="small fw-bold text-muted mb-2 ms-2">Members</label>
+                <label class="small fw-bold text-muted mb-2 ms-2">{{__('group.show.members')}}</label>
                 <div id="addedMembers" class="d-flex flex-column gap-2"></div>
             </div>
             <div class="border-0 pt-4 d-flex flex-column gap-2">
                 <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-secondary rounded-pill px-4 flex-grow-1" data-bs-dismiss="modal">Close</button>
-                    <button type="button" id="saveGroup" class="btn btn-primary rounded-pill px-4 fw-bold flex-grow-1">Save Group</button>
+                    <button type="button" class="btn btn-secondary rounded-pill px-4 flex-grow-1" data-bs-dismiss="modal">{{__('group.show.close')}}</button>
+                    <button type="button" id="saveGroup" class="btn btn-primary rounded-pill px-4 fw-bold flex-grow-1">{{__('group.create.submit')}}</button>
                 </div>
                 <div id="errorHandler" class="text-danger small text-center"></div>
             </div>

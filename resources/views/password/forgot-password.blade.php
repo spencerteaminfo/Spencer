@@ -7,11 +7,11 @@
         @if (session('status'))
             <div class="alert alert-success">{{ session('status') }}</div>
         @endif
-        <h2 class="h3 fw-bold mb-4 text-secondary">Reset password link</h2>
+        <h2 class="h3 fw-bold mb-4 text-secondary">{{__('auth.reset_password')}}</h2>
         <form method="POST" action="{{ route('api.password.email') }}" class="d-flex gap-2 flex-column">
             @csrf
-            <input type="email" name="email" required placeholder="Enter your email" class="form-control rounded-3">
-            <button type="submit" id="save-changes" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">Send link</button>
+            <input type="email" name="email" required placeholder="{{__('auth.email_placeholder')}}" class="form-control rounded-3">
+            <button type="submit" id="save-changes" class="btn btn-primary w-100 py-2 fw-bold shadow-sm">{{__('auth.submit.send_link')}}</button>
         </form>
     </div>
 </body>

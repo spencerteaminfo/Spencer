@@ -26,24 +26,24 @@
 
                             <div class="col-12 col-md-8">
                                 <div class="card border-0 shadow-sm rounded-4 p-4">
-                                    <h5 class="fw-bold text-secondary mb-4">Profile Information</h5>
+                                    <h5 class="fw-bold text-secondary mb-4">{{__('setting.info')}}</h5>
 
                                     <div class="mb-3">
-                                        <label class="form-label small text-muted ms-1">First Name</label>
+                                        <label class="form-label small text-muted ms-1">{{__('setting.first_name')}}</label>
                                         <div class="position-relative">
                                             <h4>{{$user->first_name}}</h4>
                                         </div>
                                     </div>
 
                                     <div class="mb-3">
-                                        <label class="form-label small text-muted ms-1">Surname</label>
+                                        <label class="form-label small text-muted ms-1">{{__('setting.last_name')}}</label>
                                         <div class="position-relative">
                                             <h4>{{$user->last_name}}</h4>
                                         </div>
                                     </div>
 
                                     <div class="mb-0">
-                                        <label class="form-label small text-muted ms-1">Email</label>
+                                        <label class="form-label small text-muted ms-1">{{__('setting.email')}}</label>
                                         <div class="position-relative">
                                             <h4>{{$user->email}}</h4>
                                         </div>
