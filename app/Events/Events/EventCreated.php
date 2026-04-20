@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Events;
 
 use App\Models\Event;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Auth\Authenticatable;
 
 class EventCreated
 {

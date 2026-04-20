@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\NotificationMarkedRead;
-use App\Events\NotificationsMarkedRead;
+use App\Events\Notifications\NotificationMarkedRead;
+use App\Events\Notifications\NotificationsMarkedRead;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
