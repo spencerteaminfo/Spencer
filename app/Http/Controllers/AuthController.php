@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Users\UserRegistered;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -9,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
-use App\Events\UserRegistered;
 
 class AuthController extends Controller
 {

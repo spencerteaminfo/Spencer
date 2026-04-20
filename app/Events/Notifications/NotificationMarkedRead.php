@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Notifications;
 
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Auth\Authenticatable;
 
 class NotificationMarkedRead
 {

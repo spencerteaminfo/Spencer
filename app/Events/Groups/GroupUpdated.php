@@ -1,25 +1,24 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Groups;
 
-use App\Models\Event;
+use App\Models\Group;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Auth\Authenticatable;
 
-class EventUpdated
+class GroupUpdated
 {
     use Dispatchable, SerializesModels;
 
-    public Event $event;
+    public Group $group;
     public ?Authenticatable $actor;
     public array $changes;
 
-    public function __construct(Event $event, ?Authenticatable $actor = null, array $changes = [])
+    public function __construct(Group $group, ?Authenticatable $actor = null, array $changes = [])
     {
-        $this->event = $event;
+        $this->group = $group;
         $this->actor = $actor;
         $this->changes = $changes;
     }
 }
-

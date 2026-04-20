@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Events\AttendanceUpdated;
+use App\Events\Events\EventCreated;
+use App\Events\Events\EventUpdated;
 use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\Membership;
@@ -13,9 +16,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Events\EventCreated;
-use App\Events\EventUpdated;
-use App\Events\AttendanceUpdated;
 
 class EventController extends Controller
 {

@@ -3,26 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleType;
+use App\Events\Groups\GroupCreated;
+use App\Events\Groups\GroupDeleted;
+use App\Events\Groups\GroupUpdated;
+use App\Events\Groups\Members\GroupMemberRoleUpdated;
+use App\Events\Groups\Members\GroupMembersAdded;
+use App\Events\Groups\Members\GroupMembersRemoved;
+use App\Events\Groups\Members\GroupMembersRolesUpdated;
 use App\Models\Group;
 use App\Models\Membership;
 use App\Models\Role;
 use App\Models\User;
 use App\Rules\MapKeysExist;
 use App\Rules\MatchUserIdsRule;
+use App\Services\SearchService;
 use App\Services\StorageService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
-use App\Services\SearchService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
-use App\Events\GroupCreated;
-use App\Events\GroupMembersAdded;
-use App\Events\GroupUpdated;
-use App\Events\GroupMembersRemoved;
-use App\Events\GroupMembersRolesUpdated;
-use App\Events\GroupMemberRoleUpdated;
-use App\Events\GroupDeleted;
 
 class GroupController extends Controller
 {

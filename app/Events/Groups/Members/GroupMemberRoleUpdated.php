@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Groups\Members;
 
 use App\Models\Group;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Auth\Authenticatable;
 
 class GroupMemberRoleUpdated
 {
