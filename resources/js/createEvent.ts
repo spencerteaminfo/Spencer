@@ -72,7 +72,10 @@ submitBtn.addEventListener("click", async (e)=>{
     formData.append("to", to.value);
     // Only one group
     if (selectedGroupsIds.length > 0) {
-        formData.append("group_id", selectedGroupsIds[0]!.toString());
+        console.log(JSON.stringify(selectedGroupsIds));
+        selectedGroupsIds.forEach(numeric => {
+            formData.append("groups_ids", numeric.toString());
+        });
     }
 
     if (img.files && img.files?.[0]) {
@@ -82,7 +85,6 @@ submitBtn.addEventListener("click", async (e)=>{
     }
     try{
         submitBtn.disabled=true;
-        console.log(formData);
         const response = await api.post("/api/event", formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
@@ -119,14 +121,14 @@ const createUserCard = (group: Group) => {
     const card = document.createElement('div');
     card.className = "card border border-light-subtle rounded-pill px-3 py-2 w-100";
     card.innerHTML = `
-        <div class="d-flex align-items-center">
+        <div class="add-user-btn d-flex align-items-center">
             <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
                 <img src="https://ui-avatars.com/api/?name=${groupName}&background=E9ECEF&color=6C757D" class="w-100 profile-pic" alt="acc">
             </div>
             <div class="small flex-grow-1">
                 <span class="text-muted"><strong>${groupName}</strong></span>
             </div>
-            <div class="add-user-btn fw-bold text-primary px-2" role="button">+</div>
+            <div class="fw-bold text-primary px-2" role="button">+</div>
         </div>`;
     card.querySelector('.add-user-btn')?.addEventListener('click', () => {
         addMemberToGroup(group);
@@ -138,8 +140,7 @@ const addMemberToGroup = (group: Group, canDelete: boolean = true) => {
     if (!addedMembersContainer) return;
     if (selectedGroupsIds.includes(group.id)) return;
 
-    // selectedGroupsIds.push(group.id);
-    selectedGroupsIds = [group.id];
+    selectedGroupsIds.push(group.id);
 
     const card = document.createElement('div');
     card.className = "card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100";

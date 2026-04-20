@@ -136,6 +136,10 @@ aside.sticky-top {
     cursor: pointer;
 }
 
+.add-user-btn{
+    cursor: pointer;
+}
+
 .hover-bg:hover {
     background-color: rgba(0, 0, 0, 0.05) !important;
 }
