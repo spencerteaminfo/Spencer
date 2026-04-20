@@ -9,19 +9,16 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class UserAddedToEvent extends Notification implements ShouldQueue
+class EventUpdatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-
-    private User $user;
     private Event $event;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(User $user, Event $event)
+    public function __construct(Event $event)
     {
-        $this->user = $user;
         $this->event = $event;
     }
 
@@ -51,10 +48,12 @@ class UserAddedToEvent extends Notification implements ShouldQueue
      *
      * @return array<string, mixed>
      */
-    public function toArray(object $notifiable): array
+    public function toArray($notifiable): array
     {
         return [
-            //
+            'event_id' => $this->event->id,
+            'title' => $this->event->title,
+            'message' => 'A new event has been created.',
         ];
     }
 }
