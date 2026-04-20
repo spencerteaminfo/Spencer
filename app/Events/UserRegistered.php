@@ -10,8 +10,8 @@ class UserRegistered
 {
     use Dispatchable, SerializesModels;
 
-    public $user;
-    public $meta;
+    public ?Authenticatable $user;
+    public array $meta;
 
     public function __construct(?Authenticatable $user, array $meta = [])
     {

@@ -10,8 +10,8 @@ class UserProfileUpdated
 {
     use Dispatchable, SerializesModels;
 
-    public $user;
-    public $changes;
+    public ?Authenticatable $user;
+    public array $changes;
 
     public function __construct(?Authenticatable $user, array $changes = [])
     {

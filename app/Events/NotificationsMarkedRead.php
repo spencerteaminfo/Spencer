@@ -11,7 +11,7 @@ class NotificationsMarkedRead
     use Dispatchable, SerializesModels;
 
     public $notifications;
-    public $actor;
+    public ?Authenticatable $actor;
 
     public function __construct($notifications, ?Authenticatable $actor = null)
     {

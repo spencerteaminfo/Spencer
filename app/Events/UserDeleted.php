@@ -10,8 +10,8 @@ class UserDeleted
 {
     use Dispatchable, SerializesModels;
 
-    public $user;
-    public $actor; // the user who performed the deletion (may be the same)
+    public ?Authenticatable $user;
+    public ?Authenticatable $actor;
 
     public function __construct(?Authenticatable $user, ?Authenticatable $actor = null)
     {
