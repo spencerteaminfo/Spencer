@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Services\SearchService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Events\UserDeleted;
+use App\Events\UserProfileUpdated;
 
 class UserController extends Controller
 {
@@ -48,12 +49,15 @@ class UserController extends Controller
 
         $user->delete();
 
+        event(new UserDeleted($user, $user));
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
+        $userId = $user->id;
         return response()->json([
             'message' => 'Account deleted successfully.',
-            'data' => $user->id
+            'data' => $userId
         ]);
     }
 
@@ -63,6 +67,7 @@ class UserController extends Controller
 
         if ($request->has('delete_avatar')) {
             $user->update(['avatar_url' => null]);
+            event(new UserProfileUpdated($user, ['avatar_url' => null]));
             return response()->json(['status' => 'success', 'path' => null]);
         }
 
@@ -79,6 +84,8 @@ class UserController extends Controller
         }
 
         $user->update($data);
+
+        event(new UserProfileUpdated($user, $data));
 
         return response()->json([
             'message' => 'Profile Updated successfully.',

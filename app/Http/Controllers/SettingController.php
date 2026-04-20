@@ -8,7 +8,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Arr;
+use App\Events\UserSettingsUpdated;
 
 class SettingController extends Controller
 {
@@ -68,8 +68,11 @@ class SettingController extends Controller
 
         $optionsID = array_values($request->input('options', []));
         $user = Auth::user();
-        // sync
+        $previous = $user->settings()->pluck('setting_options.id')->toArray();
+
         $user->settings()->sync($optionsID);
+
+        event(new UserSettingsUpdated($user, $optionsID, $previous));
 
 
         $updatedSettings = $user->settings()->get();

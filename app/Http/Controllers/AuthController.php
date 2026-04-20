@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\View\View;
+use App\Events\UserRegistered;
 
 class AuthController extends Controller
 {
@@ -57,6 +58,8 @@ class AuthController extends Controller
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        event(new UserRegistered($user, ['ip' => $request->ip()]));
 
         Auth::login($user);
         return response()->json([
