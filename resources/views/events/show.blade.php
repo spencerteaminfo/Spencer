@@ -12,27 +12,26 @@
             <div class="row g-4 justify-content-center">
                 <div class="col-lg-8">
                     <div class="card shadow-sm border-0 rounded-4 p-4 mb-4">
-                        <h2 class="h3 fw-bold mb-4 text-secondary">ShowEvent</h2>
                         <div id="title-div" class="mb-3">
-                            <label class="form-label small text-muted">Title</label>
+                            <label class="form-label small text-muted">{{__('event.show.title')}}</label>
                             <p>{{ $event->title }}</p>
                         </div>
 
                         <div id="description-div" class="mb-3">
-                            <label class="form-label small text-muted">Description</label>
+                            <label class="form-label small text-muted">{{__('event.show.description')}}</label>
                             <p>{{ $event->description }}</p>
                         </div>
                         <div class="row g-3 mb-4">
                             <div id="deadline-div" class="col-md-4">
-                                <label class="form-label small text-muted">Deadline</label>
+                                <label class="form-label small text-muted">{{__('event.show.deadline')}}</label>
                                 <p>{{ date('d.m.Y', strtotime($event->deadline))}}</p>
                             </div>
                             <div id="from-div" class="col-md-4">
-                                <label class="form-label small text-muted">From</label>
+                                <label class="form-label small text-muted">{{__('event.show.from')}}</label>
                                 <p>{{ date('d.m.Y', strtotime($event->starts_at))}}</p>
                             </div>
                             <div id="to-div" class="col-md-4">
-                                <label class="form-label small text-muted">To</label>
+                                <label class="form-label small text-muted">{{__('event.show.to')}}</label>
                                 <p>{{ date('d.m.Y', strtotime($event->ends_at))}}</p>
                             </div>
                         </div>
@@ -49,7 +48,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <h4 class="text-muted">Groups:</h4>
+                        <h4 class="text-muted">{{__('event.show.groups')}}</h4>
                         <div id="userBulletList" class="d-flex flex-column gap-1 mb-2" data-groupid="{{$event->group_id}}"></div>
                     </div>
 
@@ -59,23 +58,23 @@
                     </div>
                     <div id="interest-conteiner">
                         <div class="d-flex gap-3 mt-4">
-                            <button id="interested" data-eventId="{{$event->id}}" class="btn btn-primary flex-grow-1 rounded-pill py-2 fw-bold shadow-sm">I'm Interested</button>
-                            <button id="not-interested" class="btn btn-danger flex-grow-1 rounded-pill py-2 fw-bold shadow-sm">Not Interested</button>
+                            <button id="interested" data-eventId="{{$event->id}}" class="btn btn-primary flex-grow-1 rounded-pill py-2 fw-bold shadow-sm">{{__('event.show.interested')}}</button>
+                            <button id="not-interested" class="btn btn-danger flex-grow-1 rounded-pill py-2 fw-bold shadow-sm">{{__('event.show.not_interested')}}</button>
                         </div>
                     </div>
-                    
+
                 </div>
 
                 <div class="col-lg-4" id="attendance-panel">
                     <div class="card shadow-sm border-0 rounded-4 p-4 h-100">
-                        <h2 class="h4 text-center fw-bold mb-4 text-secondary">Attendance</h2>
+                        <h2 class="h4 text-center fw-bold mb-4 text-secondary">{{__('event.show.attendance')}}</h2>
                         <div>
-                            <span class="d-block small text-muted mb-3">Interested</span>
-                            <div id="interested-container"></div>                            
+                            <span class="d-block small text-muted mb-3">{{__('event.show.are_interested')}}</span>
+                            <div id="interested-container"></div>
                         </div>
 
                         <div>
-                            <span class="d-block small text-muted mb-3">Not Interested</span>
+                            <span class="d-block small text-muted mb-3">{{__('event.show.are_not_interested')}}</span>
                             <div id="not-interested-container">
 
                             </div>
