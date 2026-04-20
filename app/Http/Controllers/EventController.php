@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Events\AttendanceUpdated;
+use App\Events\Events\EventCreated;
+use App\Events\Events\EventUpdated;
 use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\Membership;
+use App\Models\User;
 use App\Services\SearchService;
 use App\Services\StorageService;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -56,8 +60,8 @@ class EventController extends Controller
     {
         $user = auth()->user();
 
-        if (!$user->groups->contains($event->group_id)) {
-            return back();
+        if (!($user instanceof User) || !$user->groups->contains($event->group_id)) {
+            abort(403, 'Unauthorized action.');
         }
 
         return view('events.show', compact('event'));
@@ -68,7 +72,8 @@ class EventController extends Controller
      */
     public function searchUsersAndGroups(Request $request) : JsonResponse
     {
-        $groupIDs = auth()->user()->groups()->pluck('groups.id');
+        $user = auth()->user();
+        $groupIDs = $user->groups()->pluck('groups.id');
         $users = $this->searchService->users($request);
         $groups = $this->searchService->groups($request)
         ->whereIn('id', $groupIDs)
@@ -145,15 +150,19 @@ class EventController extends Controller
 
         $memberships = $event->group->memberships;
 
+        $attendanceIds = [];
         foreach ($memberships as $membership) {
-            Attendance::create([
+            $attendance = Attendance::create([
                 'membership_id'  => $membership->id,
                 'event_id' => $event->id,
                 'attends' => false,
                 'created_at' => now(),
                 'updated_at' => now()
             ]);
+            $attendanceIds[] = $attendance->id;
         }
+
+        event(new EventCreated($event, auth()->user(), $attendanceIds));
 
         return response()->json([
             'message' => 'Event created successfully',
@@ -187,6 +196,8 @@ class EventController extends Controller
             'ends_at'     => $data['to'],
             'thumbnail_url'    => $data['img_path'] ?? $event->img_path,
         ]);
+
+        event(new EventUpdated($event, auth()->user(), $data));
 
         return response()->json([
             'message' => 'Event updated successfully',
@@ -237,6 +248,7 @@ class EventController extends Controller
         if ($attendance) {
             $attendance->attends = $data['attends'];
             $attendance->save();
+            event(new AttendanceUpdated($attendance, auth()->user()));
         }
 
         return response()->json([

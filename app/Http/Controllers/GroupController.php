@@ -3,16 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleType;
+use App\Events\Groups\GroupCreated;
+use App\Events\Groups\GroupDeleted;
+use App\Events\Groups\GroupUpdated;
+use App\Events\Groups\Members\GroupMemberRoleUpdated;
+use App\Events\Groups\Members\GroupMembersAdded;
+use App\Events\Groups\Members\GroupMembersRemoved;
+use App\Events\Groups\Members\GroupMembersRolesUpdated;
 use App\Models\Group;
 use App\Models\Membership;
 use App\Models\Role;
 use App\Models\User;
 use App\Rules\MapKeysExist;
 use App\Rules\MatchUserIdsRule;
+use App\Services\SearchService;
 use App\Services\StorageService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
-use App\Services\SearchService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -82,13 +89,20 @@ class GroupController extends Controller
 
             $requester = auth()->user();
 
+            $addedUserIds = [];
             if (!empty($data['users_ids'])) {
                 foreach ($data['users_ids'] as $userId) {
                     if ($userId == $requester->id) continue;
 
                     $roleId = $data['users_roles'][$userId] ?? null;
                     $this->storeMember($userId, $group, $roleId);
+                    $addedUserIds[] = $userId;
                 }
+            }
+
+            event(new GroupCreated($group, $requester, $addedUserIds));
+            if (!empty($addedUserIds)) {
+                event(new GroupMembersAdded($group, $addedUserIds, $requester));
             }
 
             return response()->json([
@@ -123,6 +137,9 @@ class GroupController extends Controller
         }
 
         $group->update($updateData);
+
+        $actor = auth()->user();
+        event(new GroupUpdated($group, $actor, $updateData));
 
         return response()->json([
             'message' => 'Updated',
@@ -174,6 +191,10 @@ class GroupController extends Controller
             }
         }
 
+        if (!empty($addedUserIds)) {
+            event(new GroupMembersAdded($group, $addedUserIds, $requester));
+        }
+
         $newMembers = User::whereIn('id', $addedUserIds)->get();
 
         return response()->json([
@@ -197,6 +218,9 @@ class GroupController extends Controller
         ]);
 
         $group->users()->detach($data['users_ids']);
+
+        $actor = auth()->user();
+        event(new GroupMembersRemoved($group, $data['users_ids'], $actor));
 
         return response()->json([
             'message' => 'Deleted',
@@ -222,6 +246,9 @@ class GroupController extends Controller
                 ->update(['role_id' => $roleId]);
         }
 
+        $actor = auth()->user();
+        event(new GroupMembersRolesUpdated($group, $data['users_roles'], $actor));
+
         return response()->json([
             'message' => "Updated users' roles",
             'data' => $memberships
@@ -243,6 +270,9 @@ class GroupController extends Controller
             ->where('group_id', $group->id)
             ->update(['role_id' => $data['role_id']]);
 
+        $actor = auth()->user();
+        event(new GroupMemberRoleUpdated($group, $data['user_id'], $data['role_id'], $actor));
+
         return response()->json([
             'message' => "Updated user's membership",
             'data' => $membership
@@ -262,6 +292,9 @@ class GroupController extends Controller
         }
 
         $group->delete();
+
+        $requester = auth()->user();
+        event(new GroupDeleted($group, $requester));
         return response()->json([
             'message' => 'Deleted',
             'data' => $group->id
@@ -270,7 +303,8 @@ class GroupController extends Controller
 
     private function requesterHasAtLeastRole(Group $group, RoleType $roleType): bool
     {
-        $requesterMembership = $this->userMembership(auth()->user(), $group);
+        $user = auth()->user();
+        $requesterMembership = $this->userMembership($user, $group);
         return $requesterMembership->hasAtLeastRole($roleType);
     }
 

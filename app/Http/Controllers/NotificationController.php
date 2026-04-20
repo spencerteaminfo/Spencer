@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Notifications\NotificationMarkedRead;
+use App\Events\Notifications\NotificationsMarkedRead;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Notifications\DatabaseNotification;
 
 class NotificationController extends Controller
 {
@@ -33,13 +34,17 @@ class NotificationController extends Controller
     /**
      * Mark a notification as read.
      */
-    public function read(Notification $notification): JsonResponse
+    public function read(DatabaseNotification $notification): JsonResponse
     {
-        if ($notification->notifiable_id !== auth()->id()) {
+        $actor = auth()->user();
+
+        if ($notification->notifiable_id !== $actor->id) {
             abort(403, 'Neoprávněná akce.');
         }
 
-        $notification->markAsRead();
+        $notification->update(['read_at' => now()]);
+
+        event(new NotificationMarkedRead($notification, $actor));
 
         return response()->json([
                 'message' => 'Notification was marked as read successfully.',
@@ -53,8 +58,13 @@ class NotificationController extends Controller
      */
     public function readAll(): JsonResponse
     {
-        $notifications = auth()->user()->unreadNotifications;
-        $notifications->markAsRead();
+        $actor = auth()->user();
+        $notifications = $actor->unreadNotifications;
+        $notifications->each(function ($n) {
+            $n->update(['read_at' => now()]);
+        });
+
+        event(new NotificationsMarkedRead($notifications, $actor));
 
         return response()->json([
             'message' => 'All notifications were marked as read successfully.',
