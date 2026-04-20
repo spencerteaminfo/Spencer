@@ -4,13 +4,11 @@ namespace App\Models;
 
 use Database\Factories\UserFactory;
 use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use Illuminate\Contracts\Auth\CanResetPassword;
 
 class User extends Authenticatable implements CanResetPassword
@@ -62,7 +60,7 @@ class User extends Authenticatable implements CanResetPassword
     }
 
     /**
-     * Vztah pro načítání skupin uživatele
+     * Relation for loading groups of this user.
      */
     public function groups(): BelongsToMany
     {
@@ -77,7 +75,7 @@ class User extends Authenticatable implements CanResetPassword
                 'email' => $user->getEmailForPasswordReset(),
             ]);
         });
-            
+
         $this->notify(new ResetPassword($token));
     }
 }
