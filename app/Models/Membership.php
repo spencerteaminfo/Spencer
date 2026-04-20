@@ -55,14 +55,15 @@ class Membership extends Model
             foreach ($events as $event) {
                 Attendance::create([
                     'event_id' => $event->id,
-                    'membership_id' => $membership->id,
+                    'user_id' => $membership->user_id,
+                    'group_id' => $membership->group_id,
                     'attends' => false,
                 ]);
             }
         });
 
         static::deleted(function (Membership $membership) {
-            Attendance::where('membership_id', $membership->id)->delete();
+            Attendance::where('user_id', $membership->user_id)->where('group_id', $membership->group_id)->delete();
         });
     }
 }

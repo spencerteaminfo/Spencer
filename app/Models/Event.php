@@ -66,10 +66,8 @@ class Event extends Model
      */
     public function usersQuery(): Builder
     {
-        // users -> memberships -> attendances -> event
         return User::query()
-            ->join('memberships', 'users.id', '=', 'memberships.user_id')
-            ->join('attendances', 'memberships.id', '=', 'attendances.membership_id')
+            ->join('attendances', 'users.id', '=', 'attendances.user_id')
             ->where('attendances.event_id', $this->id)
             ->select('users.*');
     }

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Attendance extends Model
 {
@@ -33,25 +32,13 @@ class Attendance extends Model
         return $this->belongsTo(Event::class);
     }
 
-    public function membership(): BelongsTo
-    {
-        return $this->belongsTo(Membership::class);
-    }
-
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
     }
 
-    public function user(): HasOneThrough
+    public function user(): BelongsTo
     {
-        return $this->hasOneThrough(
-        User::class,
-        Membership::class,
-        'id',
-        'id',
-        'membership_id',
-        'user_id'
-    );
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
