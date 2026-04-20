@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Group;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -14,7 +15,7 @@ class GroupMembersRemoved
     public $removedUserIds;
     public $actor;
 
-    public function __construct(\App\Models\Group $group, array $removedUserIds = [], ?Authenticatable $actor = null)
+    public function __construct(Group $group, array $removedUserIds = [], ?Authenticatable $actor = null)
     {
         $this->group = $group;
         $this->removedUserIds = $removedUserIds;

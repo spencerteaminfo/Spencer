@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Group;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -10,12 +11,12 @@ class GroupMemberRoleUpdated
 {
     use Dispatchable, SerializesModels;
 
-    public $group;
-    public $userId;
-    public $roleId;
-    public $actor;
+    public Group $group;
+    public int $userId;
+    public int $roleId;
+    public ?Authenticatable $actor;
 
-    public function __construct(\App\Models\Group $group, int $userId, int $roleId, ?Authenticatable $actor = null)
+    public function __construct(Group $group, int $userId, int $roleId, ?Authenticatable $actor = null)
     {
         $this->group = $group;
         $this->userId = $userId;
