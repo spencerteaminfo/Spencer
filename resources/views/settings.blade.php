@@ -35,7 +35,6 @@
                                         @endphp
                                         <img id="avatarDisplay" src="{{ $profilePic }}" class="w-100 h-100 rounded-circle border object-fit-cover" alt="profile picture">
                                     </div>
-                                    <p>Current Locale: {{ App::currentLocale() }}</p>
                                     <input type="file" id="profilePicInput" class="d-none" accept="image/*">
                                 </div>
                             </div>
