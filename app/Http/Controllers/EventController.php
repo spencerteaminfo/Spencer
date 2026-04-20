@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class EventController extends Controller
@@ -56,7 +57,7 @@ class EventController extends Controller
     /**
      * Show detail of specific event
      */
-    public function show(Event $event): View
+    public function show(Event $event): View|RedirectResponse
     {
         $user = auth()->user();
         $eventGroupIds = $event->groups()->pluck('groups.id');
@@ -155,10 +156,12 @@ class EventController extends Controller
             ]);
         }
 
+        $user = auth()->user();
+
         $event = Event::create([
             'title' => $data['title'],
             'description' => $data['description'],
-            'creator_id' => auth()->user()->id,
+            'creator_id' => $user->id,
             'deadline' => $data['deadline'],
             'starts_at' => $data['from'],
             'ends_at' => $data['to'],
@@ -326,13 +329,7 @@ class EventController extends Controller
         return response()->json(['message' => 'Removed', 'data' => $event->load(['groups', 'users'])], 200);
     }
 
-    /**
-     * @param Collection $userIds
-     * @param Event $event
-     * @param Collection $groupIds
-     * @return \Illuminate\Support\Collection
-     */
-    private function collectAttendanceEntries(Collection $userIds, Event $event, Collection $groupIds): \Illuminate\Support\Collection
+    private function collectAttendanceEntries(\Illuminate\Support\Collection $userIds, Event $event, \Illuminate\Support\Collection $groupIds): \Illuminate\Support\Collection
     {
         $attendanceEntries = collect();
 
@@ -351,7 +348,7 @@ class EventController extends Controller
     {
         $user = auth()->user();
 
-        if ($event->cretor_id != $user->id) {
+        if ($event->creator_id != $user->id) {
             abort(403, 'Unauthorized action.');
         }
     }
