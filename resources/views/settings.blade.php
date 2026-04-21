@@ -77,7 +77,7 @@
                                                        'czech' => 'Čeština',
                                                        'english' => 'English',
                                                        'german' => 'Deutsch',
-                                                       'theme' => 'Dark theme'
+                                                       'theme' => __('setting.dark_theme'),
                                                    ];
                                                $settingName = $customLabels[$setting->name] ?? ucfirst($setting->name);
                                             @endphp

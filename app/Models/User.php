@@ -78,4 +78,21 @@ class User extends Authenticatable implements CanResetPassword
 
         $this->notify(new ResetPassword($token));
     }
+
+    public function HasLocalePreference():string
+    {
+        $lang = $this->settings()
+            ->whereHas('setting', fn($query) => $query->where('name', 'language'))
+            ->first();
+
+        if ($lang) {
+            return match($lang->option_data) {
+                'czech' => 'cz',
+                'english' => 'en',
+                'german' => 'de',
+                default => 'en',
+            };
+        }
+        return 'en';
+    }
 }
