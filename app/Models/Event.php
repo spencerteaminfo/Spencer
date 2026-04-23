@@ -21,6 +21,8 @@ class Event extends Model
     protected $fillable = [
         'title',
         'description',
+        'price',
+        'currency',
         'deadline',
         'starts_at',
         'ends_at',
@@ -31,6 +33,9 @@ class Event extends Model
     {
         return [
             'id' => 'integer',
+            'description' => 'string',
+            'price' => 'decimal:2',
+            'currency' => 'string',
             'created_at' => 'datetime',
             'deadline' => 'datetime',
             'starts_at' => 'datetime',
@@ -47,6 +52,16 @@ class Event extends Model
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    /**
+     * Get the payments of the users for this group
+     *
+     * @return HasMany
+     */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 
     /**
