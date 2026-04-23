@@ -64,6 +64,9 @@ Route::get('/event/{event}/attendance', [EventController::class, 'attendances'])
 Route::post('/event', [EventController::class, 'store'])
     ->middleware(['web', 'auth:sanctum'])
     ->name('api.event.store');
+Route::post('/event/{event}/attendees', [EventController::class, 'storeAttendees'])
+    ->middleware(['web', 'auth:sanctum'])
+    ->name('api.event.store');
 
 // patch
 Route::patch('/event/{event}', [EventController::class, 'update'])
@@ -72,6 +75,14 @@ Route::patch('/event/{event}', [EventController::class, 'update'])
 Route::patch('/event/{event}/attendance', [EventController::class, 'setAttendance'])
     ->middleware(['web', 'auth:sanctum'])
     ->name('api.event.setAttendance');
+
+// delete
+Route::delete('/event/{event}', [EventController::class, 'destroy'])
+    ->middleware(['web', 'auth:sanctum'])
+    ->name('api.event.store');
+Route::delete('/event/{event}/attendees', [EventController::class, 'destroyAttendees'])
+    ->middleware(['web', 'auth:sanctum'])
+    ->name('api.event.store');
 
 // GROUP ROUTES
 // get

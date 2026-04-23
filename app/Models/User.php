@@ -67,6 +67,15 @@ class User extends Authenticatable implements CanResetPassword
         return $this->belongsToMany(Group::class, 'memberships', 'user_id', 'group_id');
     }
 
+    /**
+     * The events this user is individually bound to.
+     */
+    public function events(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class)->withTimestamps();
+    }
+
+
     public function sendPasswordResetNotification($token) : void
     {
         ResetPassword::createUrlUsing(function ($user, string $token) {

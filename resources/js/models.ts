@@ -41,8 +41,9 @@ export interface Group {
 
 export interface Attendance {
     event_id: number;
-    membership_id: number;
-    attends: Attendance[];
+    user_id: number;
+    group_id: number | null;
+    attends: boolean;
 }
 
 export interface setting {

@@ -1,4 +1,4 @@
-import api from './bootstrap'; 
+import api from './bootstrap';
 
 document.addEventListener("DOMContentLoaded", async()=>{
     const addedMembersContainer = document.getElementById("userBulletList") as HTMLDivElement;
@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
     const TrueAttendece = document.getElementById("interested");
     const FalseAttendence = document.getElementById("not-interested");
     const event = TrueAttendece?.dataset.eventid;
-    const membersGroup = await api.get("/api/group/"+groupId+"/members"); 
+    const membersGroup = await api.get("/api/group/"+groupId+"/members");
     const members = membersGroup.data.data;
     const groupRes = await api.get("/api/groups", { params: { title: "" } });
     const groups = groupRes.data.data;
@@ -46,17 +46,17 @@ document.addEventListener("DOMContentLoaded", async()=>{
                 <img src="https://ui-avatars.com/api/?name=${member.email}&background=198754&color=fff" class="w-100" alt="user">
             </div>
             <span class="small fw-medium">${member.email}</span>`;
-        
+
         attendanceBox?.append(notIterestedDiv);
     });
-    
+
     TrueAttendece?.addEventListener("click", async ()=>{
         try{
             const response = await api.patch("/api/event/"+event+"/attendance", {
                 user_id: currentUserId,
                 attends: true,
             });
- 
+
 
             const memberDiv = document?.getElementById("member-"+currentUserId) as HTMLDivElement;
             memberDiv?.remove();
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
         } catch (e: any){
             console.error("Error: "+e);
         }
-        
+
     })
     FalseAttendence?.addEventListener("click", async ()=>{
         try{
@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
         } catch (e: any){
             console.log("Error: "+e);
         }
-        
+
     })
 })
 function showAttendanceSuccessNotification(message: string = 'Attendance byla úspěšně změněna'): void {
@@ -92,14 +92,14 @@ function showAttendanceSuccessNotification(message: string = 'Attendance byla ú
     alertDiv.innerHTML = `${message}`;
 
     const container: HTMLElement | null = document.getElementById('interest-conteiner');
-    
+
     if (container) {
         container.append(alertDiv);
     }
 
     setTimeout(() => {
         alertDiv.classList.remove('show');
-        
+
         setTimeout(() => alertDiv.remove(), 150);
     }, 3000);
 }

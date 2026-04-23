@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Attendance extends Model
 {
     protected $fillable = [
         'event_id',
-        'membership_id',
+        'user_id',
+        'group_id',
         'attends'
     ];
 
@@ -18,30 +18,27 @@ class Attendance extends Model
     {
         return [
             'event_id' => 'integer',
-            'membership_id' => 'integer',
+            'user_id' => 'integer',
+            'group_id' => 'integer',
             'attends' => 'boolean',
         ];
     }
 
+    /**
+     * The event this attendance record is for.
+     */
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);
     }
 
-    public function membership(): BelongsTo
+    public function group(): BelongsTo
     {
-        return $this->belongsTo(Membership::class);
+        return $this->belongsTo(Group::class);
     }
 
-    public function user(): HasOneThrough
+    public function user(): BelongsTo
     {
-        return $this->hasOneThrough(
-        User::class,
-        Membership::class,
-        'id',
-        'id',
-        'membership_id',
-        'user_id'
-    );
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

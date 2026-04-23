@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
 /**
  * @property Carbon|null $created_at
@@ -24,19 +24,18 @@ class Event extends Model
         'deadline',
         'starts_at',
         'ends_at',
-        'group_id',
         'thumbnail_url'
     ];
 
     protected function casts(): array
     {
         return [
-            'event_id' => 'integer',
+            'id' => 'integer',
             'created_at' => 'datetime',
             'deadline' => 'datetime',
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
-            'group_id' => 'integer'
+            'is_all_day' => 'boolean',
         ];
     }
 
@@ -50,8 +49,36 @@ class Event extends Model
         return $this->hasMany(Attendance::class);
     }
 
-    public function group(): BelongsTo
+    /**
+     * Many-to-many relationship: Event may belong to multiple Groups via pivot table `event_group`.
+     */
+    public function groups(): BelongsToMany
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsToMany(Group::class, 'event_group', 'event_id', 'group_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * Build a query for Users associated with this Event via memberships and attendances.
+     * Returns a query builder so callers can further chain (->where, ->paginate, etc.).
+     *
+     * @return Builder
+     */
+    public function usersQuery(): Builder
+    {
+        return User::query()
+            ->join('attendances', 'users.id', '=', 'attendances.user_id')
+            ->where('attendances.event_id', $this->id)
+            ->select('users.*');
+    }
+
+    /**
+     * Get a collection of User models associated with this Event (attendees).
+     *
+     * @return EloquentCollection
+     */
+    public function users(): EloquentCollection
+    {
+        return $this->usersQuery()->get();
     }
 }

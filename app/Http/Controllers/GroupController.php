@@ -3,23 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleType;
-use App\Events\Groups\GroupCreated;
-use App\Events\Groups\GroupDeleted;
-use App\Events\Groups\GroupUpdated;
-use App\Events\Groups\Members\GroupMemberRoleUpdated;
-use App\Events\Groups\Members\GroupMembersAdded;
-use App\Events\Groups\Members\GroupMembersRemoved;
-use App\Events\Groups\Members\GroupMembersRolesUpdated;
 use App\Models\Group;
 use App\Models\Membership;
 use App\Models\Role;
 use App\Models\User;
 use App\Rules\MapKeysExist;
 use App\Rules\MatchUserIdsRule;
-use App\Services\SearchService;
+use App\Services\MembershipService;
 use App\Services\StorageService;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
+use App\Services\SearchService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -28,11 +21,13 @@ class GroupController extends Controller
 {
     protected SearchService $searchService;
     protected StorageService $storageService;
+    protected MembershipService $membershipService;
 
-    public function __construct(SearchService $groupService, StorageService $storageService)
+    public function __construct(SearchService $groupService, StorageService $storageService, MembershipService $membershipService)
     {
         $this->searchService = $groupService;
         $this->storageService = $storageService;
+        $this->membershipService = $membershipService;
     }
 
     /**
@@ -89,20 +84,13 @@ class GroupController extends Controller
 
             $requester = auth()->user();
 
-            $addedUserIds = [];
             if (!empty($data['users_ids'])) {
                 foreach ($data['users_ids'] as $userId) {
                     if ($userId == $requester->id) continue;
 
                     $roleId = $data['users_roles'][$userId] ?? null;
                     $this->storeMember($userId, $group, $roleId);
-                    $addedUserIds[] = $userId;
                 }
-            }
-
-            event(new GroupCreated($group, $requester, $addedUserIds));
-            if (!empty($addedUserIds)) {
-                event(new GroupMembersAdded($group, $addedUserIds, $requester));
             }
 
             return response()->json([
@@ -117,7 +105,7 @@ class GroupController extends Controller
      */
     public function update(Request $request, Group $group): JsonResponse
     {
-        if (!$this->requesterHasAtLeastRole($group, RoleType::CASHIER)) {
+        if (!$this->membershipService->hasAtLeastRole(auth()->user(), $group, RoleType::CASHIER)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -137,9 +125,6 @@ class GroupController extends Controller
         }
 
         $group->update($updateData);
-
-        $actor = auth()->user();
-        event(new GroupUpdated($group, $actor, $updateData));
 
         return response()->json([
             'message' => 'Updated',
@@ -163,7 +148,7 @@ class GroupController extends Controller
     public function addMembers(Request $request, Group $group): JsonResponse
     {
         $requester = auth()->user();
-        $requesterMembership = $this->userMembership($requester, $group);
+        $requesterMembership = $this->membershipService->getUserMembership($requester, $group);
 
         if (!$requesterMembership->hasAtLeastRole(RoleType::CASHIER)) {
             abort(403, 'Unauthorized action.');
@@ -191,10 +176,6 @@ class GroupController extends Controller
             }
         }
 
-        if (!empty($addedUserIds)) {
-            event(new GroupMembersAdded($group, $addedUserIds, $requester));
-        }
-
         $newMembers = User::whereIn('id', $addedUserIds)->get();
 
         return response()->json([
@@ -208,7 +189,7 @@ class GroupController extends Controller
      */
     public function destroyMembers(Request $request, Group $group): JsonResponse
     {
-        if (!$this->requesterHasAtLeastRole($group, RoleType::CASHIER)) {
+        if (!$this->membershipService->hasAtLeastRole(auth()->user(), $group, RoleType::CASHIER)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -219,9 +200,6 @@ class GroupController extends Controller
 
         $group->users()->detach($data['users_ids']);
 
-        $actor = auth()->user();
-        event(new GroupMembersRemoved($group, $data['users_ids'], $actor));
-
         return response()->json([
             'message' => 'Deleted',
             'data' => array_values($data['users_ids'])
@@ -230,7 +208,7 @@ class GroupController extends Controller
 
     public function updateMembers(Request $request, Group $group): JsonResponse
     {
-        if (!$this->requesterHasAtLeastRole($group, RoleType::OWNER)) {
+        if (!$this->membershipService->hasAtLeastRole(auth()->user(), $group, RoleType::OWNER)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -246,9 +224,6 @@ class GroupController extends Controller
                 ->update(['role_id' => $roleId]);
         }
 
-        $actor = auth()->user();
-        event(new GroupMembersRolesUpdated($group, $data['users_roles'], $actor));
-
         return response()->json([
             'message' => "Updated users' roles",
             'data' => $memberships
@@ -257,7 +232,7 @@ class GroupController extends Controller
 
     public function updateMember(Request $request, Group $group): JsonResponse
     {
-        if (!$this->requesterHasAtLeastRole($group, RoleType::OWNER)) {
+        if (!$this->membershipService->hasAtLeastRole(auth()->user(), $group, RoleType::OWNER)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -269,9 +244,6 @@ class GroupController extends Controller
         $membership = Membership::where('user_id', $data['user_id'])
             ->where('group_id', $group->id)
             ->update(['role_id' => $data['role_id']]);
-
-        $actor = auth()->user();
-        event(new GroupMemberRoleUpdated($group, $data['user_id'], $data['role_id'], $actor));
 
         return response()->json([
             'message' => "Updated user's membership",
@@ -285,34 +257,17 @@ class GroupController extends Controller
     public function destroy(Group $group): JsonResponse
     {
         $requester = auth()->user();
-        $requesterMembership = $this->userMembership($requester, $group);
+        $requesterMembership = $this->membershipService->getUserMembership($requester, $group);
 
         if (!$requesterMembership->hasAtLeastRole(RoleType::OWNER)) {
             abort(403, 'Unauthorized action.');
         }
 
         $group->delete();
-
-        $requester = auth()->user();
-        event(new GroupDeleted($group, $requester));
         return response()->json([
             'message' => 'Deleted',
             'data' => $group->id
         ], 200);
-    }
-
-    private function requesterHasAtLeastRole(Group $group, RoleType $roleType): bool
-    {
-        $user = auth()->user();
-        $requesterMembership = $this->userMembership($user, $group);
-        return $requesterMembership->hasAtLeastRole($roleType);
-    }
-
-    private function userMembership(Authenticatable $user, Group $group): ?Membership
-    {
-        return Membership::where('user_id', $user->id)
-            ->where('group_id', $group->id)
-            ->first();
     }
 
     private function isMember(int $userId, Group $group): bool
