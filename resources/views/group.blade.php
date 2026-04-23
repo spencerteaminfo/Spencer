@@ -12,12 +12,12 @@
             <div class="d-flex justify-content-center justify-content-md-start mb-5">
                 <button class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-lg d-flex align-items-center gap-2 border-0" data-bs-toggle="modal" data-bs-target="#groupModal" id="createNewGroupBtn">
                     <span class="fs-4 lh-1 text-white">+</span>
-                    <span>Create New Group</span>
+                    <span>{{__('group.create.init')}}</span>
                 </button>
             </div>
 
             <div id="groups-container" class="row g-4" data-user-id="{{ auth()->id() }}">
-                <div class="col-12 text-center text-muted">Načítám skupiny...</div>
+                <div class="col-12 text-center text-muted">{{__('group.show.loading')}}</div>
             </div>
         </div>
     </div>

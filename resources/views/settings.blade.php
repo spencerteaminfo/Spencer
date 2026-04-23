@@ -5,14 +5,14 @@
 <div id="deleteMenu" class="w-100 h-100 d-none position-fixed start-0 top-0 d-flex align-items-center bg-dark bg-opacity-50" style="z-index: 9999;">
     <div class="w-100 d-flex justify-content-center">
         <div class="card p-5 shadow-lg">
-            <h2 class="text-muted">Are you sure you want to delete account?</h2>
+            <h2 class="text-muted">{{__('setting.delete')}}</h2>
             <form id="deleteAccountForm">
                 <div class="d-flex justify-content-between align-items-center">
                     <button type="submit" id="submitDeleteBtn" class="btn btn-link link-danger p-0 text-decoration-none">
-                        Delete account
+                        {{__('setting.delete_yes')}}
                         <img src="{{ Vite::asset('resources/svg/trash.svg') }}" class="mb-1" alt="Event" width="16" height="16">
                     </button>
-                    <button type="button" id="cancelDelete" class="btn btn-primary">Cancel</button>
+                    <button type="button" id="cancelDelete" class="btn btn-primary">{{__('setting.delete_no')}}</button>
                 </div>
             </form>
         </div>
@@ -44,14 +44,14 @@
                                     <div id="saveSuccess" class="alert alert-success d-none py-1 small mb-2">Saved!</div>
                                     <form id="profileForm">
                                         <div class="mb-3">
-                                            <label class="form-label small text-muted ms-1">First Name</label>
+                                            <label class="form-label small text-muted ms-1">{{__('setting.first_name')}}</label>
                                             <div class="position-relative">
                                                 <input type="text" class="form-control rounded-3 pe-5" value="{{ auth()->user()->first_name ?? "" }}" name="first_name" id="firstName">
                                                 <img id="editFirstName" src="{{ Vite::asset('resources/svg/edit.svg') }}" class="position-absolute end-0 top-50 translate-middle-y me-3 opacity-50 h-50 w-auto cursor-pointer">
                                             </div>
                                         </div>
                                         <div class="mb-0">
-                                            <label class="form-label small text-muted ms-1">Surname</label>
+                                            <label class="form-label small text-muted ms-1">{{__('setting.last_name')}}</label>
                                             <div class="position-relative">
                                                 <input type="text" class="form-control rounded-3 pe-5" value="{{ auth()->user()->last_name ?? "" }}" name="last_name" id="lastName">
                                                 <img id="editLastName" src="{{ Vite::asset('resources/svg/edit.svg') }}" class="position-absolute end-0 top-50 translate-middle-y me-3 opacity-50 h-50 w-auto cursor-pointer">
@@ -66,7 +66,7 @@
                             <div class="col-12 col-md-8 col-lg-6">
                                 <div class="card border-0 shadow-sm rounded-4 p-4">
                                     <div class="text-center mb-4">
-                                        <span class="h5 fw-bold text-secondary">Settings</span>
+                                        <span class="h5 fw-bold text-secondary">{{__('setting.settings')}}</span>
                                         <hr class="mt-2 mb-0 opacity-25">
                                     </div>
                                     <form id="settingsForm">
@@ -77,7 +77,7 @@
                                                        'czech' => 'Čeština',
                                                        'english' => 'English',
                                                        'german' => 'Deutsch',
-                                                       'theme' => 'Dark theme'
+                                                       'theme' => __('setting.dark_theme'),
                                                    ];
                                                $settingName = $customLabels[$setting->name] ?? ucfirst($setting->name);
                                             @endphp
@@ -118,18 +118,18 @@
                                         @endforeach
                                     </form>
                                     <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <span class="fw-medium text-dark">Delete PFP</span>
-                                        <a href="#" id="DeletePFP" class="link-underline link-underline-opacity-0 link-danger link-underline-opacity-0-hover">Delete PFP <img src="{{ Vite::asset('resources/svg/trash.svg') }}" class="mb-1" alt="trashIcon" width="16" height="16"></a>
+                                        <span class="fw-medium text-dark">{{__('setting.delete_pfp')}}</span>
+                                        <a href="#" id="DeletePFP" class="link-underline link-underline-opacity-0 link-danger link-underline-opacity-0-hover">{{__('setting.delete_pfp')}} <img src="{{ Vite::asset('resources/svg/trash.svg') }}" class="mb-1" alt="trashIcon" width="16" height="16"></a>
                                     </div>
 
                                     <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <span class="fw-medium text-dark">Change password</span>
-                                        <a href="#" class="link-underline link-underline-opacity-0 link-primary link-underline-opacity-0-hover">Reset password <img src="{{ Vite::asset('resources/svg/edit-2.svg') }}" class="mb-1" alt="Event" width="16" height="16"></a>
+                                        <span class="fw-medium text-dark">{{__('setting.change_pass')}}</span>
+                                        <a href="#" class="link-underline link-underline-opacity-0 link-primary link-underline-opacity-0-hover">{{__('setting.change_pass')}} <img src="{{ Vite::asset('resources/svg/edit-2.svg') }}" class="mb-1" alt="Event" width="16" height="16"></a>
                                     </div>
 
                                     <div class="d-flex justify-content-between align-items-center mb-4">
-                                        <span class="fw-medium text-dark">Delete account</span>
-                                        <a href="#" id="openDeleteDialog" class="link-underline link-underline-opacity-0 link-danger link-underline-opacity-0-hover">Delete account <img src="{{ Vite::asset('resources/svg/trash.svg') }}" class="mb-1" alt="trashIcon" width="16" height="16"></a>
+                                        <span class="fw-medium text-dark">{{__('setting.delete_account')}}</span>
+                                        <a href="#" id="openDeleteDialog" class="link-underline link-underline-opacity-0 link-danger link-underline-opacity-0-hover">{{__('setting.delete_account')}} <img src="{{ Vite::asset('resources/svg/trash.svg') }}" class="mb-1" alt="trashIcon" width="16" height="16"></a>
                                     </div>
                                 </div>
                             </div>

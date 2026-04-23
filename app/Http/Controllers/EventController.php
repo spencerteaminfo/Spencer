@@ -5,15 +5,13 @@ namespace App\Http\Controllers;
 use App\Enums\RoleType;
 use App\Models\Attendance;
 use App\Models\Event;
-use App\Models\Group;
-use App\Models\Payment;
-use Brick\Money\Money;
 use App\Services\MembershipService;
 use App\Services\SearchService;
 use App\Services\StorageService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -59,13 +57,13 @@ class EventController extends Controller
     /**
      * Show detail of specific event
      */
-    public function show(Event $event): View|RedirectResponse
+    public function show(Event $event): View
     {
         $user = auth()->user();
         $eventGroupIds = $event->groups()->pluck('groups.id');
 
-        if (!$user->groups()->pluck('groups.id')->intersect($eventGroupIds)->count()) {
-            return back();
+        if (!($user instanceof User) || !$user->groups->contains($event->group_id)) {
+            abort(403, 'Unauthorized action.');
         }
 
         return view('events.show', compact('event'));

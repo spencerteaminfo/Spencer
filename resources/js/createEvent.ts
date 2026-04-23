@@ -74,7 +74,7 @@ submitBtn.addEventListener("click", async (e)=>{
     if (selectedGroupsIds.length > 0) {
         console.log(JSON.stringify(selectedGroupsIds));
         selectedGroupsIds.forEach(numeric => {
-            formData.append("groups_ids", numeric.toString());
+            formData.append("group_ids[]", numeric.toString());
         });
     }
 
