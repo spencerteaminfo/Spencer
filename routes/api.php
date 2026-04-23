@@ -59,6 +59,9 @@ Route::get('/events', [EventController::class, 'search'])
 Route::get('/event/{event}/attendance', [EventController::class, 'attendances'])
     ->middleware(['web', 'auth:sanctum'])
     ->name('api.group.attendance'); // List user attendance in the event
+Route::get('/event/{event}/payments', [EventController::class, 'payments'])
+    ->middleware(['web', 'auth:sanctum'])
+    ->name('api.group.payments'); // List user payments in the event
 
 // post
 Route::post('/event', [EventController::class, 'store'])
