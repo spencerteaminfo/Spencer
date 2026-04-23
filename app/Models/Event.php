@@ -77,8 +77,10 @@ class Event extends Model
      *
      * @return EloquentCollection
      */
-    public function users(): EloquentCollection
+    public function users(): BelongsToMany
     {
-        return $this->usersQuery()->get();
+        return $this->belongsToMany(User::class, 'attendances', 'event_id', 'user_id')
+                ->withPivot('group_id', 'attends') // volitelné: pokud chceš mít přístup k těmto datům v pivotu
+                ->withTimestamps();
     }
 }
