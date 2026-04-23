@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleType;
+use App\Events\Events\PaymentUpdated;
 use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\Group;
@@ -370,6 +371,8 @@ class EventController extends Controller
 
         $payment->save();
 
+        event(new PaymentUpdated($payment, auth()->user()));
+
         return response()->json([
             'message' => 'Payment recorded',
             'data' => $payment
@@ -403,6 +406,8 @@ class EventController extends Controller
 
         $payment->save();
 
+        event(new PaymentUpdated($payment, auth()->user()));
+
         return response()->json([
             'message' => 'Payment updated',
             'data' => $payment
@@ -434,6 +439,8 @@ class EventController extends Controller
         $payment->amount_paid = $event->price->getMinorAmount()->toInt();;
 
         $payment->save();
+
+        event(new PaymentUpdated($payment, auth()->user()));
 
         return response()->json([
             'message' => 'Payment marked as paid fully',

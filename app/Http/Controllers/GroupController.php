@@ -3,6 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RoleType;
+use App\Events\Groups\GroupCreated;
+use App\Events\Groups\GroupUpdated;
+use App\Events\Groups\GroupDeleted;
+use App\Events\Groups\Members\GroupMembersAdded;
+use App\Events\Groups\Members\GroupMembersRemoved;
+use App\Events\Groups\Members\GroupMembersRolesUpdated;
 use App\Models\Group;
 use App\Models\Membership;
 use App\Models\Role;
@@ -93,6 +99,9 @@ class GroupController extends Controller
                 }
             }
 
+            $addedUserIds = array_values(array_filter($data['users_ids'] ?? [], fn($id) => $id !== auth()->id()));
+            event(new GroupCreated($group, auth()->user(), $addedUserIds));
+
             return response()->json([
                 'message' => 'Created',
                 'data' => $group
@@ -125,6 +134,9 @@ class GroupController extends Controller
         }
 
         $group->update($updateData);
+
+        $changes = $updateData;
+        event(new GroupUpdated($group, auth()->user(), $changes));
 
         return response()->json([
             'message' => 'Updated',
@@ -178,6 +190,8 @@ class GroupController extends Controller
 
         $newMembers = User::whereIn('id', $addedUserIds)->get();
 
+        event(new GroupMembersAdded($group, $addedUserIds, auth()->user()));
+
         return response()->json([
             'message' => 'Members added',
             'data' => $newMembers
@@ -199,6 +213,8 @@ class GroupController extends Controller
         ]);
 
         $group->users()->detach($data['users_ids']);
+
+        event(new GroupMembersRemoved($group, $data['users_ids'], auth()->user()));
 
         return response()->json([
             'message' => 'Deleted',
@@ -224,6 +240,8 @@ class GroupController extends Controller
                 ->update(['role_id' => $roleId]);
         }
 
+        event(new GroupMembersRolesUpdated($group, $memberships, auth()->user()));
+
         return response()->json([
             'message' => "Updated users' roles",
             'data' => $memberships
@@ -245,6 +263,8 @@ class GroupController extends Controller
             ->where('group_id', $group->id)
             ->update(['role_id' => $data['role_id']]);
 
+        event(new \App\Events\Groups\Members\GroupMemberRoleUpdated($group, $data['user_id'], $data['role_id'], auth()->user()));
+
         return response()->json([
             'message' => "Updated user's membership",
             'data' => $membership
@@ -262,6 +282,8 @@ class GroupController extends Controller
         if (!$requesterMembership->hasAtLeastRole(RoleType::OWNER)) {
             abort(403, 'Unauthorized action.');
         }
+
+        event(new GroupDeleted($group, auth()->user()));
 
         $group->delete();
         return response()->json([
