@@ -72,9 +72,8 @@ submitBtn.addEventListener("click", async (e)=>{
     formData.append("to", to.value);
     // Only one group
     if (selectedGroupsIds.length > 0) {
-        console.log(JSON.stringify(selectedGroupsIds));
-        selectedGroupsIds.forEach(numeric => {
-            formData.append("group_ids[]", numeric.toString());
+        selectedGroupsIds.forEach(num => {
+            formData.append("group_ids[]", num.toString());
         });
     }
 
@@ -90,6 +89,7 @@ submitBtn.addEventListener("click", async (e)=>{
 
     try{
         submitBtn.disabled=true;
+        console.log(formData);
         const response = await api.post("/api/event", formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
