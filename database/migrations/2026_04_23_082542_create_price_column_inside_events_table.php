@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
-            $table->decimal('price', 15, 2)->default(0)->after('description');
-            $table->string('currency', 3);
+            $table->unsignedBigInteger('price_amount')->default(0)->after('description');
+            $table->string('price_currency', 3)->default('CZK')->after('price_amount');
         });
     }
 
@@ -23,8 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('events', function (Blueprint $table) {
-            $table->dropColumn('price');
-            $table->dropColumn('currency');
+            $table->dropColumn('price_amount');
+            $table->dropColumn('price_currency');
         });
     }
 };

@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Enums\RoleType;
 use App\Models\Attendance;
 use App\Models\Event;
+use App\Models\Group;
+use App\Models\Payment;
+use Brick\Money\Money;
 use App\Services\MembershipService;
 use App\Services\SearchService;
 use App\Services\StorageService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -124,9 +126,7 @@ class EventController extends Controller
     {
         return Event::whereHas('groups', function($q) use ($groupIDs) {
             $q->whereIn('groups.id', $groupIDs);
-        })
-            ->latest()
-            ->get();
+        })->latest()->get();
     }
 
     /**
@@ -144,7 +144,9 @@ class EventController extends Controller
             'group_ids.*' => ['integer', 'exists:groups,id'],
             'user_ids' => ['nullable', 'array'],
             'user_ids.*' => ['integer', 'exists:users,id'],
-            'img' => ['nullable', 'image', 'max:4096']
+            'img' => ['nullable', 'image', 'max:4096'],
+            'price_amount' => 'required|numeric',
+            'price_currency' => 'required|string|size:3',
         ]);
 
         $groupIds = collect($data['group_ids'] ?? []);
@@ -165,35 +167,29 @@ class EventController extends Controller
             'deadline' => $data['deadline'],
             'starts_at' => $data['from'],
             'ends_at' => $data['to'],
-            'thumbnail_url' => $this->storageService->image($request->file('img'))
+            'thumbnail_url' => $this->storageService->image($request->file('img')),
+            'price' => Money::of($data['price_amount'], $data['price_currency'])
         ]);
 
         if ($groupIds->isNotEmpty()) $event->groups()->sync($groupIds->all());
         if ($userIds->isNotEmpty()) $event->users()->sync($userIds->all());
 
-        $attendanceEntries = $this->collectAttendanceEntries($userIds, $event, $groupIds);
+        foreach ($this->aggregateUserIds($userIds, $groupIds) as $userId) {
+            Attendance::create([
+                'event_id' => $event->id,
+                'user_id' => $userId,
+            ]);
 
-        Attendance::insert($attendanceEntries->unique(fn($i) => $i['user_id'].$i['group_id'])->toArray());
+            Payment::create([
+                'event_id' => $event->id,
+                'user_id' => $userId,
+            ]);
+        }
 
         return response()->json([
             'message' => 'Event created successfully',
             'data' => $event->load(['groups', 'users'])
         ], 201);
-    }
-
-    /**
-     * Helper to format attendance row
-     */
-    private function makeAttendanceRow($eventId, $userId, $groupId = null): array
-    {
-        return [
-            'event_id'   => $eventId,
-            'user_id'    => $userId,
-            'group_id'   => $groupId,
-            'attends'    => 'PENDING',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
     }
 
     /**
@@ -243,7 +239,19 @@ class EventController extends Controller
     public function attendances(Event $event): JsonResponse
     {
         $attendances = $event->attendances()->with(['user', 'group'])->get();
-        return response()->json(['message' => 'Success', 'data' => $attendances], 200);
+        return response()->json([
+            'message' => 'Success',
+            'data' => $attendances
+        ], 200);
+    }
+
+    public function payments(Event $event): JsonResponse
+    {
+        $payments = $event->payments()->with(['user', 'group'])->get();
+        return response()->json([
+            'message' => 'Success',
+            'data' => $payments
+        ], 200);
     }
 
     /**
@@ -275,16 +283,17 @@ class EventController extends Controller
         $event->groups()->syncWithoutDetaching($groupIds->all());
         $event->users()->syncWithoutDetaching($userIds->all());
 
-        $attendanceEntries = $this->collectAttendanceEntries($userIds, $event, $groupIds);
+        foreach ($this->aggregateUserIds($userIds, $groupIds) as $userId) {
+            Attendance::firstOrCreate([
+                'event_id' => $event->id,
+                'user_id' => $userId,
+                'attends' => false
+            ]);
 
-        $existing = Attendance::where('event_id', $event->id)->get(['user_id', 'group_id']);
-
-        $toInsert = $attendanceEntries->filter(function($row) use ($existing) {
-            return !$existing->where('user_id', $row['user_id'])->where('group_id', $row['group_id'])->first();
-        });
-
-        if ($toInsert->isNotEmpty()) {
-            Attendance::insert($toInsert->toArray());
+            Payment::firstOrCreate([
+                'event_id' => $event->id,
+                'user_id' => $userId,
+            ]);
         }
 
         return response()->json(['message' => 'Attendees updated', 'data' => $event->load(['groups', 'users'])], 200);
@@ -319,29 +328,19 @@ class EventController extends Controller
         if ($groupIds->isNotEmpty()) {
             $event->groups()->detach($groupIds->all());
             $event->attendances()->whereIn('group_id', $groupIds->all())->delete();
+            $event->payments()->whereIn('user_id', $userIds->all())->delete();
         }
 
         if ($userIds->isNotEmpty()) {
             $event->users()->detach($userIds->all());
             $event->attendances()->whereIn('user_id', $userIds->all())->whereNull('group_id')->delete();
+            $event->payments()->whereIn('user_id', $userIds->all())->whereNull('group_id')->delete();
         }
 
-        return response()->json(['message' => 'Removed', 'data' => $event->load(['groups', 'users'])], 200);
-    }
-
-    private function collectAttendanceEntries(\Illuminate\Support\Collection $userIds, Event $event, \Illuminate\Support\Collection $groupIds): \Illuminate\Support\Collection
-    {
-        $attendanceEntries = collect();
-
-        foreach ($userIds as $userId) {
-            $attendanceEntries->push($this->makeAttendanceRow($event->id, $userId, null));
-        }
-
-        $memberships = DB::table('memberships')->whereIn('group_id', $groupIds)->get();
-        foreach ($memberships as $membership) {
-            $attendanceEntries->push($this->makeAttendanceRow($event->id, $membership->user_id, $membership->group_id));
-        }
-        return $attendanceEntries;
+        return response()->json([
+            'message' => 'Removed',
+            'data' => $event->load(['groups', 'users'])
+        ], 200);
     }
 
     private function abortIfRequesterIsNotCreator(Event $event): void
@@ -351,5 +350,19 @@ class EventController extends Controller
         if ($event->creator_id != $user->id) {
             abort(403, 'Unauthorized action.');
         }
+    }
+
+    private function aggregateUserIds($userIds, $groupIds): Collection
+    {
+        $groups = Group::whereIn('id', $groupIds)->with('users')->get();
+
+        $userIdsFromGroups = $groups->flatMap(function ($group) {
+            return $group->users->pluck('id');
+        });
+
+        return collect($userIds)
+            ->merge($userIdsFromGroups)
+            ->unique()
+            ->values();
     }
 }

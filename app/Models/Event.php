@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\MoneyCast;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -35,8 +36,7 @@ class Event extends Model
         return [
             'id' => 'integer',
             'description' => 'string',
-            'price' => 'decimal:2',
-            'currency' => 'string',
+            'price' => MoneyCast::class,
             'created_at' => 'datetime',
             'deadline' => 'datetime',
             'starts_at' => 'datetime',
