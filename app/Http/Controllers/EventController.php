@@ -5,16 +5,18 @@ namespace App\Http\Controllers;
 use App\Enums\RoleType;
 use App\Models\Attendance;
 use App\Models\Event;
+use App\Models\Group;
+use App\Models\Payment;
 use App\Services\MembershipService;
 use App\Services\SearchService;
 use App\Services\StorageService;
+use Brick\Money\Money;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class EventController extends Controller
@@ -236,7 +238,7 @@ class EventController extends Controller
 
     public function attendances(Event $event): JsonResponse
     {
-        $attendances = $event->attendances()->with(['user', 'group'])->get();
+        $attendances = $event->attendances()->with(['user'])->get();
         return response()->json([
             'message' => 'Success',
             'data' => $attendances
@@ -245,7 +247,7 @@ class EventController extends Controller
 
     public function payments(Event $event): JsonResponse
     {
-        $payments = $event->payments()->with(['user', 'group'])->get();
+        $payments = $event->payments()->with(['user'])->get();
         return response()->json([
             'message' => 'Success',
             'data' => $payments

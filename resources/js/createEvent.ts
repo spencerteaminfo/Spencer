@@ -83,6 +83,11 @@ submitBtn.addEventListener("click", async (e)=>{
     } else{
         formData.append("img", "");
     }
+
+    // TODO only a placeholder
+    formData.append("price_amount", "100");
+    formData.append("price_currency", "CZK");
+
     try{
         submitBtn.disabled=true;
         const response = await api.post("/api/event", formData, {

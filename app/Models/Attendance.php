@@ -10,7 +10,6 @@ class Attendance extends Model
     protected $fillable = [
         'event_id',
         'user_id',
-        'group_id',
         'attends'
     ];
 
@@ -19,7 +18,6 @@ class Attendance extends Model
         return [
             'event_id' => 'integer',
             'user_id' => 'integer',
-            'group_id' => 'integer',
             'attends' => 'boolean',
         ];
     }
@@ -30,11 +28,6 @@ class Attendance extends Model
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class);
-    }
-
-    public function group(): BelongsTo
-    {
-        return $this->belongsTo(Group::class);
     }
 
     public function user(): BelongsTo
