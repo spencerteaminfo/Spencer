@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 
@@ -74,7 +75,7 @@ class Event extends Model
     }
 
     /**
-     * Build a query for Users associated with this Event via memberships and attendances.
+     * Build a query for Users associated with this Event via attendances.
      * Returns a query builder so callers can further chain (->where, ->paginate, etc.).
      *
      * @return Builder
@@ -88,12 +89,44 @@ class Event extends Model
     }
 
     /**
-     * Get a collection of User models associated with this Event (attendees).
+     * Many-to-many relation between Event and User through the `attendances` pivot table.
+     * Pivot fields include `group_id` and `attends`.
+     *
+     * @return BelongsToMany
+     */
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'attendances', 'event_id', 'user_id')
+            ->withPivot('group_id', 'attends')
+            ->withTimestamps();
+    }
+
+    /**
+     * Return a Collection of all users "staying" for this event. This merges users from
+     * direct attendances and from memberships of groups attached to this event.
+     * The result is deduplicated by user id and returns User models.
      *
      * @return EloquentCollection
      */
-    public function users(): EloquentCollection
+    public function stayingUsers(): EloquentCollection
     {
-        return $this->usersQuery()->get();
+        // direct users from attendances
+        $direct = $this->users()->get();
+
+        // users from group memberships of groups attached to this event
+        $groupIds = $this->groups()->pluck('groups.id')->toArray();
+        if (empty($groupIds)) {
+            return $direct->unique('id')->values();
+        }
+
+        $memberUserIds = DB::table('memberships')->whereIn('group_id', $groupIds)->pluck('user_id')->toArray();
+
+        if (empty($memberUserIds)) {
+            return $direct->unique('id')->values();
+        }
+
+        $fromGroups = User::whereIn('id', $memberUserIds)->get();
+
+        return $direct->merge($fromGroups)->unique('id')->values();
     }
 }

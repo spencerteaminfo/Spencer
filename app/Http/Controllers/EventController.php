@@ -62,7 +62,7 @@ class EventController extends Controller
         $user = auth()->user();
         $eventGroupIds = $event->groups()->pluck('groups.id');
 
-        if (!$user->groups->pluck('id')->intersect($eventGroupIds)->count()) {
+        if (!$user->groups()->pluck('groups.id')->intersect($eventGroupIds)->count()) {
             return back();
         }
 
@@ -168,8 +168,8 @@ class EventController extends Controller
             'thumbnail_url' => $this->storageService->image($request->file('img'))
         ]);
 
-        if ($groupIds->isNotEmpty()) $event->groups()->sync($groupIds);
-        if ($userIds->isNotEmpty()) $event->users()->sync($userIds);
+        if ($groupIds->isNotEmpty()) $event->groups()->sync($groupIds->all());
+        if ($userIds->isNotEmpty()) $event->users()->sync($userIds->all());
 
         $attendanceEntries = $this->collectAttendanceEntries($userIds, $event, $groupIds);
 
@@ -272,8 +272,8 @@ class EventController extends Controller
         $groupIds = collect($data['group_ids'] ?? []);
         $userIds = collect($data['user_ids'] ?? []);
 
-        $event->groups()->syncWithoutDetaching($groupIds);
-        $event->users()->syncWithoutDetaching($userIds);
+        $event->groups()->syncWithoutDetaching($groupIds->all());
+        $event->users()->syncWithoutDetaching($userIds->all());
 
         $attendanceEntries = $this->collectAttendanceEntries($userIds, $event, $groupIds);
 
@@ -317,13 +317,13 @@ class EventController extends Controller
         $userIds = collect($data['user_ids'] ?? []);
 
         if ($groupIds->isNotEmpty()) {
-            $event->groups()->detach($groupIds);
-            $event->attendances()->whereIn('group_id', $groupIds)->delete();
+            $event->groups()->detach($groupIds->all());
+            $event->attendances()->whereIn('group_id', $groupIds->all())->delete();
         }
 
         if ($userIds->isNotEmpty()) {
-            $event->users()->detach($userIds);
-            $event->attendances()->whereIn('user_id', $userIds)->whereNull('group_id')->delete();
+            $event->users()->detach($userIds->all());
+            $event->attendances()->whereIn('user_id', $userIds->all())->whereNull('group_id')->delete();
         }
 
         return response()->json(['message' => 'Removed', 'data' => $event->load(['groups', 'users'])], 200);
