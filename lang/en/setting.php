@@ -12,7 +12,8 @@ return [
     'delete_no' => 'Cancel',
     // Specific settings...
 
-    'dark_theme' => 'Dark theme',
+    'dark_theme' => 'Dark theme test',
+    'email_notify' => 'Email notifications',
     'delete_pfp' => 'Delete PFP',
     'change_pass' => 'Change password',
     'delete_account' => 'Delete account',
