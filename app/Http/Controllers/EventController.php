@@ -266,7 +266,7 @@ class EventController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
-        if ($attendance && $this->membershipService->hasAtLeastRole($user, $attendance->group, RoleType::CASHIER)) {
+        if ($attendance && $event->hasUserAtLeastRole($user, RoleType::CASHIER)) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -311,7 +311,7 @@ class EventController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
-        if ($attendance && $this->membershipService->hasAtLeastRole($user, $attendance->group, RoleType::CASHIER)) {
+        if (!($attendance && $event->hasUserAtLeastRole($user, RoleType::CASHIER))) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -340,6 +340,104 @@ class EventController extends Controller
         return response()->json([
             'message' => 'Removed',
             'data' => $event->load(['groups', 'users'])
+        ], 200);
+    }
+
+    public function pay(Request $request, Event $event): JsonResponse
+    {
+        $requester = auth()->user();
+
+        $data = $request->validate([
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'amount' => ['required', 'numeric'],
+        ]);
+
+        $attendance = Attendance::with('group')
+            ->where('event_id', $event->id)
+            ->where('user_id', $requester->id)
+            ->first();
+
+        if (!($attendance && $event->hasUserAtLeastRole($requester, RoleType::CASHIER))) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $payment = $event->payments()
+            ->where('user_id', $data['user_id'])
+            ->where('event_id', $event->id)
+            ->first();
+
+        $payment->amount_paid += $data['amount'];
+
+        $payment->save();
+
+        return response()->json([
+            'message' => 'Payment recorded',
+            'data' => $payment
+        ], 200);
+    }
+
+    public function setAmountPaid(Request $request, Event $event): JsonResponse
+    {
+        $requester = auth()->user();
+
+        $data = $request->validate([
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'amount' => ['required', 'numeric'],
+        ]);
+
+        $attendance = Attendance::with('group')
+            ->where('event_id', $event->id)
+            ->where('user_id', $requester->id)
+            ->first();
+
+        if (!($attendance && $event->hasUserAtLeastRole($requester, RoleType::CASHIER))) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $payment = $event->payments()
+            ->where('user_id', $data['user_id'])
+            ->where('event_id', $event->id)
+            ->first();
+
+        $payment->amount_paid = $data['amount'];
+
+        $payment->save();
+
+        return response()->json([
+            'message' => 'Payment updated',
+            'data' => $payment
+        ], 200);
+    }
+
+    public function setPaid(Request $request, Event $event): JsonResponse
+    {
+        $requester = auth()->user();
+
+        $data = $request->validate([
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+        ]);
+
+        $attendance = Attendance::with('group')
+            ->where('event_id', $event->id)
+            ->where('user_id', $requester->id)
+            ->first();
+
+        if (!($attendance && $event->hasUserAtLeastRole($requester, RoleType::CASHIER))) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $payment = $event->payments()
+            ->where('user_id', $data['user_id'])
+            ->where('event_id', $event->id)
+            ->first();
+
+        $payment->amount_paid = $event->price->getMinorAmount()->toInt();;
+
+        $payment->save();
+
+        return response()->json([
+            'message' => 'Payment marked as paid fully',
+            'data' => $payment
         ], 200);
     }
 

@@ -70,6 +70,9 @@ Route::post('/event', [EventController::class, 'store'])
 Route::post('/event/{event}/attendees', [EventController::class, 'storeAttendees'])
     ->middleware(['web', 'auth:sanctum'])
     ->name('api.event.store');
+Route::post('/event/{event}/payment', [EventController::class, 'pay'])
+    ->middleware(['web', 'auth:sanctum'])
+    ->name('api.event.pay');
 
 // patch
 Route::patch('/event/{event}', [EventController::class, 'update'])
@@ -78,6 +81,12 @@ Route::patch('/event/{event}', [EventController::class, 'update'])
 Route::patch('/event/{event}/attendance', [EventController::class, 'setAttendance'])
     ->middleware(['web', 'auth:sanctum'])
     ->name('api.event.setAttendance');
+Route::patch('/event/{event}/payment', [EventController::class, 'setAmountPaid'])
+    ->middleware(['web', 'auth:sanctum'])
+    ->name('api.event.setAmountPaid');
+Route::patch('/event/{event}/set-paid', [EventController::class, 'setPaid'])
+    ->middleware(['web', 'auth:sanctum'])
+    ->name('api.event.setPaid');
 
 // delete
 Route::delete('/event/{event}', [EventController::class, 'destroy'])

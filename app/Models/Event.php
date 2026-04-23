@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Casts\MoneyCast;
+use App\Enums\RoleType;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -126,5 +129,29 @@ class Event extends Model
         $fromGroups = User::whereIn('id', $memberUserIds)->get();
 
         return $direct->merge($fromGroups)->unique('id')->values();
+    }
+
+    public function usersGroups(Authenticatable $user): Collection
+    {
+        $user = auth()->user();
+
+        return $this->groups()
+            ->whereDoesntHave('users', function (Builder $query) use ($user) {
+                $query->where('users.id', $user->id);
+            })
+            ->get();
+    }
+
+    public function hasUserAtLeastRole(Authenticatable $user, RoleType $roleType): bool
+    {
+        foreach ($this->usersGroups($user) as $group) {
+            $membership = $this->getUserMembership($user, $group);
+
+            if ($membership && $membership->hasAtLeastRole($roleType)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

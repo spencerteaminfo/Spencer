@@ -3,7 +3,7 @@ namespace App\Services;
 
 use App\Models\Group;
 use App\Models\Membership;
-use App\Enums\RoleType; // Assuming RoleType is an Enum
+use App\Enums\RoleType;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class MembershipService
