@@ -1,5 +1,5 @@
 <aside id="main-sidebar" class="bg-white d-none d-md-flex flex-column p-3 z-2">
-    @vite(['resources/js/sidebar.ts', 'resources/js/sidebarToggleProvider.ts'])
+    @vite(['resources/js/components/sidebar/sidebar.ts', 'resources/js/components/sidebar/sidebarToggleProvider.ts'])
 
     <div class="d-md-flex flex-column gap-2">
         <a href="/" class="text-decoration-none d-flex align-items-center p-2 rounded hover-bg">

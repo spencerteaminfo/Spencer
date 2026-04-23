@@ -1,4 +1,4 @@
-import api from './bootstrap';
+import api from '../bootstrap';
 
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById("searchUserGroup") as HTMLInputElement | null;
@@ -7,13 +7,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileSearchPopup = document.getElementById("mobileSearchPopup") as HTMLElement | null;
     const mobileInput = document.getElementById("mobileSearchInput") as HTMLInputElement | null;
     const mobileSearchResult = document.getElementById("MobilesearchResult") as HTMLElement | null;
+    const mobileLogoutForm = document.getElementById('mobileLogoutForm') as HTMLFormElement | null;
+    const logoutOverlay = document.getElementById('logoutOverlay') as HTMLElement | null;
+
+    if (mobileLogoutForm) {
+        mobileLogoutForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (logoutOverlay) logoutOverlay.classList.remove('d-none');
+
+            try {
+                await api.post('/api/logout');
+                window.location.href = '/login';
+            } catch (e) {
+                if (logoutOverlay) logoutOverlay.classList.add('d-none');
+                console.error(e);
+                window.location.href = '/login';
+            }
+        });
+    }
 
     if (!searchInput || !searchResult) return;
 
     const performSearch = async (query: string, resultContainer: HTMLElement) => {
         if (query.length < 1) {
             resultContainer.innerHTML = '';
-            searchResult.classList.add("d-none");
+            resultContainer.classList.add("d-none");
             return;
         }
 
@@ -31,7 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
             resultContainer.innerHTML = "";
 
             if (users.length > 0 || groups.length > 0 || events.length > 0) {
-                searchResult.classList.remove("d-none")
+                resultContainer.classList.remove("d-none");
+            } else {
+                resultContainer.classList.add("d-none");
             }
 
             if (users.length > 0) {
@@ -46,9 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     resultContainer.innerHTML += `
                     <div class="p-3 border-bottom shadow-sm-hover">
-                        <a href="/user/${user.id}" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100"><div class="flex-shrink-0" style="width: 45px;">
+                        <a href="/user/${user.id}" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100">
+                            <div class="flex-shrink-0" style="width: 45px;">
                                 <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
-                                    <img src="${profilePic}" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(short)}&background=198754&color=fff';">
+                                    <img src="${profilePic}" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null;this.src='${fallbackAvatar}';">
                                 </div>
                             </div>
                             <div class="flex-grow-1 ms-3 overflow-hidden">
@@ -100,11 +122,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>`;
                 });
             }
+
             if (!resultContainer.innerHTML) {
-                searchResult.classList.add("d-none");
+                resultContainer.classList.add("d-none");
             }
         } catch (e) {
             console.error(e);
+            resultContainer.classList.add("d-none");
         }
     };
 

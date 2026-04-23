@@ -1,4 +1,4 @@
-import api from './bootstrap';
+import api from '../bootstrap';
 
 document.addEventListener("DOMContentLoaded", async()=>{
     const addedMembersContainer = document.getElementById("userBulletList") as HTMLDivElement;

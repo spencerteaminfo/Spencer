@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <x-head title="Spencer">
-    @vite(['resources/js/loadMainPage.ts', 'resources/js/group/loadGroup.ts'])
+    @vite(['resources/js/main/loadMainPage.ts', 'resources/js/group/loadGroup.ts'])
 </x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
 <x-header/>
@@ -20,7 +20,7 @@
         </div>
     </div>
 </main>
-<x-group.groupSimple />
+@include('group.simple')
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

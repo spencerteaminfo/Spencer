@@ -1,4 +1,4 @@
-import api from "./bootstrap";
+import api from "../../bootstrap";
 
 function toggleEventSubmenu(): void {
     const submenu = document.getElementById('event-submenu');

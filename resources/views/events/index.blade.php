@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<x-head title="Register">@vite(['resources/js/loadEvents.ts'])</x-head>
+<x-head title="Register">@vite(['resources/js/event/loadEvents.ts'])</x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
 <x-header/>
 <main class="d-flex">

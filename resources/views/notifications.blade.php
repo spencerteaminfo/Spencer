@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<x-head title="Notifications">@vite(['resources/js/notifications.ts'])</x-head>
+<x-head title="Notifications">@vite(['resources/js/notifications/notifications.ts'])</x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
 <x-header />
 

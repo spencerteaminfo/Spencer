@@ -151,3 +151,12 @@ aside.sticky-top {
 .auth-container {
     height: calc(100vh - 5rem) !important;
 }
+
+.auth-login-alert {
+    max-width: 420px;
+}
+
+.auth-actions .btn {
+    font-weight: 600;
+}
+

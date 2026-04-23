@@ -1,4 +1,4 @@
-import api from './bootstrap';
+import api from '../bootstrap';
 
 type NotificationItem = {
     id: string;

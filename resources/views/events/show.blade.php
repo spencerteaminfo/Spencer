@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-<x-head title="Show Event">@vite(['resources/js/showImg.ts', 'resources/js/createEvent.ts', 'resources/js/detailEvent.ts'])
+<x-head title="Show Event">@vite(['resources/js/utils/showImg.ts', 'resources/js/event/createEvent.ts', 'resources/js/event/detailEvent.ts'])
     <meta name="current-user-id" content="{{ auth()->user()->id }}">
 </x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">

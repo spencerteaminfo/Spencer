@@ -1,4 +1,4 @@
-@vite(['resources/js/searchMenu.ts'])
+@vite(['resources/js/utils/searchMenu.ts'])
 <header class="navbar navbar-light bg-white shadow position-sticky top-0 z-2">
     <div class="container-fluid">
         <div class="d-none d-md-flex" id="logo">
@@ -16,7 +16,7 @@
                     <span class="position-absolute bottom-0 start-0 translate-middle p-1 bg-danger border border-white rounded-circle"></span>
                 </div>
 
-                <form method="POST" action="/logout" class="m-0 d-inline">
+                <form id="mobileLogoutForm" method="POST" action="{{ route('api.logout') }}" class="m-0 d-inline">
                     @csrf
                     <button type="submit" class="btn p-0 border-0">
                         <img src="{{ Vite::asset('resources/svg/log-out.svg') }}" alt="Logout" class="icon-custom">
@@ -46,7 +46,17 @@
         <div class="position-relative">
             <input type="text" id="mobileSearchInput" class="form-control rounded-pill border-secondary-subtle py-2 fs-5 px-4" autocomplete="off" placeholder="Search...">
             <img src="{{ Vite::asset('resources/svg/search-input.svg') }}" class="position-absolute end-0 top-50 translate-middle-y me-3">
-            <div id="MobilesearchResult" class="position-absolute bg-white w-100 border rounded-3 mt-1" style="max-height: 300px; overflow-y: auto"></div>
+            <div id="MobilesearchResult" class="position-absolute bg-white w-100 rounded-3 mt-1" style="max-height: 300px; overflow-y: auto"></div>
         </div>
+    </div>
+</div>
+
+<div id="logoutOverlay" class="position-fixed top-0 start-0 w-100 h-100 bg-dark d-none d-flex align-items-center justify-content-center" style="z-index: 99999;">
+    <div class="text-center text-white">
+        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <h2 class="fw-bold">{{ __('auth.logging_out') }}</h2>
+        <p class="text-secondary small">{{ __('auth.wait_moment') }}</p>
     </div>
 </div>

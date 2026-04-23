@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<x-head title="Register">@vite(['resources/js/auth.ts'])</x-head>
+<x-head title="Register">@vite(['resources/js/utils/auth.ts'])</x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
-<x-basicHeader/>
+<x-basic-header/>
 <main>
     <div class="d-flex flex-column justify-content-center align-items-center auth-container">
         <div class="card shadow-sm p-4">
@@ -32,10 +32,10 @@
                     </ul>
                 </form>
 
-                <div class="text-center mt-3">
-                    <a href="/login" class="text-decoration-none">
-                        <h4 class="h6 text-muted">{{__('auth.have_account')}}</h4>
-                    </a>
+
+                <div class="mt-3 auth-actions">
+                    <a href="/login" class="btn w-100">{{__('auth.have_account')}}</a>
+                    <a href="{{ route('password.request') }}" class="d-block text-center text-decoration-none text-muted small mt-2">{{__('auth.forgot_password')}}</a>
                 </div>
             </div>
         </div>

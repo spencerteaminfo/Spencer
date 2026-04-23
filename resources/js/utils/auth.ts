@@ -1,4 +1,4 @@
-import api from './bootstrap';
+import api from '../bootstrap';
 
 document.addEventListener("DOMContentLoaded", () => {
     const registerForm = document.getElementById("register") as HTMLFormElement | null;
@@ -62,8 +62,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (loginForm && emailInput && passwordInput) {
-        const errorLogger = document.getElementById("errorlogger");
+        const loginErrorAlert = document.getElementById("loginErrorAlert");
         const submitBtn = loginForm.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+        let errorAlertTimer: number | null = null;
+
+        const showLoginError = (message: string): void => {
+            if (!loginErrorAlert) return;
+
+            loginErrorAlert.textContent = message;
+            loginErrorAlert.classList.remove("d-none");
+
+            if (errorAlertTimer) {
+                clearTimeout(errorAlertTimer);
+            }
+
+            errorAlertTimer = window.setTimeout(() => {
+                loginErrorAlert.classList.add("d-none");
+                loginErrorAlert.textContent = "";
+            }, 2500);
+        };
 
         const validateLogin = () => {
             if (!submitBtn) return;
@@ -81,7 +98,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         loginForm.addEventListener("submit", async (e) => {
             e.preventDefault();
-            if (errorLogger) errorLogger.innerText = "";
+            if (loginErrorAlert) {
+                loginErrorAlert.classList.add("d-none");
+                loginErrorAlert.textContent = "";
+            }
             try {
                 await api.get('/sanctum/csrf-cookie');
                 await api.post("/api/login", {
@@ -91,9 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.location.href = "/";
             } catch (e: any) {
                 console.log(e);
-                if (errorLogger) {
-                    errorLogger.innerText = e.response?.data?.message || "No account matches these info";
-                }
+                showLoginError(e.response?.data?.message || "No account matches these info");
             }
         });
     }
