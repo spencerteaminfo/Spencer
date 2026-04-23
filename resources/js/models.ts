@@ -40,13 +40,26 @@ export interface Group {
 }
 
 export interface Attendance {
+    id: number;
     event_id: number;
     user_id: number;
-    group_id: number | null;
     attends: boolean;
+    created_at: Date;
+    updated_at: Date;
+}
+
+export interface Payment {
+    id: number;
+    event_id: number;
+    amount_paid: number;
+    user_id: number;
+    created_at: Date;
+    updated_at: Date;
 }
 
 export interface setting {
     option_id: number;
     setting_id: number;
+    created_at: Date;
+    updated_at: Date;
 }
