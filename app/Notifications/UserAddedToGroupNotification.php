@@ -23,6 +23,24 @@ class UserAddedToGroupNotification extends Notification implements ShouldQueue
         $this->group = $group;
     }
 
+    public function __get(string $name)
+    {
+        if ($name === 'event' || $name === 'groups') {
+            return $this->group ?? null;
+        }
+
+        return null;
+    }
+
+    public function __isset(string $name): bool
+    {
+        if ($name === 'event' || $name === 'groups') {
+            return isset($this->group);
+        }
+
+        return false;
+    }
+
     /**
      * Get the notification's delivery channels.
      *
@@ -39,11 +57,11 @@ class UserAddedToGroupNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject(__('notification.groups.updated.mail.title', ['name' => $this->groups->title]))
-            ->line(__('notification.groups.updated.mail.title', ['name' => $this->groups->title]))
-            ->line(__('notification.groups.updated.mail.body', [
+            ->subject(__('notification.groups.new.mail.title', ['name' => $this->group->name]))
+            ->line(__('notification.groups.new.mail.title', ['name' => $this->group->name]))
+            ->line(__('notification.groups.new.mail.body', [
                 'user' => $notifiable->first_name . ' ' . $notifiable->last_name,
-                'date' => $this->event->updated_at->format('d.m.Y')
+                'date' => $this->group->updated_at?->format('d.m.Y')
             ]));
     }
 
@@ -55,12 +73,12 @@ class UserAddedToGroupNotification extends Notification implements ShouldQueue
     public function toArray($notifiable): array
     {
         return [
-            'event_id' => $this->event->id,
-            'title' => $this->event->title,
+            'group_id' => $this->group->id,
+            'name' => $this->group->name,
             'translation' => [
-                'key' => 'notification.event.updated.db',
+                'key' => 'notification.groups.new.db',
                 'params' => [
-                    'name' => $this->event->title,
+                    'name' => $this->group->name,
                     'user' => $notifiable->first_name . ' ' . $notifiable->last_name,
                 ],
             ],
