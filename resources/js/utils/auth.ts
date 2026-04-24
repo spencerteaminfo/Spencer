@@ -66,22 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const submitBtn = loginForm.querySelector('button[type="submit"]') as HTMLButtonElement | null;
         let errorAlertTimer: number | null = null;
 
-        const showLoginError = (message: string): void => {
-            if (!loginErrorAlert) return;
-
-            loginErrorAlert.textContent = message;
-            loginErrorAlert.classList.remove("d-none");
-
-            if (errorAlertTimer) {
-                clearTimeout(errorAlertTimer);
-            }
-
-            errorAlertTimer = window.setTimeout(() => {
-                loginErrorAlert.classList.add("d-none");
-                loginErrorAlert.textContent = "";
-            }, 2500);
-        };
-
         const validateLogin = () => {
             if (!submitBtn) return;
             const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value);
@@ -111,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 window.location.href = "/";
             } catch (e: any) {
                 console.log(e);
-                showLoginError(e.response?.data?.message || "No account matches these info");
             }
         });
     }
