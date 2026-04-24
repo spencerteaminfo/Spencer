@@ -2,33 +2,26 @@ import api from '../bootstrap';
 
 document.addEventListener("DOMContentLoaded", async()=>{
     const addedMembersContainer = document.getElementById("userBulletList") as HTMLDivElement;
-    const groupId: string | undefined = addedMembersContainer.dataset.groupid;
+    const groupId: string | undefined = addedMembersContainer.dataset.groupId;
     const notIterestedContainer = document.getElementById("not-interested-container");
     const iterestedContainer = document.getElementById("interested-container");
-    let nazev:string = ""
-    let user_id:string = "";
     const TrueAttendece = document.getElementById("interested");
     const FalseAttendence = document.getElementById("not-interested");
     const event = TrueAttendece?.dataset.eventid;
-    const membersGroup = await api.get("/api/group/"+groupId+"/members");
-    const members = membersGroup.data.data;
-    const groupRes = await api.get("/api/groups", { params: { title: "" } });
-    const groups = groupRes.data.data;
-    const currentGroup = groups.find((g: any) => g.id == groupId);
     const currentUserId = document.querySelector('meta[name="current-user-id"]')?.getAttribute('content');
-    const attendance = await api.get('/api/event/'+event+'/attendance');
-    const attendanceData = attendance.data.data
-    console.log(attendance);
-    if (currentGroup && addedMembersContainer) {
+    const members: any[] = [];
+    const attendanceData: any[] = [];
+
+    if (groupId && addedMembersContainer) {
         const card = document.createElement('div');
         card.className = "card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100";
         card.innerHTML = `
             <div class="d-flex align-items-center">
                 <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
-                    <img src="https://ui-avatars.com/api/?name=${currentGroup.name}&background=198754&color=fff" class="w-100 profile-pic" alt="acc">
+                    <img src="https://ui-avatars.com/api/?name=Group&background=198754&color=fff" class="w-100 profile-pic" alt="acc">
                 </div>
                 <div class="small">
-                    <span class="text-muted d-none d-sm-inline">${currentGroup.name}</span>
+                    <span class="text-muted d-none d-sm-inline">Group</span>
                 </div>
             </div>`;
         addedMembersContainer.appendChild(card);
@@ -42,7 +35,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
         notIterestedDiv.className = "d-flex align-items-center mb-3";
         notIterestedDiv.id = "member-"+member_id;
         notIterestedDiv.innerHTML = `
-            <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 flex-shrink-0" style="width: 24px; height: 24px;">
+                <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
                 <img src="https://ui-avatars.com/api/?name=${member.email}&background=198754&color=fff" class="w-100" alt="user">
             </div>
             <span class="small fw-medium">${member.email}</span>`;
@@ -52,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
 
     TrueAttendece?.addEventListener("click", async ()=>{
         try{
-            const response = await api.patch("/api/event/"+event+"/attendance", {
+            await api.patch("/api/event/"+event+"/attendance", {
                 user_id: currentUserId,
                 attends: true,
             });
@@ -69,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
     })
     FalseAttendence?.addEventListener("click", async ()=>{
         try{
-            const response = await api.patch("/api/event/"+event+"/attendance", {
+            await api.patch("/api/event/"+event+"/attendance", {
                 user_id: currentUserId,
                 attends: false,
             });

@@ -11,6 +11,7 @@ use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\Group;
 use App\Models\Payment;
+use App\Models\User;
 use App\Services\MembershipService;
 use App\Services\SearchService;
 use App\Services\StorageService;
@@ -67,8 +68,11 @@ class EventController extends Controller
     {
         $user = auth()->user();
         $eventGroupIds = $event->groups()->pluck('groups.id');
+        $userGroupIds = $user?->groups()->pluck('groups.id') ?? collect();
+        $isGroupMember = $eventGroupIds->intersect($userGroupIds)->isNotEmpty();
+        $isDirectUser = $event->users()->whereKey($user?->id)->exists();
 
-        if (!($user instanceof User) || !$user->groups->contains($event->group_id)) {
+        if (!($user instanceof User) || (! $isGroupMember && ! $isDirectUser)) {
             abort(403, 'Unauthorized action.');
         }
 
