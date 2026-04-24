@@ -9,7 +9,6 @@ use App\Models\User;
 use App\Notifications\Events\EventPayedNotification;
 use App\Notifications\Events\EventUpdatedNotification;
 use App\Notifications\Events\NewEventNotification;
-use App\Notifications\Payments\PaymentUpdatedNotification;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Facades\Notification;
 
