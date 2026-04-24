@@ -23,8 +23,8 @@
     </div>
 </main>
 
-<x-group.groupItem />
-<x-group.groupCreate />
+@include('group.item')
+@include('group.create')
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

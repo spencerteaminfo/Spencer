@@ -1,4 +1,4 @@
-import api from './bootstrap';
+import api from '../bootstrap';
 
 addEventListener("DOMContentLoaded", () => {
     const firstName = document.getElementById("firstName") as HTMLInputElement;

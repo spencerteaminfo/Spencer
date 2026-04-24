@@ -1,7 +1,7 @@
-import api from './bootstrap';
+import api from '../bootstrap';
 
-import ErrorHandlingForm from './errorHandling';
-import type { Group } from './models';
+import ErrorHandlingForm from '../utils/errorHandling';
+import type { Group } from '../models';
 const title = document.getElementById("input-title") as HTMLInputElement;
 const description = document.getElementById("input-description") as HTMLTextAreaElement;
 const deadline = document.getElementById("input-deadline") as HTMLInputElement;

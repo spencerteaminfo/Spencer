@@ -34,5 +34,13 @@ class AppServiceProvider extends ServiceProvider
             }
             $view->with('activeTheme', $theme);
         });
+
+        $lang = request()->query('lang');
+
+        $availableLocales = ['en', 'cz', 'de'];
+
+        if ($lang && in_array($lang, $availableLocales)) {
+            app()->setLocale($lang);
+        }
     }
 }
