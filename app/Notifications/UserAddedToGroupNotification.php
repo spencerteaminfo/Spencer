@@ -14,15 +14,13 @@ class UserAddedToGroupNotification extends Notification implements ShouldQueue
     use Queueable;
 
     private Group $group;
-    private User $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Group $group, User $user)
+    public function __construct(Group $group)
     {
         $this->group = $group;
-        $this->user = $user;
     }
 
     /**
@@ -63,7 +61,7 @@ class UserAddedToGroupNotification extends Notification implements ShouldQueue
                 'key' => 'notification.event.updated.db',
                 'params' => [
                     'name' => $this->event->title,
-                    'user' => $this->user->fullName(),
+                    'user' => $notifiable->first_name . ' ' . $notifiable->last_name,
                 ],
             ],
         ];

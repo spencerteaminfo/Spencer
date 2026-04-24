@@ -13,13 +13,13 @@ class EventCreated
 
     public Event $event;
     public ?Authenticatable $creator;
-    public array $attendanceIds;
+    public array $userIds;
 
-    public function __construct(Event $event, ?Authenticatable $creator = null, array $attendanceIds = [])
+    public function __construct(Event $event, ?Authenticatable $creator = null, array $userIds = [])
     {
         $this->event = $event;
         $this->creator = $creator;
-        $this->attendanceIds = $attendanceIds;
+        $this->userIds = $userIds;
     }
 }
 

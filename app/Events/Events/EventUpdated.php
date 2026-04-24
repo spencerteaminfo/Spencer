@@ -13,13 +13,11 @@ class EventUpdated
 
     public Event $event;
     public ?Authenticatable $actor;
-    public array $changes;
 
-    public function __construct(Event $event, ?Authenticatable $actor = null, array $changes = [])
+    public function __construct(Event $event, ?Authenticatable $actor = null)
     {
         $this->event = $event;
         $this->actor = $actor;
-        $this->changes = $changes;
     }
 }
 

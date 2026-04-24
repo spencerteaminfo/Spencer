@@ -14,15 +14,13 @@ class NewEventNotification extends Notification implements ShouldQueue
     use Queueable;
 
     private Event $event;
-    private User $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Event $event, User $user)
+    public function __construct(Event $event)
     {
         $this->event = $event;
-        $this->user = $user;
     }
 
     /**
@@ -64,7 +62,7 @@ class NewEventNotification extends Notification implements ShouldQueue
                 'key' => 'notification.event.new.db',
                 'params' => [
                     'name' => $this->event->title,
-                    'user' => $this->user->fullName(),
+                    'user' => $notifiable->first_name . ' ' . $notifiable->last_name,
                 ],
             ],
         ];
