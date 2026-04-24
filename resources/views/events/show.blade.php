@@ -60,8 +60,8 @@
                     </div>
                     <div id="interest-conteiner">
                         <div class="d-flex gap-3 mt-4">
-                            <button id="interested" data-eventId="{{$event->id}}" class="btn btn-primary grow rounded-pill py-2 fw-bold shadow-sm">{{__('event.show.interested')}}</button>
-                            <button id="not-interested" class="btn btn-danger grow rounded-pill py-2 fw-bold shadow-sm">{{__('event.show.not_interested')}}</button>
+                            <button id="interested" data-eventId="{{$event->id}}" class="btn btn-primary flex-grow-1 rounded-pill py-2 fw-bold shadow-sm">I'm Interested</button>
+                            <button id="not-interested" class="btn btn-danger flex-grow-1 rounded-pill py-2 fw-bold shadow-sm">Not Interested</button>
                         </div>
                     </div>
 
