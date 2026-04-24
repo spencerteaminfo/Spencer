@@ -6,6 +6,7 @@ use App\Enums\RoleType;
 use App\Events\Events\EventCreated;
 use App\Events\Events\EventUpdated;
 use App\Events\Events\PaymentUpdated;
+use App\Events\Events\UsersAddedToEvent;
 use App\Models\Attendance;
 use App\Models\Event;
 use App\Models\Group;
@@ -191,7 +192,7 @@ class EventController extends Controller
             ]);
         }
 
-        event(new EventCreated($event, $requester, $allUserIds));
+        event(new EventCreated($event, $requester, $allUserIds->toArray()));
 
         return response()->json([
             'message' => 'Event created successfully',
@@ -292,7 +293,9 @@ class EventController extends Controller
         $event->groups()->syncWithoutDetaching($groupIds->all());
         $event->users()->syncWithoutDetaching($userIds->all());
 
-        foreach ($this->aggregateUserIds($userIds, $groupIds) as $userId) {
+        $allUserIds = $this->aggregateUserIds($userIds, $groupIds);
+
+        foreach ($allUserIds as $userId) {
             Attendance::firstOrCreate([
                 'event_id' => $event->id,
                 'user_id' => $userId,
@@ -304,6 +307,8 @@ class EventController extends Controller
                 'user_id' => $userId,
             ]);
         }
+
+        event(new UsersAddedToEvent($event, auth()->user(), $allUserIds->toArray()));
 
         return response()->json(['message' => 'Attendees updated', 'data' => $event->load(['groups', 'users'])], 200);
     }
