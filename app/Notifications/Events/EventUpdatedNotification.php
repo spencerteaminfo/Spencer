@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Notifications\Events;
 
 use App\Models\Event;
 use App\Models\User;
@@ -12,14 +12,17 @@ use Illuminate\Notifications\Notification;
 class EventUpdatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+
     private Event $event;
+    private User $user;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Event $event)
+    public function __construct(Event $event, User $user)
     {
         $this->event = $event;
+        $this->user = $user;
     }
 
     /**
@@ -38,9 +41,13 @@ class EventUpdatedNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
+            ->subject(__('notification.event.updated.mail.title', ['name' => $this->event->title]))
+            ->line(__('notification.event.updated.mail.title', ['name' => $this->event->title]))
+            ->action(__('notification.event.updated.mail.action'), url('/event/' . $this->event->id))
+            ->line(__('notification.event.updated.mail.body', [
+                'user' => $notifiable->first_name . ' ' . $notifiable->last_name,
+                'date' => $this->event->updated_at->format('d.m.Y')
+            ]));
     }
 
     /**
@@ -53,7 +60,13 @@ class EventUpdatedNotification extends Notification implements ShouldQueue
         return [
             'event_id' => $this->event->id,
             'title' => $this->event->title,
-            'message' => 'A new event has been created.',
+            'translation' => [
+                'key' => 'notification.event.updated.db',
+                'params' => [
+                    'name' => $this->event->title,
+                    'user' => $this->user->fullName(),
+                ],
+            ],
         ];
     }
 }

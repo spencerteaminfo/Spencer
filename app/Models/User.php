@@ -104,4 +104,9 @@ class User extends Authenticatable implements CanResetPassword
         }
         return 'en';
     }
+
+    public function fullName(): string
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
 }

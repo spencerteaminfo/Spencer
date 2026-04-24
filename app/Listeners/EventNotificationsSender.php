@@ -3,8 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\Events\EventCreated;
-use App\Events\Events\EventUpdated;
-use App\Notifications\EventUpdatedNotification;
+use App\Notifications\Events\EventUpdatedNotification;
 use Illuminate\Events\Dispatcher;
 
 class EventNotificationsSender
