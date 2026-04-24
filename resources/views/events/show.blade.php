@@ -10,7 +10,7 @@
 @endphp
 <main class="d-flex">
     <x-sidebar/>
-    <div id="content" class="grow p-3 p-md-5 overflow-auto">
+    <div id="content" class="flex-grow-1 p-3 p-md-5 overflow-auto">
         <div class="container-xl">
             <div class="row g-4 justify-content-center">
                 <div class="col-lg-8">
