@@ -34,6 +34,10 @@
                                 <input type="date" class="form-control rounded-3" id="input-to">
                             </div>
                         </div>
+                        <div id="price-div" class="mb-3">
+                            <label class="form-label small text-muted">{{__('event.show.price')}}</label>
+                            <input type="number" class="form-control rounded-3" rows="3" placeholder="{{__('event.create.description_placeholder')}}" id="input-price"></input>
+                        </div>
                         <div id="img-preview-div" class="ratio ratio-21x9 bg-light rounded-4 border border-secondary border-opacity-25 mb-2 position-relative">
                             <img id="img-preview" class="w-100 h-100 d-none top-0 start-0 rounded-4 z-1" style="object-fit: cover; pointer-events: none" alt="img-preview">
                             <label for="event-image-upload" class="d-flex flex-column justify-content-center align-items-center w-100 h-100" style="cursor: pointer;">

@@ -7,6 +7,7 @@ const description = document.getElementById("input-description") as HTMLTextArea
 const deadline = document.getElementById("input-deadline") as HTMLInputElement;
 const from = document.getElementById("input-from") as HTMLInputElement;
 const to = document.getElementById("input-to") as HTMLInputElement;
+const price = document.getElementById("input-price") as HTMLInputElement;
 const img = document.getElementById("event-image-upload") as HTMLInputElement;
 const submitBtn = document.getElementById("save-changes") as HTMLButtonElement;
 const addedMembersContainer = document.getElementById('addedMembers') as HTMLDivElement | null;
@@ -57,6 +58,11 @@ submitBtn.addEventListener("click", async (e)=>{
         to?.focus();
         countError++;
     }
+    if (!price?.value) {
+        ErrorHandlingForm(to, "priceErrorBlock", "Cena je povinná");
+        price?.focus();
+        countError++;
+    }
     if (selectedGroupsIds.length < 1) {
         console.log("Musise tam dat alespon jedna groupka")
         countError++;
@@ -67,6 +73,8 @@ submitBtn.addEventListener("click", async (e)=>{
     const formData = new FormData();
     formData.append("title", title.value.trim());
     formData.append("description",description.value.trim());
+    formData.append("price_ammount",price.value.trim());
+    formData.append("price_currency", "CZK");
     formData.append("deadline", deadline.value);
     formData.append("from", from.value);
     formData.append("to", to.value);
