@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
     const currentUserId = document.querySelector('meta[name="current-user-id"]')?.getAttribute('content');
     const members: any[] = [];
     const attendanceData: any[] = [];
+    // console.log(groupId);
 
     if (groupId && addedMembersContainer) {
         const card = document.createElement('div');

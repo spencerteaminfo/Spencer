@@ -6,7 +6,7 @@
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
 <x-header />
 @php
-    $eventGroupId = $event->groups()->pluck('groups.id')->first();
+    $eventGroupId = $event->groups()->get();
 @endphp
 <main class="d-flex">
     <x-sidebar/>
@@ -23,6 +23,7 @@
                         <div id="description-div" class="mb-3">
                             <label class="form-label small text-muted">{{__('event.show.description')}}</label>
                             <p>{{ $event->description }}</p>
+                            <p>{{ $eventGroupId }}</p>
                         </div>
                         <div class="row g-3 mb-4">
                             <div id="deadline-div" class="col-md-4">
@@ -48,10 +49,22 @@
                             </label>
                         </div>
                     </div>
-
                     <div class="mb-4">
                         <h4 class="text-muted">{{__('event.show.groups')}}</h4>
-                        <div id="userBulletList" class="d-flex flex-column gap-1 mb-2" data-group-id="{{ $eventGroupId }}"></div>
+                        <div id="userBulletList" class="d-flex flex-column gap-1 mb-2">
+                            @foreach ($eventGroupId as $groupObj)
+                            <div class="card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100">
+                                <div class="d-flex align-items-center">
+                                    <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
+                                        <img src="{{ Storage::url('thumbnails/NXMQjsYT8PFHL1pheMhbi42i8S23Te576rMNIG4l.png') }}" class="w-100 profile-pic rounded-circle" style="max-width: 75px; max-height: 75px;" alt="acc">
+                                    </div>
+                                    <div class="small">
+                                        <span class="text-muted d-none d-sm-inline">{{$groupObj->name}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
                     </div>
 
                     <div class="d-flex flex-column gap-2">

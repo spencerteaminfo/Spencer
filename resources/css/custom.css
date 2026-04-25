@@ -135,7 +135,11 @@ aside.sticky-top {
 .cursor-pointer {
     cursor: pointer;
 }
-
+.profile-pic {
+    border-radius: 50%; 
+    object-fit: cover; 
+    aspect-ratio: 1 / 1;
+}
 .add-user-btn{
     cursor: pointer;
 }
