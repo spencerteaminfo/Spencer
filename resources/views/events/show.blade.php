@@ -53,10 +53,19 @@
                         <h4 class="text-muted">{{__('event.show.groups')}}</h4>
                         <div id="userBulletList" class="d-flex flex-column gap-1 mb-2">
                             @foreach ($eventGroupId as $groupObj)
+                            @php
+                                if(empty($groupObj->picture_url)){
+                                    $groupImage = "https://ui-avatars.com/api/?name=".$groupObj->name."&background=198754&color=fff";
+                                }else{
+                                    $groupImage = Storage::url($groupObj->picture_url);
+                                }
+                                
+                            @endphp
+                            
                             <div class="card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
-                                        <img src="{{ Storage::url('thumbnails/NXMQjsYT8PFHL1pheMhbi42i8S23Te576rMNIG4l.png') }}" class="w-100 profile-pic rounded-circle" style="max-width: 75px; max-height: 75px;" alt="acc">
+                                        <img src="{{ $groupImage }}" class="w-100 profile-pic rounded-circle" style="max-width: 64px; max-height: 64px;" alt="acc">
                                     </div>
                                     <div class="small">
                                         <span class="text-muted d-none d-sm-inline">{{$groupObj->name}}</span>
