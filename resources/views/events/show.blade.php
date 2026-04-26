@@ -18,6 +18,11 @@
                         <div id="title-div" class="mb-3">
                             <label class="form-label small text-muted">{{__('event.show.title')}}</label>
                             <p>{{ $event->title }}</p>
+                            {{$eventGroupId}}
+                            <p></p>
+                            {{$event}}
+                            <p></p>
+                            {{$people = $event->users()->get()->groupBy('pivot.attends');}}
                         </div>
 
                         <div id="description-div" class="mb-3">
@@ -97,14 +102,51 @@
                         <h2 class="h4 text-center fw-bold mb-4 text-secondary">{{__('event.show.attendance')}}</h2>
                         <div>
                             <span class="d-block small text-muted mb-3">{{__('event.show.are_interested')}}</span>
-                            <div id="interested-container"></div>
+                            <div id="interested-container">
+                                @forelse($people->get(1) ?? [] as $user)
+                                @php
+                                    if($user->avatar_url == null){
+                                        $avatarImage = "Vite::asset('resources/svg/user.svg')";
+                                    }else{
+                                        $avatarImage = Storage::url($user->avatar_url);
+                                    }
+                                    
+                                @endphp
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
+                                            <img src="{{ $avatarImage }}" class="w-100" alt="user">
+                                        </div>
+                                        <span class="small fw-medium">{{ $user->email }}</span>
+                                    </div>
+                                @empty
+                                    <p class="text-muted small">Zatím nikdo nepotvrdil účast.</p>
+                                @endforelse
+                            </div>
                         </div>
 
                         <div>
                             <span class="d-block small text-muted mb-3">{{__('event.show.are_not_interested')}}</span>
                             <div id="not-interested-container">
-
+                                @forelse($people->get(0) ?? [] as $user)
+                                @php
+                                    if($user->avatar_url === null){
+                                        $avatarImage = Vite::asset('resources/svg/user.svg');
+                                    }else{
+                                        $avatarImage = Storage::url($user->avatar_url);
+                                    }
+                                    
+                                @endphp
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
+                                            <img src="{{ $avatarImage }}" class="w-100" alt="user">
+                                        </div>
+                                        <span class="small fw-medium">{{ $user->email }}</span>
+                                    </div>
+                                @empty
+                                    <p class="text-muted small">Zatím nikdo nepotvrdil účast.</p>
+                                @endforelse
                             </div>
+                            
                             {{--@foreach(range(1, 3) as $i)
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
