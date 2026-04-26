@@ -2,6 +2,7 @@
 <html lang="en">
 <x-head title="Show Event">@vite(['resources/js/event/detailEvent.ts'])
     <meta name="current-user-id" content="{{ auth()->user()->id }}">
+    <meta name="data-groups-ids" content="{{ json_encode($event->groups->pluck('id')) }}">
 </x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
 <x-header />
@@ -10,6 +11,31 @@
 @endphp
 <main class="d-flex">
     <x-sidebar/>
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content rounded-4 shadow border-0">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Upravit platbu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <img id="modal-user-avatar" src="" class="rounded-circle border mb-2" style="width: 48px; height: 48px; object-fit: cover;">
+                        <div id="modal-user-email" class="small fw-medium text-muted"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Částka (Kč)</label>
+                        <input type="number" id="modal-amount-input" class="form-control form-control-lg rounded-3 text-center fw-bold" placeholder="0">
+                    </div>
+                    <input type="hidden" id="modal-user-id">
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light w-100 rounded-pill" data-bs-dismiss="modal">Zrušit</button>
+                    <button type="button" id="modal-save-btn" class="btn btn-success w-100 rounded-pill fw-bold">Uložit platbu</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="content" class="flex-grow-1 p-3 p-md-5 overflow-auto">
         <div class="container-xl">
             <div class="row g-4 justify-content-center">
@@ -117,6 +143,15 @@
                                             <img src="{{ $avatarImage }}" class="w-100" alt="user">
                                         </div>
                                         <span class="small fw-medium">{{ $user->email }}</span>
+                                        <div class="admin-only-info" data-user-id="{{ $user->id }}">
+                                            <button class="btn btn-sm btn-light border rounded-pill d-flex align-items-center gap-1 open-payment-modal" 
+                                                    data-email="{{ $user->email }}"
+                                                    data-amount="20"
+                                                    data-avatar="{{ $avatarImage }}">
+                                                <span class="fw-bold text-success">20 Kč</span>
+                                                <i class="bi bi-pencil-fill text-muted ms-1" style="font-size: 0.7rem;"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 @empty
                                     <p class="text-muted small mb-4">Zatím nikdo nepotvrdil účast.</p>

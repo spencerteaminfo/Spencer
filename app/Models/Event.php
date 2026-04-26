@@ -141,6 +141,13 @@ class Event extends Model
             ->get();
     }
 
+    
+    public function getUserMembership(\App\Models\User $user, \App\Models\Group $group)
+    {
+        return \App\Models\Membership::where('user_id', $user->id)
+            ->where('group_id', $group->id)
+            ->first();
+    }
     public function hasUserAtLeastRole(Authenticatable $user, RoleType $roleType): bool
     {
         foreach ($this->usersGroups($user) as $group) {
