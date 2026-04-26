@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
     const FalseAttendence = document.getElementById("not-interested");
     const event = TrueAttendece?.dataset.eventid;
     const currentUserId = document.querySelector('meta[name="current-user-id"]')?.getAttribute('content');
+    const defaultAvatar = document.body.dataset.defaultAvatar || '';
     const members: any[] = [];
     const attendanceData: any[] = [];
     console.log(currentUserId);
@@ -42,7 +43,21 @@ document.addEventListener("DOMContentLoaded", async()=>{
         const imgEl = notIterestedDiv.querySelector('.js-avatar') as HTMLImageElement | null;
         const emailEl = notIterestedDiv.querySelector('.js-email') as HTMLElement | null;
         if (imgEl) {
-            imgEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.email)}&background=198754&color=fff`;
+            const avatarUrl = member.avatar_url || member.avatarUrl || '';
+            if (typeof avatarUrl === 'string' && avatarUrl.length > 0) {
+                const isAbsolute = avatarUrl.startsWith('http://') || avatarUrl.startsWith('https://');
+                const isStorageAbsolute = avatarUrl.startsWith('/storage/');
+                imgEl.src = (isAbsolute || isStorageAbsolute) ? avatarUrl : `/storage/${avatarUrl}`;
+            } else {
+                imgEl.src = defaultAvatar;
+            }
+
+            if (defaultAvatar) {
+                imgEl.onerror = () => {
+                    imgEl.onerror = null;
+                    imgEl.src = defaultAvatar;
+                };
+            }
         }
         if (emailEl) {
             emailEl.textContent = member.email;
