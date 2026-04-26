@@ -44,3 +44,23 @@
         </div>
     </div>
 </div>
+
+<template id="group-user-search-item-template">
+    <div class="p-2 border-bottom shadow-sm-hover cursor-pointer bg-white">
+        <span class="small fw-bold js-email"></span>
+    </div>
+</template>
+
+<template id="group-member-item-template">
+    <div class="d-flex justify-content-between align-items-center border p-2 rounded bg-white">
+        <span class="small js-email"></span>
+        <div class="d-flex align-items-center gap-2 js-actions">
+            <select class="form-select form-select-sm role-select">
+                <option value="4">Member</option>
+                <option value="5">Cashier</option>
+            </select>
+            <span class="text-danger cursor-pointer remove-user">✕</span>
+        </div>
+    </div>
+</template>
+

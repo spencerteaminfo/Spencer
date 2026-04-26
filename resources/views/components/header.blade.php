@@ -60,3 +60,59 @@
         <p class="text-secondary small">{{ __('auth.wait_moment') }}</p>
     </div>
 </div>
+
+<template id="search-result-section-template">
+    <div class="px-3 py-2 small text-uppercase fw-bold text-muted border-bottom js-label"></div>
+</template>
+
+<template id="search-user-item-template">
+    <div class="p-3 border-bottom shadow-sm-hover">
+        <a href="" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100 js-link">
+            <div class="flex-shrink-0" style="width: 45px;">
+                <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
+                    <img src="" class="w-100 h-100 object-fit-cover js-avatar" alt="user">
+                </div>
+            </div>
+            <div class="flex-grow-1 ms-3 overflow-hidden">
+                <div class="d-flex flex-column">
+                    <span class="fw-bold text-dark text-truncate js-short"></span>
+                    <span class="text-muted small text-truncate js-suffix"></span>
+                    <span class="text-secondary mt-1 small text-truncate js-full-name"></span>
+                </div>
+            </div>
+        </a>
+    </div>
+</template>
+
+<template id="search-group-item-template">
+    <div class="p-3 border-bottom shadow-sm-hover">
+        <a href="" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100 js-link">
+            <div class="flex-shrink-0" style="width: 45px;">
+                <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
+                    <img src="" class="w-100 h-100 object-fit-cover js-avatar" alt="group">
+                </div>
+            </div>
+            <div class="ms-3">
+                <div class="fw-bold text-dark js-title"></div>
+                <div class="text-muted small">Skupina</div>
+            </div>
+        </a>
+    </div>
+</template>
+
+<template id="search-event-item-template">
+    <div class="p-3 border-bottom shadow-sm-hover">
+        <a href="" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100 js-link">
+            <div class="flex-shrink-0" style="width: 45px;">
+                <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
+                    <img src="" class="w-100 h-100 object-fit-cover js-avatar" alt="event">
+                </div>
+            </div>
+            <div class="flex-grow-1 ms-3 overflow-hidden">
+                <div class="fw-bold text-dark text-truncate js-title"></div>
+                <div class="text-muted small text-truncate">Událost</div>
+            </div>
+        </a>
+    </div>
+</template>
+

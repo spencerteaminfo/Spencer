@@ -81,6 +81,34 @@
     </div>
 </main>
 
+<template id="event-group-search-item-template">
+    <div class="card border border-light-subtle rounded-pill px-3 py-2 w-100">
+        <div class="add-user-btn d-flex align-items-center">
+            <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
+                <img src="" class="w-100 profile-pic js-avatar" alt="group">
+            </div>
+            <div class="small flex-grow-1">
+                <span class="text-muted"><strong class="js-name"></strong></span>
+            </div>
+            <div class="fw-bold text-primary px-2" role="button">+</div>
+        </div>
+    </div>
+</template>
+
+<template id="event-selected-group-item-template">
+    <div class="card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100">
+        <div class="d-flex align-items-center">
+            <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
+                <img src="" class="w-100 profile-pic js-avatar" alt="group">
+            </div>
+            <div class="small">
+                <span class="text-muted d-none d-sm-inline js-name"></span>
+            </div>
+            <div class="remove-user-btn text-danger small fw-bold px-1" role="button">✕</div>
+        </div>
+    </div>
+</template>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

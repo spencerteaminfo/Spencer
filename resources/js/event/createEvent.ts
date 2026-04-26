@@ -16,6 +16,15 @@ const searchInput = document.getElementById("searchInput") as HTMLInputElement |
 let timeout: ReturnType<typeof setTimeout>;
 let selectedGroupsIds: number[] = [];
 
+const cloneTemplate = (id: string): HTMLElement | null => {
+    const template = document.getElementById(id) as HTMLTemplateElement | null;
+    if (!template) {
+        return null;
+    }
+
+    return template.content.firstElementChild?.cloneNode(true) as HTMLElement | null;
+};
+
 
 submitBtn.addEventListener("click", async (e)=>{
     let countError = 0;
@@ -131,19 +140,25 @@ const searchAndLog = async (search: string) => {
 };
 const createUserCard = (group: Group) => {
     const groupName = group.name ?? '';
-    const card = document.createElement('div');
-    card.className = "card border border-light-subtle rounded-pill px-3 py-2 w-100";
-    card.innerHTML = `
-        <div class="add-user-btn d-flex align-items-center">
-            <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
-                <img src="https://ui-avatars.com/api/?name=${groupName}&background=E9ECEF&color=6C757D" class="w-100 profile-pic" alt="acc">
-            </div>
-            <div class="small flex-grow-1">
-                <span class="text-muted"><strong>${groupName}</strong></span>
-            </div>
-            <div class="fw-bold text-primary px-2" role="button">+</div>
-        </div>`;
-    card.querySelector('.add-user-btn')?.addEventListener('click', () => {
+    const card = cloneTemplate('event-group-search-item-template');
+    if (!card) {
+        const fallback = document.createElement('div');
+        fallback.textContent = groupName;
+        return fallback;
+    }
+
+    const addBtn = card.querySelector('.add-user-btn') as HTMLElement | null;
+    const imgEl = card.querySelector('.js-avatar') as HTMLImageElement | null;
+    const nameEl = card.querySelector('.js-name') as HTMLElement | null;
+
+    if (imgEl) {
+        imgEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(groupName)}&background=E9ECEF&color=6C757D`;
+    }
+    if (nameEl) {
+        nameEl.textContent = groupName;
+    }
+
+    addBtn?.addEventListener('click', () => {
         addMemberToGroup(group);
         card.remove();
     });
@@ -155,21 +170,27 @@ const addMemberToGroup = (group: Group, canDelete: boolean = true) => {
 
     selectedGroupsIds.push(group.id);
 
-    const card = document.createElement('div');
-    card.className = "card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100";
-    card.innerHTML = `
-        <div class="d-flex align-items-center">
-            <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
-                <img src="https://ui-avatars.com/api/?name=${group.name}&background=198754&color=fff" class="w-100 profile-pic" alt="acc">
-            </div>
-            <div class="small">
-                <span class="text-muted d-none d-sm-inline">${group.name}</span>
-            </div>
-            ${canDelete ? '<div class="remove-user-btn text-danger small fw-bold px-1" role="button">✕</div>' : ''}
-        </div>`;
+    const card = cloneTemplate('event-selected-group-item-template');
+    if (!card) {
+        return;
+    }
+
+    const imgEl = card.querySelector('.js-avatar') as HTMLImageElement | null;
+    const nameEl = card.querySelector('.js-name') as HTMLElement | null;
+    const removeBtn = card.querySelector('.remove-user-btn') as HTMLElement | null;
+
+    if (imgEl) {
+        imgEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(group.name)}&background=198754&color=fff`;
+    }
+    if (nameEl) {
+        nameEl.textContent = group.name;
+    }
+    if (!canDelete && removeBtn) {
+        removeBtn.classList.add('d-none');
+    }
 
     if (canDelete) {
-        card.querySelector('.remove-user-btn')?.addEventListener('click', () => {
+        removeBtn?.addEventListener('click', () => {
             selectedGroupsIds = selectedGroupsIds.filter(id => id !== group.id);
             card.remove();
         });

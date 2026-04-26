@@ -1,5 +1,14 @@
 import api from '../bootstrap';
 
+const cloneTemplate = (id: string): HTMLElement | null => {
+    const template = document.getElementById(id) as HTMLTemplateElement | null;
+    if (!template) {
+        return null;
+    }
+
+    return template.content.firstElementChild?.cloneNode(true) as HTMLElement | null;
+};
+
 document.addEventListener("DOMContentLoaded", async()=>{
     const addedMembersContainer = document.getElementById("userBulletList") as HTMLDivElement;
     const groupId: string | undefined = addedMembersContainer.dataset.groupId;
@@ -14,32 +23,30 @@ document.addEventListener("DOMContentLoaded", async()=>{
     console.log(currentUserId);
 
     if (groupId && addedMembersContainer) {
-        const card = document.createElement('div');
-        card.className = "card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100";
-        card.innerHTML = `
-            <div class="d-flex align-items-center">
-                <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
-                    <img src="https://ui-avatars.com/api/?name=Group&background=198754&color=fff" class="w-100 profile-pic" alt="acc">
-                </div>
-                <div class="small">
-                    <span class="text-muted d-none d-sm-inline">Group</span>
-                </div>
-            </div>`;
-        addedMembersContainer.appendChild(card);
+        const card = cloneTemplate('event-detail-group-card-template');
+        if (card) {
+            addedMembersContainer.appendChild(card);
+        }
     }
     members.forEach((member:any) => {
         const member_id = member.pivot.user_id;
         const currentAttendance = attendanceData.find((a: any) => a.membership_id == member_id);
         const attends = currentAttendance?.attends || false;
         const attendanceBox = attends ? iterestedContainer:  notIterestedContainer;
-        const notIterestedDiv = document.createElement('div');
-        notIterestedDiv.className = "d-flex align-items-center mb-3";
+        const notIterestedDiv = cloneTemplate('event-detail-attendance-item-template');
+        if (!notIterestedDiv) {
+            return;
+        }
+
         notIterestedDiv.id = "member-"+member_id;
-        notIterestedDiv.innerHTML = `
-                <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
-                <img src="https://ui-avatars.com/api/?name=${member.email}&background=198754&color=fff" class="w-100" alt="user">
-            </div>
-            <span class="small fw-medium">${member.email}</span>`;
+        const imgEl = notIterestedDiv.querySelector('.js-avatar') as HTMLImageElement | null;
+        const emailEl = notIterestedDiv.querySelector('.js-email') as HTMLElement | null;
+        if (imgEl) {
+            imgEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.email)}&background=198754&color=fff`;
+        }
+        if (emailEl) {
+            emailEl.textContent = member.email;
+        }
 
         attendanceBox?.append(notIterestedDiv);
     });

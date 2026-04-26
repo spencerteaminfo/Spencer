@@ -64,13 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const isRead = (notification: NotificationItem): boolean =>
         notification.read_at !== null || localReadIds.has(notification.id);
 
-    const escapeHtml = (value: string): string =>
-        value
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#39;');
+    const cloneTemplate = (id: string): HTMLElement | null => {
+        const template = document.getElementById(id) as HTMLTemplateElement | null;
+        if (!template) {
+            return null;
+        }
+
+        return template.content.firstElementChild?.cloneNode(true) as HTMLElement | null;
+    };
 
     const getMessage = (notification: NotificationItem): string => {
         const message = notification.data.message;
@@ -109,38 +110,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
         readAllButton.disabled = notifications.length === 0 || notifications.every((notification) => isRead(notification));
 
-        listElement.innerHTML = notifications
-            .map((notification) => {
-                const notificationIsRead = isRead(notification);
-                const actionLabel = notificationIsRead ? 'Read' : 'Mark as read';
+        listElement.innerHTML = '';
+        const fragment = document.createDocumentFragment();
 
-                return `
-                    <div class="card border-0 shadow-sm rounded-pill p-2 px-3" data-id="${notification.id}">
-                        <div class="d-flex align-items-center">
-                            <div class="flex-shrink-0 me-3">
-                                <div class="ratio ratio-1x1 bg-primary-subtle rounded-circle d-flex align-items-center justify-content-center">
-                                    <div class="d-flex align-items-center justify-content-center">
-                                        <img src="${escapeHtml(bellIcon)}" alt="notif" class="h-50 w-auto opacity-75">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex-grow-1 overflow-hidden">
-                                <p class="mb-0 text-dark fw-medium text-truncate">${escapeHtml(getMessage(notification))}</p>
-                                <small class="text-muted opacity-75">${escapeHtml(formatTime(notification.created_at))}</small>
-                            </div>
-                            <div class="ms-2 d-none d-sm-block">
-                                <button class="btn btn-sm btn-light rounded-pill border px-3 shadow-none notification-read-button"
-                                    data-id="${notification.id}"
-                                    ${notificationIsRead ? 'disabled' : ''}
-                                    type="button">
-                                    ${actionLabel}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            })
-            .join('');
+        notifications.forEach((notification) => {
+            const item = cloneTemplate('notification-item-template');
+            if (!item) {
+                return;
+            }
+
+            const notificationIsRead = isRead(notification);
+            const actionLabel = notificationIsRead ? 'Read' : 'Mark as read';
+            const messageEl = item.querySelector('.js-message') as HTMLElement | null;
+            const timeEl = item.querySelector('.js-time') as HTMLElement | null;
+            const iconEl = item.querySelector('.js-bell-icon') as HTMLImageElement | null;
+            const buttonEl = item.querySelector('.notification-read-button') as HTMLButtonElement | null;
+
+            item.dataset.id = notification.id;
+            if (messageEl) messageEl.textContent = getMessage(notification);
+            if (timeEl) timeEl.textContent = formatTime(notification.created_at);
+            if (iconEl) iconEl.src = bellIcon;
+            if (buttonEl) {
+                buttonEl.dataset.id = notification.id;
+                buttonEl.disabled = notificationIsRead;
+                buttonEl.textContent = actionLabel;
+            }
+
+            fragment.appendChild(item);
+        });
+
+        listElement.appendChild(fragment);
     };
 
     const list = async (): Promise<void> => {

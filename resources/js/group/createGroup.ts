@@ -6,6 +6,15 @@ let initialUserIds: number[] = [];
 let currentGroupId: string | null = null;
 let deletePictureFlag = false;
 
+const cloneTemplate = (id: string): HTMLElement | null => {
+    const template = document.getElementById(id) as HTMLTemplateElement | null;
+    if (!template) {
+        return null;
+    }
+
+    return template.content.firstElementChild?.cloneNode(true) as HTMLElement | null;
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     setupModalEvents();
     checkUrlForOpenGroup();
@@ -123,10 +132,13 @@ async function performSearch(query: string) {
         const response = await api.get("/api/users", {params: {email: query}});
         modalList.innerHTML = "";
         response.data.data.filter((u: any) => !selectedUsers.some(su => su.id === u.id)).forEach((user: any) => {
-            const [short] = user.email.split("@");
-            const item = document.createElement('div');
-            item.className = "p-2 border-bottom shadow-sm-hover cursor-pointer bg-white";
-            item.innerHTML = `<span class="small fw-bold">${user.email}</span>`;
+            const item = cloneTemplate('group-user-search-item-template') ?? document.createElement('div');
+            const emailEl = item.querySelector('.js-email') as HTMLElement | null;
+            if (emailEl) {
+                emailEl.textContent = user.email;
+            } else {
+                item.textContent = user.email;
+            }
             item.addEventListener('click', () => { addMemberToGroup(user); item.remove(); });
             modalList.appendChild(item);
         });
@@ -140,21 +152,27 @@ function addMemberToGroup(user: any, canDelete: boolean = true) {
     const role = user.role ?? 4;
     selectedUsers.push({ id: user.id, role });
 
-    const card = document.createElement('div');
-    card.className = "d-flex justify-content-between align-items-center border p-2 rounded bg-white";
-    card.innerHTML = `
-        <span class="small">${user.email}</span>
-        ${canDelete ? `
-        <div class="d-flex align-items-center gap-2">
-            <select class="form-select form-select-sm role-select">
-                <option value="4" ${role == 4 ? 'selected' : ''}>Member</option>
-                <option value="5" ${role == 5 ? 'selected' : ''}>Cashier</option>
-            </select>
-            <span class="text-danger cursor-pointer remove-user">✕</span>
-        </div>` : ''}`;
+    const card = cloneTemplate('group-member-item-template');
+    if (!card) {
+        return;
+    }
+
+    const emailEl = card.querySelector('.js-email') as HTMLElement | null;
+    const roleSelect = card.querySelector('.role-select') as HTMLSelectElement | null;
+    const actionsEl = card.querySelector('.js-actions') as HTMLElement | null;
+
+    if (emailEl) {
+        emailEl.textContent = user.email;
+    }
+    if (roleSelect) {
+        roleSelect.value = role.toString();
+    }
+    if (!canDelete && actionsEl) {
+        actionsEl.classList.add('d-none');
+    }
 
     if (canDelete) {
-        card.querySelector('.role-select')?.addEventListener('change', (e) => {
+        roleSelect?.addEventListener('change', (e) => {
             const target = selectedUsers.find(u => u.id === user.id);
             if (target) target.role = parseInt((e.target as HTMLSelectElement).value);
         });

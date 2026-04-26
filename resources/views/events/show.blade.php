@@ -67,9 +67,9 @@
                                 }else{
                                     $groupImage = Storage::url($groupObj->picture_url);
                                 }
-                                
+
                             @endphp
-                            
+
                             <div class="card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
@@ -110,7 +110,7 @@
                                     }else{
                                         $avatarImage = Storage::url($user->avatar_url);
                                     }
-                                    
+
                                 @endphp
                                     <div class="d-flex align-items-center mb-3">
                                         <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
@@ -134,7 +134,7 @@
                                     }else{
                                         $avatarImage = Storage::url($user->avatar_url);
                                     }
-                                    
+
                                 @endphp
                                     <div class="d-flex align-items-center mb-3">
                                         <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
@@ -146,7 +146,7 @@
                                     <p class="text-muted small mb-2">Zatím nikdo nepotvrdil účast.</p>
                                 @endforelse
                             </div>
-                            
+
                             {{--@foreach(range(1, 3) as $i)
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
@@ -163,5 +163,27 @@
         </div>
     </div>
 </main>
+
+<template id="event-detail-group-card-template">
+    <div class="card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100">
+        <div class="d-flex align-items-center">
+            <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
+                <img src="https://ui-avatars.com/api/?name=Group&background=198754&color=fff" class="w-100 profile-pic" alt="group">
+            </div>
+            <div class="small">
+                <span class="text-muted d-none d-sm-inline">Group</span>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="event-detail-attendance-item-template">
+    <div class="d-flex align-items-center mb-3">
+        <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
+            <img src="" class="w-100 js-avatar" alt="user">
+        </div>
+        <span class="small fw-medium js-email"></span>
+    </div>
+</template>
 </body>
 </html>
