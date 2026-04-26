@@ -15,6 +15,15 @@
             <div class="row g-4 justify-content-center">
                 <div class="col-lg-8">
                     <div class="card shadow-sm border-0 rounded-4 p-4 mb-4">
+                        <div id="img-preview-div" class="ratio ratio-21x9 bg-light rounded-4 border border-secondary border-opacity-25 mb-2 position-relative">
+                            {{$pathwayImg = $event->thumbnail_url}}
+                            @if(!empty($pathwayImg))
+                                <img id="img-preview" src="{{  asset('storage/'.$pathwayImg)}}" class="w-100 h-100 top-0 start-0 rounded-4 z-1" style="object-fit: cover; pointer-events: none" alt="img-preview">
+                            @endif
+                            <label for="event-image-upload" class="d-flex flex-column justify-content-center align-items-center w-100 h-100">
+                                <img id="input-img" src="{{ Vite::asset('resources/svg/file.svg') }}" alt="Upload" class="opacity-50 mb-2" style="width: 80px; height: auto;">
+                            </label>
+                        </div>
                         <div id="title-div" class="mb-3">
                             <label class="form-label small text-muted">{{__('event.show.title')}}</label>
                             <p>{{ $event->title }}</p>
@@ -46,15 +55,6 @@
                         <div id="price-div" class="mb-3">
                             <label class="form-label small text-muted">{{__('event.show.price')}}</label>
                             <p>{{$event->price_amount}} {{$event->price_currency}}</p>
-                        </div>
-                        <div id="img-preview-div" class="ratio ratio-21x9 bg-light rounded-4 border border-secondary border-opacity-25 mb-2 position-relative">
-                            {{$pathwayImg = $event->thumbnail_url}}
-                            @if(!empty($pathwayImg))
-                                <img id="img-preview" src="{{  asset('storage/'.$pathwayImg)}}" class="w-100 h-100 top-0 start-0 rounded-4 z-1" style="object-fit: cover; pointer-events: none" alt="img-preview">
-                            @endif
-                            <label for="event-image-upload" class="d-flex flex-column justify-content-center align-items-center w-100 h-100">
-                                <img id="input-img" src="{{ Vite::asset('resources/svg/file.svg') }}" alt="Upload" class="opacity-50 mb-2" style="width: 80px; height: auto;">
-                            </label>
                         </div>
                     </div>
                     <div class="mb-4">
