@@ -23,7 +23,6 @@
                         <div id="description-div" class="mb-3">
                             <label class="form-label small text-muted">{{__('event.show.description')}}</label>
                             <p>{{ $event->description }}</p>
-                            <p>{{ $eventGroupId }}</p>
                         </div>
                         <div class="row g-3 mb-4">
                             <div id="deadline-div" class="col-md-4">
@@ -38,6 +37,10 @@
                                 <label class="form-label small text-muted">{{__('event.show.to')}}</label>
                                 <p>{{ date('d.m.Y', strtotime($event->ends_at))}}</p>
                             </div>
+                        </div>
+                        <div id="price-div" class="mb-3">
+                            <label class="form-label small text-muted">{{__('event.show.price')}}</label>
+                            <p>{{$event->price_amount}} {{$event->price_currency}}</p>
                         </div>
                         <div id="img-preview-div" class="ratio ratio-21x9 bg-light rounded-4 border border-secondary border-opacity-25 mb-2 position-relative">
                             {{$pathwayImg = $event->thumbnail_url}}
