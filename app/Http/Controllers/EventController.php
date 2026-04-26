@@ -316,6 +316,29 @@ class EventController extends Controller
 
         return response()->json(['message' => 'Attendees updated', 'data' => $event->load(['groups', 'users'])], 200);
     }
+    /**
+     * Store patch attendees from event
+     */
+    public function setAttendance(Request $request, Event $event): JsonResponse
+    {
+        $data = $request->validate([
+            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'attends' => ['required', 'boolean'],
+        ]);
+
+        $attendance = Attendance::where('event_id', $event->id)
+            ->where('user_id', $data['user_id'])
+            ->firstOrFail();
+
+        $attendance->update([
+            'attends' => $data['attends']
+        ]);
+
+        return response()->json([
+            'message' => 'Attendance updated',
+            'data' => $attendance
+        ], 200);
+    }
 
     /**
      * Delete requested group/user attendees from the event

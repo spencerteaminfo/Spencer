@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", async()=>{
     const currentUserId = document.querySelector('meta[name="current-user-id"]')?.getAttribute('content');
     const members: any[] = [];
     const attendanceData: any[] = [];
-    // console.log(groupId);
+    console.log(currentUserId);
 
     if (groupId && addedMembersContainer) {
         const card = document.createElement('div');
@@ -50,11 +50,6 @@ document.addEventListener("DOMContentLoaded", async()=>{
                 user_id: currentUserId,
                 attends: true,
             });
-
-
-            const memberDiv = document?.getElementById("member-"+currentUserId) as HTMLDivElement;
-            memberDiv?.remove();
-            iterestedContainer?.append(memberDiv);
             showAttendanceSuccessNotification();
         } catch (e: any){
             console.error("Error: "+e);
@@ -67,9 +62,6 @@ document.addEventListener("DOMContentLoaded", async()=>{
                 user_id: currentUserId,
                 attends: false,
             });
-            const memberDiv = document?.getElementById("member-"+currentUserId) as HTMLDivElement;
-            memberDiv?.remove();
-            notIterestedContainer?.append(memberDiv);
             showAttendanceSuccessNotification();
         } catch (e: any){
             console.log("Error: "+e);

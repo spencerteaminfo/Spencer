@@ -119,7 +119,7 @@
                                         <span class="small fw-medium">{{ $user->email }}</span>
                                     </div>
                                 @empty
-                                    <p class="text-muted small">Zatím nikdo nepotvrdil účast.</p>
+                                    <p class="text-muted small mb-4">Zatím nikdo nepotvrdil účast.</p>
                                 @endforelse
                             </div>
                         </div>
@@ -143,7 +143,7 @@
                                         <span class="small fw-medium">{{ $user->email }}</span>
                                     </div>
                                 @empty
-                                    <p class="text-muted small">Zatím nikdo nepotvrdil účast.</p>
+                                    <p class="text-muted small mb-2">Zatím nikdo nepotvrdil účast.</p>
                                 @endforelse
                             </div>
                             
