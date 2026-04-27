@@ -7,6 +7,7 @@ use App\Enums\RoleType;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
@@ -25,6 +26,7 @@ class Event extends Model
     protected $fillable = [
         'title',
         'description',
+        'creator_id',
         'price',
         'currency',
         'deadline',
@@ -37,6 +39,7 @@ class Event extends Model
     {
         return [
             'id' => 'integer',
+            'creator_id' => 'integer',
             'description' => 'string',
             'price' => MoneyCast::class,
             'created_at' => 'datetime',
@@ -74,6 +77,11 @@ class Event extends Model
     {
         return $this->belongsToMany(Group::class, 'event_group', 'event_id', 'group_id')
             ->withTimestamps();
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'creator_id');
     }
 
     /**
@@ -141,7 +149,7 @@ class Event extends Model
             ->get();
     }
 
-    
+
     public function getUserMembership(\App\Models\User $user, \App\Models\Group $group)
     {
         return \App\Models\Membership::where('user_id', $user->id)

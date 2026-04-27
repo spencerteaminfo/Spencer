@@ -273,13 +273,15 @@ class EventController extends Controller
      */
     public function storeAttendees(Request $request, Event $event): JsonResponse
     {
-        $user = auth()->user();
+        $requester = auth()->user();
 
         $attendance = Attendance::where('event_id', $event->id)
-            ->where('user_id', $user->id)
+            ->where('user_id', $requester->id)
             ->first();
 
-        if ($attendance && $event->hasUserAtLeastRole($user, RoleType::CASHIER)) {
+        $isAtLeastCashier = $event->hasUserAtLeastRole($requester, RoleType::CASHIER);
+        $isOwner = $event->creator_id == $requester->id;
+        if (!$attendance && !$isAtLeastCashier && !$isOwner) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -350,7 +352,9 @@ class EventController extends Controller
             ->where('user_id', $user->id)
             ->first();
 
-        if (!($attendance && $event->hasUserAtLeastRole($user, RoleType::CASHIER))) {
+        $isAtLeastCashier = $event->hasUserAtLeastRole($user, RoleType::CASHIER);
+        $isOwner = $event->creator_id == $user->id;
+        if (!$attendance && !$isAtLeastCashier && !$isOwner) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -395,7 +399,9 @@ class EventController extends Controller
             ->where('user_id', $requester->id)
             ->first();
 
-        if (!($attendance && $event->hasUserAtLeastRole($requester, RoleType::CASHIER))) {
+        $isAtLeastCashier = $event->hasUserAtLeastRole($requester, RoleType::CASHIER);
+        $isOwner = $event->creator_id == $requester->id;
+        if (!$attendance && !$isAtLeastCashier && !$isOwner) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -429,7 +435,9 @@ class EventController extends Controller
             ->where('user_id', $requester->id)
             ->first();
 
-        if (!($attendance && $event->hasUserAtLeastRole($requester, RoleType::CASHIER))) {
+        $isAtLeastCashier = $event->hasUserAtLeastRole($requester, RoleType::CASHIER);
+        $isOwner = $event->creator_id == $requester->id;
+        if (!$attendance && !$isAtLeastCashier && !$isOwner) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -462,7 +470,9 @@ class EventController extends Controller
             ->where('user_id', $requester->id)
             ->first();
 
-        if (!($attendance && $event->hasUserAtLeastRole($requester, RoleType::CASHIER))) {
+        $isAtLeastCashier = $event->hasUserAtLeastRole($requester, RoleType::CASHIER);
+        $isOwner = $event->creator_id == $requester->id;
+        if (!$attendance && !$isAtLeastCashier && !$isOwner) {
             abort(403, 'Unauthorized action.');
         }
 
