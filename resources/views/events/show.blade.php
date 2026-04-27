@@ -2,7 +2,9 @@
 <html lang="en">
 <x-head title="Show Event">@vite(['resources/js/event/detailEvent.ts'])
     <meta name="current-user-id" content="{{ auth()->user()->id }}">
+    <meta name="current-event-id" content="{{ $event->id }}">
     <meta name="data-groups-ids" content="{{ json_encode($event->groups->pluck('id')) }}">
+    <meta name="all-user-ids" content="{{ json_encode($event->users()->get()->groupBy('pivot.attends')) }}">
 </x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}" data-default-avatar="{{ Vite::asset('resources/svg/user.svg') }}">
 <x-header />
@@ -32,6 +34,7 @@
                 <div class="modal-footer border-0 pt-0">
                     <button type="button" class="btn btn-light w-100 rounded-pill" data-bs-dismiss="modal">Zrušit</button>
                     <button type="button" id="modal-save-btn" class="btn btn-success w-100 rounded-pill fw-bold">Uložit platbu</button>
+                    <button type="button" id="modal-correct-btn" class="btn btn-success w-100 rounded-pill fw-bold">Zaplaceno přesne</button>
                 </div>
             </div>
         </div>
@@ -149,11 +152,10 @@
                                         </div>
                                         <span class="small fw-medium">{{ $user->email }}</span>
                                         <div class="admin-only-info" data-user-id="{{ $user->id }}">
-                                            <button class="btn btn-sm btn-light border rounded-pill d-flex align-items-center gap-1 open-payment-modal" 
+                                            <button id="button{{$user->id}}" class="btn btn-sm btn-light border rounded-pill d-flex align-items-center gap-1 open-payment-modal" 
                                                     data-email="{{ $user->email }}"
-                                                    data-amount="20"
                                                     data-avatar="{{ $avatarImage }}">
-                                                <span class="fw-bold text-success">20 Kč</span>
+                                                <span id="span{{$user->id}}" class="fw-bold text-success">0</span>
                                                 <i class="bi bi-pencil-fill text-muted ms-1" style="font-size: 0.7rem;"></i>
                                             </button>
                                         </div>
