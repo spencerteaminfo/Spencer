@@ -12,6 +12,7 @@ return [
         'deadline' => 'Deadline',
         'from' => 'From',
         'to' => 'To',
+        'price' => 'Price',
 
         'groups' => 'Groups:',
 

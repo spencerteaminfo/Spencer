@@ -10,6 +10,7 @@ return [
         'deadline' => 'Frist',
         'from' => 'Von',
         'to' => 'Bis',
+        'price' => 'Preis',
         'groups' => 'Gruppen:',
         'interested' => 'Interessiert',
         'not_interested' => 'Nicht interessiert',

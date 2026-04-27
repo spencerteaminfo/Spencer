@@ -10,6 +10,7 @@ return [
         'deadline' => 'Termín',
         'from' => 'Od',
         'to' => 'Do',
+        'price' => 'Cena',
         'groups' => 'Skupiny:',
         'interested' => 'Mám zájem',
         'not_interested' => 'Nemám zájem',
