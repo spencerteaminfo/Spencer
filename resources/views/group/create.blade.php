@@ -46,7 +46,10 @@
 </div>
 
 <template id="group-user-search-item-template">
-    <div class="p-2 border-bottom shadow-sm-hover cursor-pointer bg-white">
+    <div class="p-2 border-bottom shadow-sm-hover cursor-pointer bg-white rounded-3 d-flex align-items-center gap-2">
+        <div class="rounded-circle overflow-hidden border border-secondary-subtle" style="width: 28px; height: 28px;">
+            <img src="{{ Vite::asset('resources/svg/user.svg') }}" data-default-avatar="{{ Vite::asset('resources/svg/user.svg') }}" class="w-100 h-100 object-fit-cover js-avatar" alt="user">
+        </div>
         <span class="small fw-bold js-email"></span>
     </div>
 </template>

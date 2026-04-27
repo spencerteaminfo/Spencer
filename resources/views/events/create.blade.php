@@ -55,7 +55,7 @@
                             <span>Don´t have an group <a href="/groups">create it</a></span>
                         </div>
                         <div class="position-relative">
-                            <input id="searchInput" type="text" class="form-control rounded-pill py-3 px-4 shadow-sm border-0" placeholder="Search for a person or a group">
+                            <input id="searchInput" type="text" class="form-control rounded-pill py-3 px-4 shadow-sm border-0 mb-2" placeholder="Search for a person or a group">
                             <span class="position-absolute end-0 top-50 translate-middle-y me-4">
                                 <img src="{{ Vite::asset('resources/svg/search.svg') }}" alt="search" class="h-auto w-auto opacity-50">
                             </span>
@@ -82,27 +82,27 @@
 </main>
 
 <template id="event-group-search-item-template">
-    <div class="card border border-light-subtle rounded-pill px-3 py-2 w-100">
-        <div class="add-user-btn d-flex align-items-center">
-            <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
-                <img src="" class="w-100 profile-pic js-avatar" alt="group">
-            </div>
-            <div class="small flex-grow-1">
-                <span class="text-muted"><strong class="js-name"></strong></span>
-            </div>
-            <div class="fw-bold text-primary px-2" role="button">+</div>
+    <div class="add-user-btn p-3 border-bottom shadow-sm-hover cursor-pointer bg-white rounded-5 d-flex align-items-center gap-2">
+        <div class="rounded-circle overflow-hidden border border-secondary-subtle" style="width: 28px; height: 28px;">
+            <img src="{{ Vite::asset('resources/svg/users.svg') }}" data-default-avatar="{{ Vite::asset('resources/svg/users.svg') }}" class="w-100 h-100 object-fit-cover js-avatar" alt="group">
         </div>
+        <span class="small fw-bold js-name"></span>
     </div>
 </template>
 
 <template id="event-selected-group-item-template">
-    <div class="card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100">
-        <div class="d-flex align-items-center">
-            <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
-                <img src="" class="w-100 profile-pic js-avatar" alt="group">
-            </div>
-            <div class="small">
-                <span class="text-muted d-none d-sm-inline js-name"></span>
+    <div class="card border border-success-subtle bg-success bg-opacity-10 rounded-3 px-3 py-2 mb-1 w-100">
+        <div class="d-flex align-items-center justify-content-between gap-2">
+            <div class="d-flex align-items-center gap-2 min-w-0">
+                <div class="rounded-circle overflow-hidden border border-secondary-subtle" style="width: 28px; height: 28px; flex: 0 0 28px;">
+                    <img
+                        src="{{ Vite::asset('resources/svg/users.svg') }}"
+                        data-default-avatar="{{ Vite::asset('resources/svg/users.svg') }}"
+                        class="w-100 h-100 object-fit-cover js-avatar"
+                        alt="group"
+                    >
+                </div>
+                <span class="text-muted small text-truncate js-name"></span>
             </div>
             <div class="remove-user-btn text-danger small fw-bold px-1" role="button">✕</div>
         </div>

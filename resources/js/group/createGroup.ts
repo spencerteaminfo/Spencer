@@ -133,12 +133,24 @@ async function performSearch(query: string) {
         modalList.innerHTML = "";
         response.data.data.filter((u: any) => !selectedUsers.some(su => su.id === u.id)).forEach((user: any) => {
             const item = cloneTemplate('group-user-search-item-template') ?? document.createElement('div');
+            const imgEl = item.querySelector('.js-avatar') as HTMLImageElement | null;
             const emailEl = item.querySelector('.js-email') as HTMLElement | null;
+
+            if (imgEl) {
+                const defaultAvatar = imgEl.dataset.defaultAvatar || imgEl.src;
+                const avatarUrl = user.avatar_url ? (user.avatar_url.startsWith('http') ? user.avatar_url : `/storage/${user.avatar_url}`) : defaultAvatar;
+                imgEl.src = avatarUrl;
+                imgEl.onerror = () => {
+                    imgEl.src = defaultAvatar;
+                };
+            }
+
             if (emailEl) {
                 emailEl.textContent = user.email;
             } else {
                 item.textContent = user.email;
             }
+
             item.addEventListener('click', () => { addMemberToGroup(user); item.remove(); });
             modalList.appendChild(item);
         });

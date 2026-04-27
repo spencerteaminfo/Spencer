@@ -147,21 +147,29 @@ const createUserCard = (group: Group) => {
         return fallback;
     }
 
-    const addBtn = card.querySelector('.add-user-btn') as HTMLElement | null;
+    const addBtn = (card.querySelector('.add-user-btn') as HTMLElement | null)
+        || (card.classList.contains('add-user-btn') ? card : null);
     const imgEl = card.querySelector('.js-avatar') as HTMLImageElement | null;
     const nameEl = card.querySelector('.js-name') as HTMLElement | null;
 
     if (imgEl) {
-        imgEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(groupName)}&background=E9ECEF&color=6C757D`;
+        const defaultAvatar = imgEl.dataset.defaultAvatar || imgEl.src;
+        const pictureUrl = group.picture_url ? (group.picture_url.startsWith('http') ? group.picture_url : `/storage/${group.picture_url}`) : defaultAvatar;
+        imgEl.src = pictureUrl;
+        imgEl.onerror = () => {
+            imgEl.src = defaultAvatar;
+        };
     }
     if (nameEl) {
         nameEl.textContent = groupName;
     }
 
-    addBtn?.addEventListener('click', () => {
+    const clickTarget = addBtn || card;
+    clickTarget.addEventListener('click', () => {
         addMemberToGroup(group);
         card.remove();
     });
+
     return card;
 };
 const addMemberToGroup = (group: Group, canDelete: boolean = true) => {
@@ -180,7 +188,14 @@ const addMemberToGroup = (group: Group, canDelete: boolean = true) => {
     const removeBtn = card.querySelector('.remove-user-btn') as HTMLElement | null;
 
     if (imgEl) {
-        imgEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(group.name)}&background=198754&color=fff`;
+        const defaultAvatar = imgEl.dataset.defaultAvatar || imgEl.src;
+        const pictureUrl = group.picture_url
+            ? (group.picture_url.startsWith('http') ? group.picture_url : `/storage/${group.picture_url}`)
+            : defaultAvatar;
+        imgEl.src = pictureUrl;
+        imgEl.onerror = () => {
+            imgEl.src = defaultAvatar;
+        };
     }
     if (nameEl) {
         nameEl.textContent = group.name;
@@ -209,4 +224,3 @@ searchInput?.addEventListener("input", (e) => {
         else if (modalList) modalList.innerHTML = '';
     }, 300);
 });
-
