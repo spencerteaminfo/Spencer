@@ -1,5 +1,101 @@
 import api from '../bootstrap';
 
+const cloneTemplate = (id: string): HTMLElement | null => {
+    const template = document.getElementById(id) as HTMLTemplateElement | null;
+    if (!template) {
+        return null;
+    }
+
+    return template.content.firstElementChild?.cloneNode(true) as HTMLElement | null;
+};
+
+const createSearchSectionTitle = (label: string, withTopMargin = false): HTMLElement | null => {
+    const item = cloneTemplate('search-result-section-template');
+    if (!item) {
+        return null;
+    }
+
+    const labelEl = item.querySelector('.js-label');
+    if (labelEl) labelEl.textContent = label;
+    if (withTopMargin) item.classList.add('mt-2');
+    return item;
+};
+
+const createUserResult = (user: any): HTMLElement | null => {
+    const item = cloneTemplate('search-user-item-template');
+    if (!item) {
+        return null;
+    }
+
+    const email = user.email || 'User';
+    const [short, suffix] = email.split('@');
+    const fullName = `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim();
+    const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(short)}&background=198754&color=fff&size=128`;
+    const hasLocalAvatar = user.avatar_url && user.avatar_url !== '' && !user.avatar_url.startsWith('http');
+    const profilePic = hasLocalAvatar ? `/storage/${user.avatar_url}` : fallbackAvatar;
+
+    const linkEl = item.querySelector('.js-link') as HTMLAnchorElement | null;
+    const imgEl = item.querySelector('.js-avatar') as HTMLImageElement | null;
+    const shortEl = item.querySelector('.js-short') as HTMLElement | null;
+    const suffixEl = item.querySelector('.js-suffix') as HTMLElement | null;
+    const fullNameEl = item.querySelector('.js-full-name') as HTMLElement | null;
+
+    if (linkEl) linkEl.href = `/user/${user.id}`;
+    if (imgEl) {
+        imgEl.src = profilePic;
+        imgEl.onerror = () => {
+            imgEl.onerror = null;
+            imgEl.src = fallbackAvatar;
+        };
+    }
+    if (shortEl) shortEl.textContent = short;
+    if (suffixEl) suffixEl.textContent = `@${suffix ?? ''}`;
+    if (fullNameEl) {
+        if (fullName) {
+            fullNameEl.textContent = fullName;
+            fullNameEl.classList.remove('d-none');
+        } else {
+            fullNameEl.classList.add('d-none');
+        }
+    }
+
+    return item;
+};
+
+const createGroupResult = (group: any): HTMLElement | null => {
+    const item = cloneTemplate('search-group-item-template');
+    if (!item) {
+        return null;
+    }
+
+    const linkEl = item.querySelector('.js-link') as HTMLAnchorElement | null;
+    const imgEl = item.querySelector('.js-avatar') as HTMLImageElement | null;
+    const titleEl = item.querySelector('.js-title') as HTMLElement | null;
+
+    if (linkEl) linkEl.href = `/groups?open=${group.id}`;
+    if (imgEl) imgEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(group.name)}&background=198754&color=fff`;
+    if (titleEl) titleEl.textContent = group.name ?? '';
+
+    return item;
+};
+
+const createEventResult = (event: any): HTMLElement | null => {
+    const item = cloneTemplate('search-event-item-template');
+    if (!item) {
+        return null;
+    }
+
+    const linkEl = item.querySelector('.js-link') as HTMLAnchorElement | null;
+    const imgEl = item.querySelector('.js-avatar') as HTMLImageElement | null;
+    const titleEl = item.querySelector('.js-title') as HTMLElement | null;
+
+    if (linkEl) linkEl.href = `/event/${event.id}`;
+    if (imgEl) imgEl.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(event.title)}&background=198754&color=fff`;
+    if (titleEl) titleEl.textContent = event.title ?? '';
+
+    return item;
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById("searchUserGroup") as HTMLInputElement | null;
     const searchResult = document.getElementById("searchResult") as HTMLElement | null;
@@ -47,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const groups = resGroups.data.data;
             const events = resEvents.data.data;
 
-            resultContainer.innerHTML = "";
+            resultContainer.innerHTML = '';
 
             if (users.length > 0 || groups.length > 0 || events.length > 0) {
                 resultContainer.classList.remove("d-none");
@@ -55,73 +151,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultContainer.classList.add("d-none");
             }
 
-            if (users.length > 0) {
-                resultContainer.innerHTML += `<div class="px-3 py-2 small text-uppercase fw-bold text-muted border-bottom">Uživatelé</div>`;
-                users.forEach((user: any) => {
-                    const email = user.email || 'User';
-                    const [short, suffix] = email.split("@");
-                    const fullName = `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim();
-                    const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(short)}&background=198754&color=fff&size=128`;
-                    const hasLocalAvatar = user.avatar_url && user.avatar_url !== '' && !user.avatar_url.startsWith('http');
-                    const profilePic = hasLocalAvatar ? `/storage/${user.avatar_url}` : fallbackAvatar;
+            const fragment = document.createDocumentFragment();
 
-                    resultContainer.innerHTML += `
-                    <div class="p-3 border-bottom shadow-sm-hover">
-                        <a href="/user/${user.id}" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100">
-                            <div class="flex-shrink-0" style="width: 45px;">
-                                <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
-                                    <img src="${profilePic}" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null;this.src='${fallbackAvatar}';">
-                                </div>
-                            </div>
-                            <div class="flex-grow-1 ms-3 overflow-hidden">
-                                <div class="d-flex flex-column">
-                                    <span class="fw-bold text-dark text-truncate">${short}</span>
-                                    <span class="text-muted small text-truncate">@${suffix}</span>
-                                    ${fullName ? `<span class="text-secondary mt-1 small text-truncate">${fullName}</span>` : ''}
-                                </div>
-                            </div>
-                        </a>
-                    </div>`;
+            if (users.length > 0) {
+                const usersTitle = createSearchSectionTitle('Uživatelé');
+                if (usersTitle) fragment.appendChild(usersTitle);
+                users.forEach((user: any) => {
+                    const userResult = createUserResult(user);
+                    if (userResult) fragment.appendChild(userResult);
                 });
             }
 
             if (groups.length > 0 || events.length > 0) {
-                resultContainer.innerHTML += `<div class="px-3 py-2 small text-uppercase fw-bold text-muted border-bottom mt-2">Ostatní</div>`;
+                const othersTitle = createSearchSectionTitle('Ostatní', true);
+                if (othersTitle) fragment.appendChild(othersTitle);
 
                 groups.forEach((group: any) => {
-                    resultContainer.innerHTML += `
-                    <div class="p-3 border-bottom shadow-sm-hover">
-                        <a href="" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100">
-                            <div class="flex-shrink-0" style="width: 45px;">
-                                <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
-                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(group.name)}&background=198754&color=fff" class="w-100 h-100 object-fit-cover">
-                                </div>
-                            </div>
-                            <div class="ms-3">
-                                <div class="fw-bold text-dark">${group.name}</div>
-                                <div class="text-muted small">Skupina</div>
-                            </div>
-                        </a>
-                    </div>`;
+                    const groupResult = createGroupResult(group);
+                    if (groupResult) fragment.appendChild(groupResult);
                 });
 
                 events.forEach((event: any) => {
-                    resultContainer.innerHTML += `
-                    <div class="p-3 border-bottom shadow-sm-hover">
-                        <a href="/event/${event.id}" class="d-flex align-items-center link-underline link-underline-opacity-0 w-100">
-                            <div class="flex-shrink-0" style="width: 45px;">
-                                <div class="ratio ratio-1x1 rounded-circle overflow-hidden border">
-                                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(event.title)}&background=198754&color=fff" class="w-100 h-100 object-fit-cover">
-                                </div>
-                            </div>
-                            <div class="flex-grow-1 ms-3 overflow-hidden">
-                                <div class="fw-bold text-dark text-truncate">${event.title}</div>
-                                <div class="text-muted small text-truncate">Událost</div>
-                            </div>
-                        </a>
-                    </div>`;
+                    const eventResult = createEventResult(event);
+                    if (eventResult) fragment.appendChild(eventResult);
                 });
             }
+
+            resultContainer.appendChild(fragment);
 
             if (!resultContainer.innerHTML) {
                 resultContainer.classList.add("d-none");

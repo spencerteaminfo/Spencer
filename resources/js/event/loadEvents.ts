@@ -10,6 +10,39 @@ interface EventData {
 addEventListener("DOMContentLoaded", ()=>{
     showEvents(false);
 })
+
+const renderEventCard = (
+    event: any,
+    clockIconPath: string,
+    formattedDeadline: string,
+    formattedStart: string,
+    formattedEnd: string
+): HTMLElement | null => {
+    const template = document.getElementById('event-card-full-template') as HTMLTemplateElement | null;
+    if (!template) {
+        return null;
+    }
+
+    const clone = template.content.cloneNode(true) as DocumentFragment;
+    const linkEl = clone.querySelector('.js-event-link') as HTMLAnchorElement | null;
+    const titleEl = clone.querySelector('.js-event-title') as HTMLElement | null;
+    const descEl = clone.querySelector('.js-event-description') as HTMLElement | null;
+    const deadlineEl = clone.querySelector('.js-event-deadline') as HTMLElement | null;
+    const startEl = clone.querySelector('.js-event-start') as HTMLElement | null;
+    const endEl = clone.querySelector('.js-event-end') as HTMLElement | null;
+    const iconEl = clone.querySelector('.js-event-clock-icon') as HTMLImageElement | null;
+
+    if (linkEl) linkEl.href = `/event/${event.id}`;
+    if (titleEl) titleEl.textContent = event?.title ?? '';
+    if (descEl) descEl.textContent = event?.description ?? '';
+    if (deadlineEl) deadlineEl.textContent = formattedDeadline;
+    if (startEl) startEl.textContent = formattedStart;
+    if (endEl) endEl.textContent = formattedEnd;
+    if (iconEl) iconEl.src = clockIconPath;
+
+    return clone.firstElementChild as HTMLElement | null;
+};
+
 async function showEvents(pageType:boolean) {
     try{
         const response:any = await api.get('/api/events', {});
@@ -18,43 +51,25 @@ async function showEvents(pageType:boolean) {
         const clockIconPath = newestEventsContainer?.getAttribute('data-url')|| "" as string;
 
         if (response.data) {
-            const renderEvents = (timeClock:string): string => {
-                let neco = "";
-                if (response.data.length > 5 && pageType == true) {
-                    response.data.length = 5;
-                }
-                for (let index = 0; index < response.data.length; index++) {
-                    const formattedDeadline = new Date(response?.data[index]?.deadline).toLocaleDateString('cs-CZ');
-                    const formattedStart = new Date(response?.data[index]?.starts_at).toLocaleDateString('cs-CZ');
-                    const formattedEnd = new Date(response?.data[index]?.ends_at).toLocaleDateString('cs-CZ');
-                    const element = response.data[index];
-                    neco += `
-                            <a href="/event/${element.id}" class="text-decoration-none">
-                                <div class="col-12 col-md-12 mb-3">
-                                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                                        <div class="card-header bg-white border-0 py-3 px-3">
-                                            <h5 class="mb-0 text-dark fw-bold text-truncate">${element?.title}</h5>
-                                        </div>
-                                        <div class="text-muted mt-1 px-3">
-                                            <p>${element?.description}</p>
-                                        </div>
-                                        <div class="card-footer bg-white border-0 py-3 px-3 mt-auto">
-                                            <div class="d-flex align-items-center gap-2 text-muted small">
-                                                <img src="${clockIconPath}" alt="time" class="h-auto w-auto opacity-75">
-                                                <span>Deadline: ${formattedDeadline}</span>
-                                                <span>Start: ${formattedStart}</span>
-                                                <span>End: ${formattedEnd}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>`
+            const events = [...response.data];
+            if (events.length > 5 && pageType === true) {
+                events.length = 5;
+            }
 
+            newestEventsContainer!.innerHTML = '';
+            const fragment = document.createDocumentFragment();
+
+            for (const element of events) {
+                const formattedDeadline = new Date(element?.deadline).toLocaleDateString('cs-CZ');
+                const formattedStart = new Date(element?.starts_at).toLocaleDateString('cs-CZ');
+                const formattedEnd = new Date(element?.ends_at).toLocaleDateString('cs-CZ');
+                const card = renderEventCard(element, clockIconPath, formattedDeadline, formattedStart, formattedEnd);
+                if (card) {
+                    fragment.appendChild(card);
                 }
-                return neco;
-            };
-            const Events = renderEvents(clockIconPath);
-            newestEventsContainer!.innerHTML = Events
+            }
+
+            newestEventsContainer!.appendChild(fragment);
         } else{
             '<p class="text-muted">Žádné nadcházející události.</p>';
         }

@@ -4,7 +4,7 @@
     <meta name="current-user-id" content="{{ auth()->user()->id }}">
     <meta name="data-groups-ids" content="{{ json_encode($event->groups->pluck('id')) }}">
 </x-head>
-<body class="bg-light" data-bs-theme="{{ $activeTheme }}">
+<body class="bg-light" data-bs-theme="{{ $activeTheme }}" data-default-avatar="{{ Vite::asset('resources/svg/user.svg') }}">
 <x-header />
 @php
     $eventGroupId = $event->groups()->get();
@@ -53,11 +53,21 @@
                         <div id="title-div" class="mb-3">
                             <label class="form-label small text-muted">{{__('event.show.title')}}</label>
                             <p>{{ $event->title }}</p>
-                            {{$eventGroupId}}
-                            <p></p>
-                            {{$event}}
-                            <p></p>
-                            {{$people = $event->users()->get()->groupBy('pivot.attends');}}
+                            @php
+                                $people = $event->users()->get()->groupBy('pivot.attends');
+                                $defaultAvatar = Vite::asset('resources/svg/user.svg');
+                                $resolveAvatar = static function (?string $avatarUrl) use ($defaultAvatar): string {
+                                    if (empty($avatarUrl)) {
+                                        return $defaultAvatar;
+                                    }
+
+                                    if (\Illuminate\Support\Str::startsWith($avatarUrl, ['http://', 'https://', '/storage/'])) {
+                                        return $avatarUrl;
+                                    }
+
+                                    return Storage::url($avatarUrl);
+                                };
+                            @endphp
                         </div>
 
                         <div id="description-div" class="mb-3">
@@ -93,9 +103,9 @@
                                 }else{
                                     $groupImage = Storage::url($groupObj->picture_url);
                                 }
-                                
+
                             @endphp
-                            
+
                             <div class="card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100">
                                 <div class="d-flex align-items-center">
                                     <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
@@ -131,16 +141,11 @@
                             <div id="interested-container">
                                 @forelse($people->get(1) ?? [] as $user)
                                 @php
-                                    if($user->avatar_url == null){
-                                        $avatarImage = "Vite::asset('resources/svg/user.svg')";
-                                    }else{
-                                        $avatarImage = Storage::url($user->avatar_url);
-                                    }
-                                    
+                                    $avatarImage = $resolveAvatar($user->avatar_url);
                                 @endphp
                                     <div class="d-flex align-items-center mb-3">
                                         <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
-                                            <img src="{{ $avatarImage }}" class="w-100" alt="user">
+                                            <img src="{{ $avatarImage }}" class="w-100" alt="user" onerror="this.onerror=null;this.src='{{ $defaultAvatar }}';">
                                         </div>
                                         <span class="small fw-medium">{{ $user->email }}</span>
                                         <div class="admin-only-info" data-user-id="{{ $user->id }}">
@@ -164,16 +169,11 @@
                             <div id="not-interested-container">
                                 @forelse($people->get(0) ?? [] as $user)
                                 @php
-                                    if($user->avatar_url === null){
-                                        $avatarImage = Vite::asset('resources/svg/user.svg');
-                                    }else{
-                                        $avatarImage = Storage::url($user->avatar_url);
-                                    }
-                                    
+                                    $avatarImage = $resolveAvatar($user->avatar_url);
                                 @endphp
                                     <div class="d-flex align-items-center mb-3">
                                         <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
-                                            <img src="{{ $avatarImage }}" class="w-100" alt="user">
+                                            <img src="{{ $avatarImage }}" class="w-100" alt="user" onerror="this.onerror=null;this.src='{{ $defaultAvatar }}';">
                                         </div>
                                         <span class="small fw-medium">{{ $user->email }}</span>
                                     </div>
@@ -181,7 +181,7 @@
                                     <p class="text-muted small mb-2">Zatím nikdo nepotvrdil účast.</p>
                                 @endforelse
                             </div>
-                            
+
                             {{--@foreach(range(1, 3) as $i)
                                 <div class="d-flex align-items-center mb-3">
                                     <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
@@ -198,5 +198,27 @@
         </div>
     </div>
 </main>
+
+<template id="event-detail-group-card-template">
+    <div class="card border border-light-subtle rounded-pill px-3 py-2 mb-1 w-100">
+        <div class="d-flex align-items-center">
+            <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2">
+                <img src="https://ui-avatars.com/api/?name=Group&background=198754&color=fff" class="w-100 profile-pic" alt="group">
+            </div>
+            <div class="small">
+                <span class="text-muted d-none d-sm-inline">Group</span>
+            </div>
+        </div>
+    </div>
+</template>
+
+<template id="event-detail-attendance-item-template">
+    <div class="d-flex align-items-center mb-3">
+        <div class="rounded-circle overflow-hidden border border-secondary-subtle me-2 shrink-0" style="width: 24px; height: 24px;">
+            <img src="" class="w-100 js-avatar" alt="user" onerror="this.onerror=null;this.src='{{ $defaultAvatar ?? Vite::asset('resources/svg/user.svg') }}';">
+        </div>
+        <span class="small fw-medium js-email"></span>
+    </div>
+</template>
 </body>
 </html>
