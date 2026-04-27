@@ -275,8 +275,7 @@ class EventController extends Controller
     {
         $user = auth()->user();
 
-        $attendance = Attendance::with('group')
-            ->where('event_id', $event->id)
+        $attendance = Attendance::where('event_id', $event->id)
             ->where('user_id', $user->id)
             ->first();
 
@@ -347,8 +346,7 @@ class EventController extends Controller
     {
         $user = auth()->user();
 
-        $attendance = Attendance::with('group')
-            ->where('event_id', $event->id)
+        $attendance = Attendance::where('event_id', $event->id)
             ->where('user_id', $user->id)
             ->first();
 
@@ -393,8 +391,7 @@ class EventController extends Controller
             'amount' => ['required', 'numeric'],
         ]);
 
-        $attendance = Attendance::with('group')
-            ->where('event_id', $event->id)
+        $attendance = Attendance::where('event_id', $event->id)
             ->where('user_id', $requester->id)
             ->first();
 
@@ -428,8 +425,7 @@ class EventController extends Controller
             'amount' => ['required', 'numeric'],
         ]);
 
-        $attendance = Attendance::with('group')
-            ->where('event_id', $event->id)
+        $attendance = Attendance::where('event_id', $event->id)
             ->where('user_id', $requester->id)
             ->first();
 
@@ -462,8 +458,7 @@ class EventController extends Controller
             'user_id' => ['required', 'integer', 'exists:users,id'],
         ]);
 
-        $attendance = Attendance::with('group')
-            ->where('event_id', $event->id)
+        $attendance = Attendance::where('event_id', $event->id)
             ->where('user_id', $requester->id)
             ->first();
 
