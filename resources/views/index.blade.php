@@ -15,7 +15,10 @@
             </div>
             <div class="col-md-6 column g-4">
                 <h2 class="mb-4">{{__('home.group.grid_name')}}</h2>
-                <div id="container-groups" class="row g-3" data-url="{{ Vite::asset('resources/svg/users.svg') }}"></div>
+                <div id="container-groups" class="row g-3"
+                     data-url="{{ Vite::asset('resources/svg/users.svg') }}"
+                     data-empty-text="{{ __('home.group.empty') }}"
+                     data-error-text="{{ __('home.group.load_failed') }}"></div>
             </div>
         </div>
     </div>

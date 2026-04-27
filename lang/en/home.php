@@ -19,5 +19,6 @@ return [
         'grid_name' => 'Recent groups',
         'label' => 'Group',
         'members' => 'Members',
+        'no_description' => 'No description',
     ],
 ];

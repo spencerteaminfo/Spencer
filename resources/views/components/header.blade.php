@@ -2,7 +2,7 @@
 <header class="navbar navbar-light bg-white shadow position-sticky top-0 z-2">
     <div class="container-fluid">
         <div class="d-none d-md-flex" id="logo">
-            <h1 class="mb-0 fw-bold text-primary">Spencer</h1>
+            <h1><a class="mb-0 fw-bold text-primary text-decoration-none" href="/">Spencer</a></h1>
         </div>
         <div class="d-flex d-md-none w-100 justify-content-between align-items-center h-100">
             <a href="/" class="text-decoration-none"><h1 class="mb-0 fw-bold text-primary">Spencer</h1></a>

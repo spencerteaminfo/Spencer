@@ -18,5 +18,6 @@ return [
         'grid_name' => 'Nedávné skupiny',
         'label' => 'Skupina',
         'members' => 'Členové',
+        'no_description' => 'Žádný popis',
     ],
 ];

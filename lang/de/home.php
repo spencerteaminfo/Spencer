@@ -18,5 +18,6 @@ return [
         'grid_name' => 'Aktuelle Gruppen',
         'label' => 'Gruppe',
         'members' => 'Mitglieder',
+        'no_description' => 'Keine Beschreibung',
     ],
 ];

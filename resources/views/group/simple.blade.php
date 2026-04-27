@@ -5,20 +5,21 @@
 
                 <div class="card-header bg-white border-0 py-3 px-3 d-flex align-items-center gap-3">
                     <div class="ratio ratio-1x1 rounded-circle overflow-hidden border d-none js-img-wrapper" style="width: 40px;">
-                        <img src="" class="w-100 h-100 object-fit-cover js-img" alt="Group">
+                        <img src="" class="w-100 h-100 object-fit-cover js-img" alt="{{ __('home.group.label') }}">
                     </div>
 
                     <h5 class="mb-0 text-dark fw-bold text-truncate js-name"></h5>
                 </div>
 
                 <div class="text-muted mt-1 px-3">
-                    <p class="js-desc text-truncate mb-2"></p>
+                    <p class="js-desc text-truncate mb-2" data-fallback="{{ __('home.group.no_description') }}"></p>
                 </div>
 
                 <div class="card-footer bg-white border-0 py-3 px-3 mt-auto">
                     <div class="d-flex align-items-center gap-2 text-muted small">
-                        <img src="" alt="icon" class="h-auto w-auto opacity-75 js-icon" style="width: 16px; height: 16px;">
-                        <span class="js-members"></span>
+                        <img src="" alt="{{ __('home.group.members') }}" class="h-auto w-auto opacity-75 js-icon" style="width: 16px; height: 16px;">
+                        <span class="js-members-count">0</span>
+                        <span>{{ __('home.group.members') }}</span>
                     </div>
                 </div>
 
