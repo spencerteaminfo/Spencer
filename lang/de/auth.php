@@ -1,7 +1,10 @@
 <?php
 
 return [
+    'language' => 'de',
+
     'login' => 'Anmelden',
+    'login-error' => 'Name oder Passwort ist falsch.',
     'email' => 'Email',
     'email_placeholder' => 'beispiel@beispiel.com',
     'password' => 'Passwort',
@@ -11,6 +14,7 @@ return [
     'forgot_password' => 'Passwort vergessen?',
 
     'register' => 'Registrieren',
+    'register-error' => 'Registrierung fehlgeschlagen.',
     'confirm_password' => 'Passwort wiederholen',
     'reg_min_char' => 'Mindestens 8 Zeichen',
     'reg_min_caps' => 'Mindestens 1 Großbuchstabe',

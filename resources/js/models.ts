@@ -1,3 +1,8 @@
+export interface Auth {
+    message: string;
+    user?: object;
+}
+
 export interface Event {
     id: number;
     title: string;

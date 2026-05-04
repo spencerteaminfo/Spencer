@@ -1,7 +1,10 @@
 <?php
 
 return [
+    'language' => 'cz',
+
     'login' => 'Přihlášení',
+    'login-error' => 'Uživatelské jméno nebo heslo není validní.',
     'email' => 'Email',
     'email_placeholder' => 'priklad@priklad.com',
     'password' => 'Heslo',
@@ -11,6 +14,7 @@ return [
     'forgot_password' => 'Zapomněli jste heslo?',
 
     'register' => 'Registrace',
+    'register-error' => 'Došlo na chybu na naší straně.',
     'confirm_password' => 'Zopakujte heslo',
     'reg_min_char' => 'Minimálně 8 znaků',
     'reg_min_caps' => 'Aspoň jedno velké písmeno',
