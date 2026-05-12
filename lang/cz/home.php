@@ -19,5 +19,7 @@ return [
         'label' => 'Skupina',
         'members' => 'Členové',
         'no_description' => 'Žádný popis',
+        'empty' => 'Zatím neexistují žádné skupiny',
+        'load_failed' => 'Nastala chyba při načítání'
     ],
 ];

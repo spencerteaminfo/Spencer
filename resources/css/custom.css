@@ -136,8 +136,8 @@ aside.sticky-top {
     cursor: pointer;
 }
 .profile-pic {
-    border-radius: 50%; 
-    object-fit: cover; 
+    border-radius: 50%;
+    object-fit: cover;
     aspect-ratio: 1 / 1;
 }
 .add-user-btn{
@@ -164,3 +164,20 @@ aside.sticky-top {
     font-weight: 600;
 }
 
+.btn-primary:disabled,
+.btn-primary.disabled {
+    --bs-btn-disabled-color: #ffffff;
+    --bs-btn-disabled-bg: #1D6F1D;
+    --bs-btn-disabled-border-color: #1D6F1D;
+    opacity: 0.55;
+    filter: grayscale(0.2);
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+[data-bs-theme=dark] .btn-primary:disabled,
+[data-bs-theme=dark] .btn-primary.disabled {
+    --bs-btn-disabled-bg: #165616;
+    --bs-btn-disabled-border-color: #165616;
+    opacity: 0.4;
+}

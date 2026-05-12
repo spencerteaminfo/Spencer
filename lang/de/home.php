@@ -19,5 +19,7 @@ return [
         'label' => 'Gruppe',
         'members' => 'Mitglieder',
         'no_description' => 'Keine Beschreibung',
+        'empty' => 'Keine Beschreibung',
+        'load_failed' => 'Fehler beim Laden der Gruppen',
     ],
 ];

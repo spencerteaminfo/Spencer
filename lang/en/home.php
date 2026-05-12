@@ -20,5 +20,7 @@ return [
         'label' => 'Group',
         'members' => 'Members',
         'no_description' => 'No description',
+        'empty' => 'You are not currently member of any group',
+        'load_failed' => 'Error occured while loading groups',
     ],
 ];
