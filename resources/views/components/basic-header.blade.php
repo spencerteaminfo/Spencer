@@ -2,9 +2,7 @@
 
 <header class="navbar navbar-light bg-white shadow sticky-top py-0">
     <div class="container-fluid h-100">
-        <a href="/" class="link-underline link-underline-opacity-0">
-            <h1 class="mb-0 fw-bold text-primary">Spencer</h1>
-        </a>
+        <a href="/" class="link-underline link-underline-opacity-0"><h1 class="mb-0 fw-bold text-primary">Spencer</h1></a>
 
         @php
             $langMapping = [

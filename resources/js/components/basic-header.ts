@@ -4,10 +4,8 @@ export const initLanguageSwitcher = () => {
     if (langSelect) {
         langSelect.addEventListener('change', () => {
             const selectedLang = langSelect.value;
-
             const url = new URL(window.location.href);
             url.searchParams.set('lang', selectedLang);
-
             window.location.href = url.toString();
         });
     }
