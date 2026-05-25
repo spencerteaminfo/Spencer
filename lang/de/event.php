@@ -1,5 +1,6 @@
 <?php
 return [
+    'language' => 'de',
     'title' => 'Veranstaltung erstellen',
     'show' => [
         'deadline_min' => 'Frist:',
@@ -22,7 +23,12 @@ return [
     'create' => [
         'title_placeholder' => 'Veranstaltungstitel eingeben',
         'description_placeholder' => 'Beschreiben Sie Ihre Veranstaltung',
+        'price_placeholder' => 'Preis eingeben',
         'img_placeholder' => 'Klicken Sie um ein Bild hochzuladen',
+        'search_placeholder' => 'Nach Person oder Gruppe suchen',
+        'group_hint' => 'Sie haben keine Gruppe?',
+        'group_action' => 'Erstellen Sie sie',
+        'group_required' => 'Bitte fügen Sie mindestens eine Gruppe hinzu',
         'submit' => 'Änderungen speichern',
     ],
 ];

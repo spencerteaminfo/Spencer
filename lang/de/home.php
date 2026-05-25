@@ -1,5 +1,6 @@
 <?php
 return [
+    'language' => 'de',
     'sidebar' => [
         'home' => 'Startseite',
         'event' => 'Veranstaltung',

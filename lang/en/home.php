@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'language' => 'en',
     'sidebar' => [
         'home' => 'Home',
         'event' => 'Event',

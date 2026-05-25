@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'language' => 'en',
     'title' => 'Group',
     'show' => [
         'owner' => 'Owner',
@@ -11,6 +12,7 @@ return [
         'close' => 'Close',
 
         'loading' => 'Loading groups',
+        'groupThumbnail' => 'Group thumbnail',
     ],
     'create' => [
         'init' => 'Create New Group',
@@ -21,4 +23,5 @@ return [
         'submit' => 'Save Group',
         'update' => 'Save changes',
     ],
+
 ];

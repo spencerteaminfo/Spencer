@@ -3,6 +3,17 @@ export interface Auth {
     user?: object;
 }
 
+export interface EventData {
+    title: string;
+    deadline: string;
+}
+
+export interface User {
+    id: number;
+    email: string;
+    pivot?: { role_id: number };
+}
+
 export interface Event {
     id: number;
     title: string;
@@ -42,6 +53,7 @@ export interface Group {
     picture_url: string;
     created_at: Date;
     updated_at: Date;
+    users: User[];
 }
 
 export interface Attendance {

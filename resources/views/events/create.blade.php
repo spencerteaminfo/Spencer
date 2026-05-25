@@ -36,7 +36,7 @@
                         </div>
                         <div id="price-div" class="mb-3">
                             <label class="form-label small text-muted">{{__('event.show.price')}}</label>
-                            <input type="number" class="form-control rounded-3" rows="3" placeholder="{{__('event.create.description_placeholder')}}" id="input-price"></input>
+                            <input type="number" class="form-control rounded-3" rows="3" placeholder="{{__('event.create.price_placeholder')}}" id="input-price"></input>
                         </div>
                         <div id="img-preview-div" class="ratio ratio-21x9 bg-light rounded-4 border border-secondary border-opacity-25 mb-2 position-relative">
                             <img id="img-preview" class="w-100 h-100 d-none top-0 start-0 rounded-4 z-1" style="object-fit: cover; pointer-events: none" alt="img-preview">
@@ -52,16 +52,17 @@
 
                     <div class="mb-4">
                         <div class="small text-muted text-end mb-2 mx-2">
-                            <span>Don´t have an group <a href="/groups">create it</a></span>
+                            <span>{{__('event.create.group_hint')}} <a href="/groups">{{__('event.create.group_action')}}</a></span>
                         </div>
                         <div class="position-relative">
-                            <input id="searchInput" type="text" class="form-control rounded-pill py-3 px-4 shadow-sm border-0 mb-2" placeholder="Search for a person or a group">
+                            <input id="searchInput" type="text" class="form-control rounded-pill py-3 px-4 shadow-sm border-0 mb-2" placeholder="{{__('event.create.search_placeholder')}}">
                             <span class="position-absolute end-0 top-50 translate-middle-y me-4">
                                 <img src="{{ Vite::asset('resources/svg/search.svg') }}" alt="search" class="h-auto w-auto opacity-50">
                             </span>
                         </div>
 
                         <div id="userBulletList" class="d-flex flex-column gap-1 mb-2"></div>
+                        <div id="groupSelectionError" class="text-danger small d-none px-2" data-message="{{__('event.create.group_required')}}"></div>
                     </div>
 
                     <div class="d-flex flex-column gap-2">
@@ -82,11 +83,14 @@
 </main>
 
 <template id="event-group-search-item-template">
-    <div class="add-user-btn p-3 border-bottom shadow-sm-hover cursor-pointer bg-white rounded-5 d-flex align-items-center gap-2">
+    <div class="add-user-btn p-3 border-bottom shadow-sm-hover cursor-pointer bg-white rounded-5 d-flex align-items-center gap-2 justify-content-between">
+        <div class="d-flex align-items-center gap-2 min-w-0">
         <div class="rounded-circle overflow-hidden border border-secondary-subtle" style="width: 28px; height: 28px;">
             <img src="{{ Vite::asset('resources/svg/users.svg') }}" data-default-avatar="{{ Vite::asset('resources/svg/users.svg') }}" class="w-100 h-100 object-fit-cover js-avatar" alt="group">
         </div>
         <span class="small fw-bold js-name"></span>
+        </div>
+        <button type="button" class="btn btn-success btn-sm rounded-circle js-add-group d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; line-height: 1;">+</button>
     </div>
 </template>
 

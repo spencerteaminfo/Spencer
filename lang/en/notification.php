@@ -1,6 +1,19 @@
 <?php
 
 return [
+    'language' => 'en',
+    'ui' => [
+        'title' => 'Notifications',
+        'read_all' => 'Mark all as read',
+        'read' => 'Read',
+        'mark_as_read' => 'Mark as read',
+        'empty' => 'No notifications found.',
+        'load_failed' => 'Could not load notifications. Refresh the page and try again.',
+        'single_read_fallback' => 'Single read is saved in this browser until API single-read is fixed.',
+        'read_all_failed' => 'Mark all as read failed. Try again.',
+        'unknown_time' => 'Unknown time',
+    ],
+    
     'groups' => [
         'new' => [
             'mail' => [

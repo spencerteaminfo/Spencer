@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{__('auth.language')}}">
-<head><x-head title="{{__('auth.login')}}">@vite(['resources/js/utils/auth/login.ts'])</x-head></head>
+<x-head title="{{__('auth.login')}}">@vite(['resources/js/utils/auth/login.ts'])</x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
 <x-basic-header/>
 <main>

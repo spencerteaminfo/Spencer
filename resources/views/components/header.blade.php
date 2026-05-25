@@ -54,7 +54,7 @@
 <div id="logoutOverlay" class="position-fixed top-0 start-0 w-100 h-100 bg-dark d-none d-flex align-items-center justify-content-center" style="z-index: 99999;">
     <div class="text-center text-white">
         <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">{{ __('auth.wait_moment') }}</span>
         </div>
         <h2 class="fw-bold">{{ __('auth.logging_out') }}</h2>
         <p class="text-secondary small">{{ __('auth.wait_moment') }}</p>
@@ -94,7 +94,7 @@
             </div>
             <div class="ms-3">
                 <div class="fw-bold text-dark js-title"></div>
-                <div class="text-muted small">Skupina</div>
+                <div class="text-muted small">{{__('userProfile.group')}}</div>
             </div>
         </a>
     </div>
@@ -110,7 +110,7 @@
             </div>
             <div class="flex-grow-1 ms-3 overflow-hidden">
                 <div class="fw-bold text-dark text-truncate js-title"></div>
-                <div class="text-muted small text-truncate">Událost</div>
+                <div class="text-muted small text-truncate">{{__('userProfile.event')}}</div>
             </div>
         </a>
     </div>

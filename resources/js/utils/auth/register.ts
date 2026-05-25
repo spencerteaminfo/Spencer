@@ -2,12 +2,13 @@ import api from '../../bootstrap';
 import type { Auth } from '@/models';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const errorEl = document.getElementById('register-error') as HTMLElement;
-    const form = document.getElementById('register-form') as HTMLFormElement;
-    const inputEmail = document.getElementById('register-email') as HTMLInputElement;
-    const inputPassword = document.getElementById('register-password') as HTMLInputElement;
-    const inputPasswordRepeat = document.getElementById('register-password-repeat') as HTMLInputElement;
-    const button = document.getElementById('register-send') as HTMLButtonElement;
+    const errorEl = document.getElementById('register-error') as HTMLElement | null;
+    const form = document.getElementById('register-form') as HTMLFormElement | null;
+    const inputEmail = document.getElementById('register-email') as HTMLInputElement | null;
+    const inputPassword = document.getElementById('register-password') as HTMLInputElement | null;
+    const inputPasswordRepeat = document.getElementById('register-password-repeat') as HTMLInputElement | null;
+    const button = document.getElementById('register-send') as HTMLButtonElement | null;
+    
     const reqs = {
         length: document.getElementById('req-length'),
         upper: document.getElementById('req-upper'),
@@ -15,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         match: document.getElementById('req-match')
     };
 
-    const inputs = [inputEmail, inputPassword, inputPasswordRepeat];
+    const inputs = [inputEmail, inputPassword, inputPasswordRepeat].filter((i): i is HTMLInputElement => Boolean(i));
 
     const updateStatus = (el: HTMLElement | null, isValid: boolean) => {
         if (el) {
@@ -25,6 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const validate = (): boolean => {
+        if (!inputEmail || !inputPassword || !inputPasswordRepeat || !button) {
+            return false;
+        }
+
         const email = inputEmail.value.trim();
         const pass = inputPassword.value;
         const repeat = inputPasswordRepeat.value;
@@ -50,14 +55,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const handleRegister = async (event: Event): Promise<void> => {
         event.preventDefault();
+
+        if (!inputEmail || !inputPassword || !inputPasswordRepeat || !button) {
+            return;
+        }
+
         button.disabled = true;
-        errorEl.classList.add('d-none');
+        if (errorEl) errorEl.classList.add('d-none');
 
         try {
             await api.get('/sanctum/csrf-cookie');
 
             const payload = {
-                email: inputEmail.value,
+                email: inputEmail.value.trim(),
                 password: inputPassword.value,
                 password_confirmation: inputPasswordRepeat.value
             };
@@ -68,21 +78,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (err: any) {
             button.disabled = false;
-            errorEl.classList.remove('d-none');
+            if (errorEl) errorEl.classList.remove('d-none');
 
             if (err.response?.data?.errors) {
-                const firstError = Object.values(err.response.data.errors)[0] as string[];
-                errorEl.textContent = firstError[0];
+                const firstError = Object.values(err.response.data.errors)[0] as any[];
+                if (errorEl) errorEl.textContent = firstError[0];
             } else if (err.response?.data?.message) {
-                errorEl.textContent = err.response.data.message;
+                if (errorEl) errorEl.textContent = err.response.data.message;
+            } else {
+                if (errorEl) errorEl.textContent = 'Něco se nepovedlo. Zkuste to znovu.';
             }
         }
     };
-
     inputs.forEach(input => {
         input.addEventListener('input', validate);
     });
+
     validate();
+
     if (form) {
         form.addEventListener('submit', handleRegister);
     }

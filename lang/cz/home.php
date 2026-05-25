@@ -1,5 +1,7 @@
 <?php
 return [
+    'language' => 'cz',
+    
     'sidebar' => [
         'home' => 'Domů',
         'event' => 'Událost',

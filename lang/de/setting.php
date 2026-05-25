@@ -1,17 +1,28 @@
 <?php
 return [
+    'language' => 'de',
     'first_name' => 'Vorname',
     'last_name' => 'Nachname',
     'settings' => 'Einstellungen',
 
     'email' => 'Email',
     'info' => 'Profilinformationen',
+    'email_notifications' => 'E-Mail-Benachrichtigungen',
+    'hide_pfp' => 'Profilbild ausblenden',
+    'language' => 'Sprache',
+    'theme' => 'Design',
+    'theme_light' => 'Hell',
+    'theme_dark' => 'Dunkel',
+    'enable' => 'Aktivieren',
+    'disable' => 'Deaktivieren',
+    'show' => 'Anzeigen',
+    'hide' => 'Ausblenden',
+    'czech' => 'Tschechisch',
+    'english' => 'Englisch',
+    'german' => 'Deutsch',
     'delete' => 'Sind Sie sicher, dass Sie das Konto löschen möchten?',
     'delete_yes' => 'Konto löschen',
     'delete_no' => 'Abbrechen',
-
-
-    'dark_theme' => 'Dunkles Design',
 
     'delete_pfp' => 'Profilbild löschen',
     'change_pass' => 'Passwort ändern',

@@ -12,9 +12,25 @@ const img = document.getElementById("event-image-upload") as HTMLInputElement;
 const submitBtn = document.getElementById("save-changes") as HTMLButtonElement;
 const addedMembersContainer = document.getElementById('addedMembers') as HTMLDivElement | null;
 const searchInput = document.getElementById("searchInput") as HTMLInputElement | null;
+const groupSelectionError = document.getElementById('groupSelectionError') as HTMLDivElement | null;
+const groupSelectionErrorMessage = groupSelectionError?.dataset.message ?? 'Please add at least one group';
 
 let timeout: ReturnType<typeof setTimeout>;
 let selectedGroupsIds: number[] = [];
+
+const setGroupSelectionError = (message: string | null) => {
+    if (!groupSelectionError) {
+        return;
+    }
+
+    if (message) {
+        groupSelectionError.textContent = message;
+        groupSelectionError.classList.remove('d-none');
+    } else {
+        groupSelectionError.textContent = '';
+        groupSelectionError.classList.add('d-none');
+    }
+};
 
 const cloneTemplate = (id: string): HTMLElement | null => {
     const template = document.getElementById(id) as HTMLTemplateElement | null;
@@ -73,12 +89,13 @@ submitBtn.addEventListener("click", async (e)=>{
         countError++;
     }
     if (selectedGroupsIds.length < 1) {
-        console.log("Musise tam dat alespon jedna groupka")
+        setGroupSelectionError(groupSelectionErrorMessage);
         countError++;
     }
     if (countError > 0) {
         return;
     }
+    setGroupSelectionError(null);
     const formData = new FormData();
     formData.append("title", title.value.trim());
     formData.append("description",description.value.trim());
@@ -149,6 +166,7 @@ const createUserCard = (group: Group) => {
 
     const addBtn = (card.querySelector('.add-user-btn') as HTMLElement | null)
         || (card.classList.contains('add-user-btn') ? card : null);
+    const plusBtn = card.querySelector('.js-add-group') as HTMLButtonElement | null;
     const imgEl = card.querySelector('.js-avatar') as HTMLImageElement | null;
     const nameEl = card.querySelector('.js-name') as HTMLElement | null;
 
@@ -166,6 +184,13 @@ const createUserCard = (group: Group) => {
 
     const clickTarget = addBtn || card;
     clickTarget.addEventListener('click', () => {
+        addMemberToGroup(group);
+        card.remove();
+    });
+
+    plusBtn?.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
         addMemberToGroup(group);
         card.remove();
     });
@@ -212,6 +237,7 @@ const addMemberToGroup = (group: Group, canDelete: boolean = true) => {
     }
 
     addedMembersContainer.appendChild(card);
+    setGroupSelectionError(null);
     if (modalList) modalList.innerHTML = '';
     if (searchInput) searchInput.value = '';
 };

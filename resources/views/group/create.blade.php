@@ -59,11 +59,10 @@
         <span class="small js-email"></span>
         <div class="d-flex align-items-center gap-2 js-actions">
             <select class="form-select form-select-sm role-select">
-                <option value="4">Member</option>
-                <option value="5">Cashier</option>
+                <option value="4">{{__('group.show.member')}}</option>
+                <option value="5">{{__('group.show.cashier')}}</option>
             </select>
             <span class="text-danger cursor-pointer remove-user">✕</span>
         </div>
     </div>
 </template>
-

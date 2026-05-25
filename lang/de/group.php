@@ -1,5 +1,6 @@
 <?php
 return [
+    'language' => 'de',
     'title' => 'Gruppe',
     'show' => [
         'owner' => 'Eigentümer',
@@ -8,6 +9,7 @@ return [
         'members' => 'Mitglieder',
         'close' => 'Schließen',
         'loading' => 'Gruppen werden geladen',
+        'groupThumbnail' => 'Gruppenbild',
     ],
     'create' => [
         'init' => 'Neue Gruppe erstellen',

@@ -2,10 +2,13 @@
 
 namespace App\Providers;
 
+use App\Listeners\EventNotificationsSender;
+use App\Listeners\GroupNotificationsSender;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Event::subscribe(GroupNotificationsSender::class);
+        Event::subscribe(EventNotificationsSender::class);
+
         View::composer('*', function ($view) {
             $theme = 'light';
             if (Auth::check()) {

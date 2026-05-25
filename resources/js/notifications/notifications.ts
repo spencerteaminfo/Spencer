@@ -26,6 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
     let notifications: NotificationItem[] = [];
     const localReadStorageKey = 'notifications_local_read_ids';
     const bellIcon = listElement.dataset.bellIcon ?? '';
+    const ui = {
+        readAll: readAllButton.dataset.labelReadAll ?? 'Mark all as read',
+        read: listElement.dataset.labelRead ?? 'Read',
+        markAsRead: listElement.dataset.labelMarkAsRead ?? 'Mark as read',
+        unknownTime: listElement.dataset.labelUnknownTime ?? 'Unknown time',
+        loadFailed: statusElement.dataset.labelLoadFailed ?? 'Could not load notifications. Refresh the page and try again.',
+        singleReadFallback: statusElement.dataset.labelSingleReadFallback ?? 'Single read is saved in this browser until API single-read is fixed.',
+        readAllFailed: statusElement.dataset.labelReadAllFailed ?? 'Mark all as read failed. Try again.',
+    };
 
     const showStatus = (message: string): void => {
         statusElement.textContent = message;
@@ -96,10 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatTime = (rawDate: string): string => {
         const date = new Date(rawDate);
         if (Number.isNaN(date.getTime())) {
-            return 'Unknown time';
+            return ui.unknownTime;
         }
 
-        return new Intl.DateTimeFormat('cs-CZ', {
+        return new Intl.DateTimeFormat(listElement.dataset.locale || document.documentElement.lang || 'en', {
             dateStyle: 'medium',
             timeStyle: 'short',
         }).format(date);
@@ -120,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const notificationIsRead = isRead(notification);
-            const actionLabel = notificationIsRead ? 'Read' : 'Mark as read';
+            const actionLabel = notificationIsRead ? ui.read : ui.markAsRead;
             const messageEl = item.querySelector('.js-message') as HTMLElement | null;
             const timeEl = item.querySelector('.js-time') as HTMLElement | null;
             const iconEl = item.querySelector('.js-bell-icon') as HTMLImageElement | null;
@@ -160,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             render();
         } catch (e) {
             console.error(e);
-            showStatus('Could not load notifications. Refresh the page and try again.');
+            showStatus(ui.loadFailed);
         }
     };
 
@@ -185,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localReadIds.add(id);
             saveLocalReadIds(localReadIds);
             render();
-            showStatus('Single read is saved in this browser until API single-read is fixed.');
+            showStatus(ui.singleReadFallback);
         }
     };
 
@@ -199,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hideStatus();
         } catch (e) {
             console.error(e);
-            showStatus('Mark all as read failed. Try again.');
+            showStatus(ui.readAllFailed);
         }
     };
 

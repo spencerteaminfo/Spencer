@@ -10,7 +10,6 @@
             <div id="register-box">
                 <h2 class="text-center mb-4">{{__('auth.register')}}</h2>
                 <form id="register-form" method="POST" action="/register" class="d-flex flex-column gap-3">
-                    @csrf
                     <div>
                         <label for="email" class="form-label">{{__('auth.email')}}</label>
                         <input type="email" name="email" id="register-email" placeholder="{{__('auth.email_placeholder')}}" class="form-control">

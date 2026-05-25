@@ -88,7 +88,17 @@ class User extends Authenticatable implements CanResetPassword
         $this->notify(new ResetPassword($token));
     }
 
-    public function HasLocalePreference():string
+    public function preferredLocale(): string
+    {
+        return $this->resolvePreferredLocale();
+    }
+
+    public function HasLocalePreference(): string
+    {
+        return $this->resolvePreferredLocale();
+    }
+
+    private function resolvePreferredLocale(): string
     {
         $lang = $this->settings()
             ->whereHas('setting', fn($query) => $query->where('name', 'language'))

@@ -1,6 +1,19 @@
 <?php
 
 return [
+    'language' => 'de',
+    'ui' => [
+        'title' => 'Benachrichtigungen',
+        'read_all' => 'Alle als gelesen markieren',
+        'read' => 'Gelesen',
+        'mark_as_read' => 'Als gelesen markieren',
+        'empty' => 'Keine Benachrichtigungen gefunden.',
+        'load_failed' => 'Benachrichtigungen konnten nicht geladen werden. Aktualisieren Sie die Seite und versuchen Sie es erneut.',
+        'single_read_fallback' => 'Die Einzelmarkierung wird in diesem Browser gespeichert, bis die API behoben ist.',
+        'read_all_failed' => 'Alle als gelesen markieren ist fehlgeschlagen. Bitte erneut versuchen.',
+        'unknown_time' => 'Unbekannte Zeit',
+    ],
+    
     'groups' => [
         'new' => [
             'mail' => [

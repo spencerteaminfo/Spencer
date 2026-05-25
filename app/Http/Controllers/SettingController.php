@@ -21,7 +21,7 @@ class SettingController extends Controller
 
         $currentSelect = Auth::user()->settings()->pluck('setting_options.id')->toArray();
 
-        return view('settings', compact('allSettings', 'currentSelect'));
+        return view('settings.settings', compact('allSettings', 'currentSelect'));
     }
 
     /**

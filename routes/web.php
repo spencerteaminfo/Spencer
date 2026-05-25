@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 // MAIN ROUTES`
 // views
-Route::get('/', function() { return view('index'); })
+Route::get('/', function() { return view('main.index'); })
     ->middleware('auth')
     ->name('index');
 

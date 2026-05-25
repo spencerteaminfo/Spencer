@@ -1,11 +1,6 @@
 import api from '../bootstrap';
 import '../group/loadGroup';
 
-interface EventData {
-    title: string;
-    deadline: string;
-}
-
 addEventListener("DOMContentLoaded", ()=>{
     showEvents(true);
 })

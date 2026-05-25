@@ -1,5 +1,7 @@
 <?php
 return [
+    'language' => 'cz',
+
     'title' => 'Skupina',
     'show' => [
         'owner' => 'Vlastník',
@@ -8,6 +10,7 @@ return [
         'members' => 'Členové',
         'close' => 'Zavřít',
         'loading' => 'Načítání skupin',
+        'groupThumbnail' => 'Obrázek skupiny',
     ],
     'create' => [
         'init' => 'Vytvořit novou skupinu',

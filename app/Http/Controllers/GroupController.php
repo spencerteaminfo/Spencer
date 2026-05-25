@@ -42,7 +42,7 @@ class GroupController extends Controller
     public function index(): View
     {
         $groups = auth()->user()->groups()->with('users')->get();
-        return view('group', compact('groups'));
+        return view('group.group', compact('groups'));
     }
 
     /**

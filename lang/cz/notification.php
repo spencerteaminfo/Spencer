@@ -1,6 +1,19 @@
 <?php
 
 return [
+    'language' => 'cz',
+    'ui' => [
+        'title' => 'Oznámení',
+        'read_all' => 'Označit vše jako přečtené',
+        'read' => 'Přečteno',
+        'mark_as_read' => 'Označit jako přečtené',
+        'empty' => 'Žádná oznámení nenalezena.',
+        'load_failed' => 'Oznámení se nepodařilo načíst. Obnovte stránku a zkuste to znovu.',
+        'single_read_fallback' => 'Jedno oznámení je uloženo v tomto prohlížeči, dokud nebude opraveno API.',
+        'read_all_failed' => 'Označení všech jako přečtených selhalo. Zkuste to znovu.',
+        'unknown_time' => 'Neznámý čas',
+    ],
+
     'groups' => [
         'new' => [
             'mail' => [

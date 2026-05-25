@@ -1,19 +1,8 @@
 import api from '../bootstrap';
-
-interface User {
-    id: number;
-    email: string;
-    pivot?: { role_id: number };
-}
-interface Group {
-    id: number;
-    name: string;
-    description: string | null;
-    picture_url: string | null;
-    users: User[];
-}
+import type { Group } from '@/models';
 
 document.addEventListener('DOMContentLoaded', loadGroups);
+
 async function loadGroups() {
     const container = document.getElementById('groups-container');
     const template = document.getElementById('group-card-template') as HTMLTemplateElement;
@@ -38,9 +27,20 @@ async function loadGroups() {
             const myMembership = group.users?.find(u => u.id === currentUserId);
             const myRoleId = myMembership?.pivot?.role_id ?? 4;
             const isCreator = myRoleId === 3;
-            const roleName = isCreator ? 'Owner' : (myRoleId === 5 ? 'Cashier' : 'Member');
+
+            const roleOwnerEl = clone.querySelector('.js-role-owner');
+            const roleCashierEl = clone.querySelector('.js-role-cashier');
+            const roleMemberEl = clone.querySelector('.js-role-member');
+
+            if (myRoleId === 3) {
+                roleOwnerEl?.classList.remove('d-none');
+            } else if (myRoleId === 5) {
+                roleCashierEl?.classList.remove('d-none');
+            } else {
+                roleMemberEl?.classList.remove('d-none');
+            }
+
             clone.querySelector('.js-name')!.textContent = group.name;
-            clone.querySelector('.js-role')!.textContent = roleName;
 
             if (group.picture_url) {
                 const imgEl = clone.querySelector('.js-img') as HTMLImageElement;

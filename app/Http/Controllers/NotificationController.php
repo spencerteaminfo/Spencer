@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\Notifications\NotificationMarkedRead;
 use App\Events\Notifications\NotificationsMarkedRead;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -17,7 +18,7 @@ class NotificationController extends Controller
      */
     public function index(): Factory|View
     {
-        return view('notifications');
+        return view('notifications.notifications');
     }
 
     /**
@@ -25,9 +26,31 @@ class NotificationController extends Controller
      */
     public function list(Request $request): JsonResponse // TODO maybe this should be standardized?
     {
+        $formatNotification = static function (DatabaseNotification $notification): array {
+            $data = $notification->data;
+
+            if (isset($data['translation']['key']) && is_string($data['translation']['key'])) {
+                $params = is_array($data['translation']['params'] ?? null) ? $data['translation']['params'] : [];
+                $data['message'] = __($data['translation']['key'], $params);
+            }
+
+            return [
+                'id' => $notification->id,
+                'type' => $notification->type,
+                'data' => $data,
+                'created_at' => $notification->created_at?->toISOString(),
+                'read_at' => $notification->read_at?->toISOString(),
+            ];
+        };
+
+        $allNotifications = $request->user()->notifications()->paginate(10);
+        $allNotifications->setCollection(
+            $allNotifications->getCollection()->map(fn (DatabaseNotification $notification) => $formatNotification($notification))
+        );
+
         return response()->json([
-            'unread' => $request->user()->unreadNotifications,
-            'all'    => $request->user()->notifications()->paginate(10) // TODO forgot what this does, maybe should rework?
+            'unread' => $request->user()->unreadNotifications->map(fn (DatabaseNotification $notification) => $formatNotification($notification))->values(),
+            'all'    => $allNotifications
         ]);
     }
 
