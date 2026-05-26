@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Controllers\Controller;
+use App\Mail\ForgetPassword;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use App\Models\User;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -17,24 +19,30 @@ class PasswordResetController extends Controller
 {
     public function showLinkRequestForm() : View
     {
-        return view('password/forgot-password');
+        return view('password.forgot-password');
     }
 
-    public function sendResetLinkEmail(request $request)
+    public function sendResetLinkEmail(Request $request)
     {
         $request->validate([
             'email' => ['required', 'email']
         ]);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $user = User::where('email', $request->email)->first();
 
-        if ($status === Password::RESET_LINK_SENT) {
-            return back()->with('status', __($status));
+        if (! $user) {
+            return back()->withErrors(['email' => __('passwords.user')]);
         }
-        
-        return back()->withErrors(['email' => __($status)]);
+
+        $token = Password::broker()->createToken($user);
+        $resetUrl = route('password.reset', [
+            'token' => $token,
+            'email' => $user->email,
+        ]);
+
+        Mail::to($user->email)->send(new ForgetPassword($resetUrl, $user->email));
+
+        return back()->with('status', __('passwords.sent'));
     }
 
     public function showResetForm(Request $request, string $token) : View

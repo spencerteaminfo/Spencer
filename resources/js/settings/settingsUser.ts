@@ -146,4 +146,10 @@ addEventListener("DOMContentLoaded", () => {
             console.error(e);
         }
     });
+
+    const openChangePassDialog = document.getElementById("openChangePassDialog");
+    openChangePassDialog?.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.location.href = "/forgot-password";
+    });
 });

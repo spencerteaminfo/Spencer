@@ -8,6 +8,8 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ForgetPassword;
 
 // MAIN ROUTES`
 // views
@@ -28,12 +30,21 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])
 Route::get('/forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])
     ->name('password.request');
 
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])
+    ->name('password.email');
+
 Route::prefix('api')->group(function () {
     Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])
         ->name('api.password.reset');
     Route::post('/reset-password', [PasswordResetController::class, 'reset'])
         ->name('api.password.update');
 });
+
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])
+    ->name('password.reset');
+
+Route::post('/reset-password', [PasswordResetController::class, 'reset'])
+    ->name('password.update');
 
 // SETTINGS ROUTES
 // views
@@ -80,3 +91,16 @@ Route::get('/notifications', [NotificationController::class, 'index'])
 Route::get('/settings', [SettingController::class, 'showSettings'])
     ->name('settings.index')
     ->middleware('auth');
+
+// MAILS ROUTES
+
+Route::get('/sendForgetPassword', function () {
+    if (auth()->check()) {
+        $user = auth()->user();
+        Mail::to($user)->send(new ForgetPassword());
+        
+        return view('main.index');
+    }
+
+    return 'Pro odeslání e-mailu se nejprve musíš přihlásit.';
+})->middleware('auth');

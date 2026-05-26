@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="en">
-<x-head title="Settings">@vite(['resources/js/settings/settingsUser.ts'])</x-head>
+<html lang="{{__('setting.language')}}">
+<x-head title="{{__('setting.title')}}">@vite(['resources/js/settings/settingsUser.ts'])</x-head>
 <body class="bg-light" data-bs-theme="{{ $activeTheme }}">
 <div id="deleteMenu" class="w-100 h-100 d-none position-fixed start-0 top-0 d-flex align-items-center bg-dark bg-opacity-50" style="z-index: 9999;">
     <div class="w-100 d-flex justify-content-center">
@@ -133,7 +133,7 @@
 
                                     <div class="d-flex justify-content-between align-items-center mb-4">
                                         <span class="fw-medium text-dark">{{__('setting.change_pass')}}</span>
-                                        <a href="#" class="link-underline link-underline-opacity-0 link-primary link-underline-opacity-0-hover">{{__('setting.change_pass')}} <img src="{{ Vite::asset('resources/svg/edit-2.svg') }}" class="mb-1" alt="Event" width="16" height="16"></a>
+                                        <a href="{{ route('password.request') }}" id="openChangePassDialog" class="link-underline link-underline-opacity-0 link-primary link-underline-opacity-0-hover">{{__('setting.change_pass')}} <img src="{{ Vite::asset('resources/svg/edit-2.svg') }}" class="mb-1" alt="Event" width="16" height="16"></a>
                                     </div>
 
                                     <div class="d-flex justify-content-between align-items-center mb-4">
