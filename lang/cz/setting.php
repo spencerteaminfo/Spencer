@@ -10,7 +10,7 @@ return [
     'email_notifications' => 'E-mailová upozornění',
     'hide_pfp' => 'Skrýt profilový obrázek',
     'language' => 'Jazyk',
-    'theme' => 'Motiv',
+    'theme' => 'Tmavý motiv',
     'theme_light' => 'Světlý',
     'theme_dark' => 'Tmavý',
     'enable' => 'Povolit',

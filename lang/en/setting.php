@@ -11,7 +11,7 @@ return [
     'email_notifications' => 'Email notifications',
     'hide_pfp' => 'Hide profile picture',
     'language' => 'Language',
-    'theme' => 'Theme',
+    'theme' => 'Dark Theme',
     'theme_light' => 'Light',
     'theme_dark' => 'Dark',
     'enable' => 'Enable',
