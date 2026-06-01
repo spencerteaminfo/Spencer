@@ -45,9 +45,14 @@ class PasswordResetController extends Controller
         return back()->with('status', __('passwords.sent'));
     }
 
-    public function showResetForm(Request $request, string $token) : View
+    public function showResetForm(Request $request, string $token) : View | RedirectResponse
     {   
+        $user = User::where('email', $request->email)->first();
 
+        if (! $user || ! Password::broker()->tokenExists($user, $token)) {
+            return redirect()->route('password.email')
+                ->withErrors(['email' => 'Tento odkaz pro obnovu hesla je neplatný nebo již expiroval.']);
+        }
         return view('password.reset', [
             'token' => $token,
             'email' => $request->email
@@ -87,6 +92,8 @@ class PasswordResetController extends Controller
         ])->setRememberToken(Str::random(60));
 
         $user->save();
+
+        Password::broker()->deleteToken($user);
 
         event(new PasswordReset($user));
     }
