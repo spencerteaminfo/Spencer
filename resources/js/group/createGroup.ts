@@ -229,8 +229,8 @@ async function saveGroupData() {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             if (Object.keys(rolesMap).length > 0) {await api.patch(`/api/group/${currentGroupId}/members`, { users_roles: rolesMap });}
-            addMembers(toAdd, rolesMap);
-            deleteMembers(toDelete);
+            await addMembers(toAdd, rolesMap);
+            await deleteMembers(toDelete);
             window.location.reload();
         } catch (error: any) {
             console.error(error.response?.data || error);
@@ -274,9 +274,16 @@ async function deleteMembers(toDelete: number[]) {
 
 async function addMembers(toAdd: number[], rolesMap: Record<number, number>) {
     if (toAdd.length > 0) {
+        const newMembersRoles: Record<number, number> = {};
+        toAdd.forEach(id => {
+            if (rolesMap[id] !== undefined) {
+                newMembersRoles[id] = rolesMap[id];
+            }
+        });
+
         await api.post(`/api/group/${currentGroupId}/members`, {
             users_ids: toAdd,
-            users_roles: rolesMap
+            users_roles: newMembersRoles
         });
     }
 }
