@@ -29,7 +29,7 @@
             </div>
             <div id="price-div" class="mb-3">
                 <label class="form-label small text-muted">{{__('event.show.price')}}</label>
-                <input type="number" class="form-control rounded-3" placeholder="{{__('event.create.price_placeholder')}}" id="input-price">
+                <input type="number" class="form-control rounded-3" placeholder="{{__('event.create.price_placeholder')}}" id="input-price" min="0">
             </div>
             <div id="img-preview-div" class="ratio ratio-21x9 bg-light rounded-4 border border-secondary border-opacity-25 mb-2 position-relative overflow-hidden">
                 <label for="event-image-upload" class="w-100 h-100 m-0 d-flex flex-column justify-content-center align-items-center" style="cursor: pointer;">
