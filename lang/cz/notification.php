@@ -9,7 +9,7 @@ return [
         'mark_as_read' => 'Označit jako přečtené',
         'empty' => 'Žádná oznámení nenalezena.',
         'load_failed' => 'Oznámení se nepodařilo načíst. Obnovte stránku a zkuste to znovu.',
-        'single_read_fallback' => 'Jedno oznámení je uloženo v tomto prohlížeči, dokud nebude opraveno API.',
+        'single_read_fallback' => 'Oznámení úspěšně označeno jako přečtené.',
         'read_all_failed' => 'Označení všech jako přečtených selhalo. Zkuste to znovu.',
         'unknown_time' => 'Neznámý čas',
     ],
@@ -20,7 +20,7 @@ return [
                 'title' => 'Byl(a) jste přidán(a) do skupiny :name',
                 'body' => ':user vás přidal(a) do :name dne :date',
             ],
-            'db' => 'Přidán do skupiny :name uživatelem :user',
+            'db' => 'Přidán do skupiny :name',
         ],
     ],
 
@@ -31,7 +31,7 @@ return [
                 'action' => 'Zobrazit událost',
                 'body' => ':user vytvořil(a) událost :name dne :date',
             ],
-            'db' => 'Nová událost :name od :user',
+            'db' => 'Nová událost :name',
         ],
 
         'updated' => [
@@ -40,7 +40,7 @@ return [
                 'action' => 'Zobrazit událost',
                 'body' => ':user aktualizoval(a) :name dne :date',
             ],
-            'db' => 'Událost :name aktualizoval :user',
+            'db' => 'Událost :name aktualizována',
         ],
 
         'payment' => [

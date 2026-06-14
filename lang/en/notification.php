@@ -9,7 +9,7 @@ return [
         'mark_as_read' => 'Mark as read',
         'empty' => 'No notifications found.',
         'load_failed' => 'Could not load notifications. Refresh the page and try again.',
-        'single_read_fallback' => 'Single read is saved in this browser until API single-read is fixed.',
+        'single_read_fallback' => 'Notification succesfully marked as read.',
         'read_all_failed' => 'Mark all as read failed. Try again.',
         'unknown_time' => 'Unknown time',
     ],
@@ -20,7 +20,7 @@ return [
                 'title' => 'You were added to group :name',
                 'body' => ':user added you to :name on :date',
             ],
-            'db' => 'Added to group :name by :user',
+            'db' => 'Added to group :name',
         ],
     ],
 
@@ -31,7 +31,7 @@ return [
                 'action' => 'View event',
                 'body' => ':user created :name on :date',
             ],
-            'db' => 'New event :name by :user',
+            'db' => 'New event :name',
         ],
 
         'updated' => [
@@ -40,7 +40,7 @@ return [
                 'action' => 'View event',
                 'body' => ':user updated :name on :date',
             ],
-            'db' => 'Event :name updated by :user',
+            'db' => 'Event :name updated',
         ],
 
         'payment' => [

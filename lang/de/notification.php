@@ -9,7 +9,7 @@ return [
         'mark_as_read' => 'Als gelesen markieren',
         'empty' => 'Keine Benachrichtigungen gefunden.',
         'load_failed' => 'Benachrichtigungen konnten nicht geladen werden. Aktualisieren Sie die Seite und versuchen Sie es erneut.',
-        'single_read_fallback' => 'Die Einzelmarkierung wird in diesem Browser gespeichert, bis die API behoben ist.',
+        'single_read_fallback' => 'Benachrichtigung erfolgreich als gelesen markiert.',
         'read_all_failed' => 'Alle als gelesen markieren ist fehlgeschlagen. Bitte erneut versuchen.',
         'unknown_time' => 'Unbekannte Zeit',
     ],
@@ -20,7 +20,7 @@ return [
                 'title' => 'Sie wurden zur Gruppe :name hinzugefügt',
                 'body' => ':user hat Sie am :date zur Gruppe :name hinzugefügt',
             ],
-            'db' => 'Zur Gruppe :name hinzugefügt von :user',
+            'db' => 'Zur Gruppe :name',
         ],
     ],
 
@@ -31,7 +31,7 @@ return [
                 'action' => 'Veranstaltung anzeigen',
                 'body' => ':user hat :name am :date erstellt',
             ],
-            'db' => 'Neue Veranstaltung :name von :user',
+            'db' => 'Neue Veranstaltung :name',
         ],
 
         'updated' => [
@@ -40,7 +40,7 @@ return [
                 'action' => 'Veranstaltung anzeigen',
                 'body' => ':user hat :name am :date aktualisiert',
             ],
-            'db' => 'Veranstaltung :name aktualisiert von :user',
+            'db' => 'Veranstaltung :name aktualisiert',
         ],
 
         'payment' => [

@@ -121,13 +121,18 @@ class GroupController extends Controller
         $data = $request->validate([
             'name' => ['nullable', 'string', 'max:128'],
             'description' => ['nullable', 'string'],
-            'img' => ['nullable', 'image', 'max:4096']
+            'img' => ['nullable', 'image', 'max:4096'],
+            'delete_picture' => ['nullable', 'string']
         ]);
 
         $updateData = [
             'name' => $data['name'] ?? $group->name,
             'description' => $data['description'] ?? $group->description,
         ];
+
+        if ($request->boolean('delete_picture')) {
+            $updateData['picture_url'] = null;
+        }
 
         if ($request->hasFile('img')) {
             $updateData['picture_url'] = $this->storageService->image($request->file('img'));

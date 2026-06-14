@@ -9,7 +9,7 @@ return [
         'end_min' => 'Konec:',
         'title' => 'Název',
         'description' => 'Popis',
-        'deadline' => 'Termín',
+        'deadline' => 'Deadline',
         'from' => 'Od',
         'to' => 'Do',
         'price' => 'Cena',

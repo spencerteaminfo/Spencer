@@ -97,6 +97,13 @@ textarea {
 
 @media (max-width: 767.98px) {
     aside { display: contents; }
+    
+    #content {
+        padding-bottom: 90px !important;
+    }
+    .modal-dialog {
+        --bs-modal-margin: 2rem;
+    }
 }
 
 header.navbar {

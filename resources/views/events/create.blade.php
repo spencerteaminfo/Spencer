@@ -11,16 +11,16 @@
                 <div class="col-lg-8">
                     <div class="card shadow-sm border-0 rounded-4 p-4 mb-4">
                         <h2 class="h3 fw-bold mb-4 text-secondary">{{__('event.title')}}</h2>
-                        <div id="title-div" class="mb-3">
+                        <div id="title-div" class="mb-2">
                             <label class="form-label small text-muted">{{__('event.show.title')}}</label>
                             <input id="input-title" type="text" class="form-control rounded-3" placeholder="{{__('event.create.title_placeholder')}}">
                         </div>
 
-                        <div id="description-div" class="mb-3">
+                        <div id="description-div" class="mb-2">
                             <label class="form-label small text-muted">{{__('event.show.description')}}</label>
                             <textarea class="form-control rounded-3" rows="3" placeholder="{{__('event.create.description_placeholder')}}" id="input-description"></textarea>
                         </div>
-                        <div class="row g-3 mb-4">
+                        <div class="row g-3 mb-2">
                             <div id="deadline-div" class="col-md-4">
                                 <label class="form-label small text-muted">{{__('event.show.deadline')}}</label>
                                 <input type="date" class="form-control rounded-3" id="input-deadline">
@@ -34,7 +34,7 @@
                                 <input type="date" class="form-control rounded-3" id="input-to">
                             </div>
                         </div>
-                        <div id="price-div" class="mb-3">
+                        <div id="price-div" class="mb-2">
                             <label class="form-label small text-muted">{{__('event.show.price')}}</label>
                             <input type="number" class="form-control rounded-3" rows="3" placeholder="{{__('event.create.price_placeholder')}}" id="input-price"></input>
                         </div>
@@ -54,7 +54,7 @@
                         <div class="small text-muted text-end mb-2 mx-2">
                             <span>{{__('event.create.group_hint')}} <a href="/groups">{{__('event.create.group_action')}}</a></span>
                         </div>
-                        <div class="position-relative">
+                        <div class="position-relative mt-3">
                             <input id="searchInput" type="text" class="form-control rounded-pill py-3 px-4 shadow-sm border-0 mb-2" placeholder="{{__('event.create.search_placeholder')}}">
                             <span class="position-absolute end-0 top-50 translate-middle-y me-4">
                                 <img src="{{ Vite::asset('resources/svg/search.svg') }}" alt="search" class="h-auto w-auto opacity-50">

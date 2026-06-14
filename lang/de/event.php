@@ -8,7 +8,7 @@ return [
         'end_min' => 'Ende:',
         'title' => 'Titel',
         'description' => 'Beschreibung',
-        'deadline' => 'Frist',
+        'deadline' => 'Deadline',
         'from' => 'Von',
         'to' => 'Bis',
         'price' => 'Preis',
